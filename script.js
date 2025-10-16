@@ -2,6 +2,35 @@
 // DETECÇÃO DE DISPOSITIVOS APPLE E ANDROID
 // ========================================
 
+// Detectar iPad Mini 6 especificamente
+function detectIPadMini6() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isIPad = /ipad/.test(userAgent);
+  
+  // Verificar tamanho: iPad Mini 6 tem 2048x1536 (portrait)
+  const screenWidth = window.screen.width;
+  const screenHeight = window.screen.height;
+  
+  // iPad Mini 6: ~1024x768 em modo reportado pelo navegador (scaled)
+  const isIPadMini6 = isIPad && (
+    (screenWidth === 1024 && screenHeight === 768) ||
+    (screenWidth === 768 && screenHeight === 1024)
+  );
+  
+  if (isIPadMini6) {
+    document.documentElement.dataset.device = "ipad-mini-6";
+    console.log(
+      "🍎 iPad Mini 6 detectado - aplicando fixes específicos",
+      `Screen: ${screenWidth}x${screenHeight}`,
+      `Inner: ${window.innerWidth}x${window.innerHeight}`,
+      `DPR: ${window.devicePixelRatio}`
+    );
+    return true;
+  }
+  
+  return false;
+}
+
 // Detectar se é um celular (não tablet)
 function isMobilePhone() {
   const userAgent = navigator.userAgent.toLowerCase();
@@ -169,6 +198,7 @@ function updateAppleDeviceStyles() {
 }
 
 // Executar detecção ao carregar
+detectIPadMini6();
 detectAppleDevice();
 detectAndroidDevice();
 updateAppleDeviceStyles();

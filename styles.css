@@ -4750,6 +4750,23 @@ div {
 }
 
 /* ========================================
+   FIX ESPECÍFICO PARA iPAD MINI 6
+   ======================================== */
+
+[data-device="ipad-mini-6"] .tv-control-wrapper {
+  position: fixed !important;
+  top: 103px !important;
+  left: 21px !important;
+  right: 21px !important;
+  bottom: 87px !important;
+  max-height: calc(100vh - 190px) !important;
+}
+
+[data-device="ipad-mini-6"] * {
+  box-sizing: border-box;
+}
+
+/* ========================================
    RESPONSIVIDADE MOBILE
    ======================================== */
 
