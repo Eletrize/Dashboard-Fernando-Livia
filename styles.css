@@ -4736,11 +4736,17 @@ div {
 }
 
 /* ========================================
-   ESTILOS ESPECÍFICOS PARA iPAD
+   ESTILOS ESPECÍFICOS PARA DISPOSITIVOS APPLE
    ======================================== */
 
-[data-device="ipad"] .tv-control-wrapper {
-  bottom: 92px; /* 77px navbar + 15px margem */
+/* Apple em layout padrão - colado na navbar */
+[data-device="apple"] .tv-control-wrapper {
+  bottom: 87px; /* colado na navbar (77px + 10px padrão) */
+}
+
+/* Apple em landscape no controle remoto da TV - 20px de margem */
+[data-device="apple"][data-apple-layout="tv-landscape"] .tv-control-wrapper {
+  bottom: 97px; /* 77px navbar + 20px margem */
 }
 
 /* ========================================

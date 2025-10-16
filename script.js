@@ -1,18 +1,181 @@
 // ========================================
-// DETECÇÃO DE iPAD
+// DETECÇÃO DE DISPOSITIVOS APPLE E ANDROID
 // ========================================
-function detectIPad() {
+
+// Detectar se é um celular (não tablet)
+function isMobilePhone() {
   const userAgent = navigator.userAgent.toLowerCase();
-  const isIPad = /ipad|mac os x/.test(userAgent) && navigator.maxTouchPoints > 2;
   
-  if (isIPad) {
-    document.documentElement.dataset.device = 'ipad';
-    console.log('📱 iPad detectado - aplicando estilos específicos');
+  // Considerar celular se:
+  // 1. iPhone ou Android com tela pequena
+  // 2. Largura máxima < 768px (breakpoint de tablet)
+  const isIPhone = /iphone/.test(userAgent);
+  const isAndroid = /android/.test(userAgent);
+  const isSmallScreen = window.innerWidth < 768;
+  
+  // iPad e tablets maiores não são celulares
+  const isTablet = /ipad|galaxy tab|sm-t/.test(userAgent);
+  
+  return (isIPhone || (isAndroid && isSmallScreen)) && !isTablet;
+}
+
+function detectAppleDevice() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isApple =
+    /ipad|iphone|mac os x/.test(userAgent) && navigator.maxTouchPoints > 1;
+
+  if (isApple) {
+    document.documentElement.dataset.device = "apple";
+    console.log(
+      "🍎 Dispositivo Apple detectado - aplicando estilos específicos"
+    );
+  }
+}
+
+function detectAndroidDevice() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isAndroid = /android/.test(userAgent);
+  
+  if (isAndroid) {
+    document.documentElement.dataset.device = "android";
+    console.log(
+      "🤖 Dispositivo Android detectado - aplicando estilos específicos"
+    );
+  }
+}
+
+// Função para detectar se está na página de controle remoto da TV
+function isOnTVControlPage() {
+  return (
+    window.location.pathname.includes("ambiente1-tv") ||
+    window.location.hash.includes("ambiente1-tv")
+  );
+}
+
+// Função para criar/mostrar overlay de orientação
+function showOrientationOverlay() {
+  let overlay = document.getElementById("orientation-overlay");
+  
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "orientation-overlay";
+    overlay.innerHTML = `
+      <div class="orientation-overlay-content">
+        <div class="orientation-icon">📱</div>
+        <p class="orientation-message">Rotacione seu dispositivo para o modo retrato</p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // Adicionar estilos dinamicamente se não existirem
+    if (!document.getElementById("orientation-overlay-styles")) {
+      const style = document.createElement("style");
+      style.id = "orientation-overlay-styles";
+      style.innerHTML = `
+        #orientation-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.95);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          z-index: 10000;
+          align-items: center;
+          justify-content: center;
+        }
+
+        #orientation-overlay.active {
+          display: flex;
+        }
+
+        .orientation-overlay-content {
+          text-align: center;
+          color: #fff;
+        }
+
+        .orientation-icon {
+          font-size: 120px;
+          margin-bottom: 20px;
+          animation: rotate 2s infinite;
+        }
+
+        .orientation-message {
+          font-size: 24px;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        @keyframes rotate {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+          .orientation-icon {
+            font-size: 80px;
+          }
+
+          .orientation-message {
+            font-size: 18px;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+  
+  return overlay;
+}
+
+// Função para aplicar estilos baseado em orientação e localização
+function updateAppleDeviceStyles() {
+  const isApple = document.documentElement.dataset.device === "apple";
+  const isAndroid = document.documentElement.dataset.device === "android";
+  const isMobile = isMobilePhone();
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const onTVPage = isOnTVControlPage();
+
+  // Se for celular (mobile) e estiver no controle remoto da TV
+  if ((isApple || isAndroid) && isMobile && onTVPage) {
+    const overlay = showOrientationOverlay();
+    
+    if (isLandscape) {
+      // Mostrar mensagem se estiver em landscape
+      overlay.classList.add("active");
+      document.documentElement.dataset.appleLayout = "mobile-blocked";
+      console.log("📵 Celular em landscape no controle remoto - bloqueado");
+    } else {
+      // Esconder mensagem se voltar para portrait
+      overlay.classList.remove("active");
+      document.documentElement.dataset.appleLayout = "default";
+      console.log("✅ Celular em portrait - liberado");
+    }
+  } else if (isApple && isLandscape && onTVPage && !isMobile) {
+    // Apple em landscape (tablet/iPad) no controle remoto
+    document.documentElement.dataset.appleLayout = "tv-landscape";
+    console.log(
+      "📺 Layout Apple em landscape no controle remoto - margem 20px"
+    );
+  } else {
+    document.documentElement.dataset.appleLayout = "default";
+    const overlay = showOrientationOverlay();
+    overlay.classList.remove("active");
   }
 }
 
 // Executar detecção ao carregar
-detectIPad();
+detectAppleDevice();
+detectAndroidDevice();
+updateAppleDeviceStyles();
+
+// Monitorar mudanças de orientação
+window.addEventListener("orientationchange", updateAppleDeviceStyles);
+window.addEventListener("resize", updateAppleDeviceStyles);
 
 // ========================================
 // CONFIGURAÇÕES GERAIS
