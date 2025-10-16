@@ -1,3 +1,23 @@
+// ========================================
+// DETECÇÃO DE iPAD
+// ========================================
+function detectIPad() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isIPad = /ipad|mac os x/.test(userAgent) && navigator.maxTouchPoints > 2;
+  
+  if (isIPad) {
+    document.documentElement.dataset.device = 'ipad';
+    console.log('📱 iPad detectado - aplicando estilos específicos');
+  }
+}
+
+// Executar detecção ao carregar
+detectIPad();
+
+// ========================================
+// CONFIGURAÇÕES GERAIS
+// ========================================
+
 // IDs de todos os dispositivos de iluminação (atualizados com devices.json)
 const ALL_LIGHT_IDS = [
   "231", // Ambiente 1 - Luz 1 (Escritorio-Pendente)

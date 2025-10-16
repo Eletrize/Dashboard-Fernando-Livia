@@ -4736,6 +4736,14 @@ div {
 }
 
 /* ========================================
+   ESTILOS ESPECÍFICOS PARA iPAD
+   ======================================== */
+
+[data-device="ipad"] .tv-control-wrapper {
+  bottom: 92px; /* 77px navbar + 15px margem */
+}
+
+/* ========================================
    RESPONSIVIDADE MOBILE
    ======================================== */
 
