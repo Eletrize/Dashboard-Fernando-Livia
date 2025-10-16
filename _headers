@@ -1,0 +1,44 @@
+# Cache control para Cloudflare Pages
+
+# HTML - sem cache (sempre atualizado)
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# CSS e JS - cache curto para desenvolvimento ágil
+/*.css
+  Cache-Control: public, max-age=300, s-maxage=300
+  Pragma: no-cache
+
+/*.js
+  Cache-Control: public, max-age=300, s-maxage=300
+  Pragma: no-cache
+
+# Root HTML
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# Manifest e service worker - sem cache
+/manifest.json
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/service-worker.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Imagens - cache mais longo (menos alterações)
+/images/*
+  Cache-Control: public, max-age=3600, s-maxage=3600
+
+# Fontes - cache longo
+/fonts/*
+  Cache-Control: public, max-age=86400, s-maxage=86400
+
+# Functions - CORS handled internally by Functions
+# /functions/*
+#   Access-Control-Allow-Origin: *
+#   Access-Control-Allow-Methods: GET, POST, OPTIONS
+#   Access-Control-Allow-Headers: Content-Type
+#   Cache-Control: no-cache, no-store, must-revalidate

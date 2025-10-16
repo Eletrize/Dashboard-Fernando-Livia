@@ -1,0 +1,26 @@
+{
+  "name": "dashboard-eletrize-base",
+  "version": "1.0.0",
+  "description": "Dashboard de automação residencial - Base Eletrize",
+  "main": "index.html",
+  "scripts": {
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy .",
+    "preview": "wrangler pages dev . --port 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ph1l-T/Dashboard-Eletrize-Base.git"
+  },
+  "keywords": [
+    "smart-home",
+    "hubitat",
+    "dashboard",
+    "automation"
+  ],
+  "author": "Ph1l-T",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
