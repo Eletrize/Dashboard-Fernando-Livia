@@ -2,7 +2,10 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Dashboard Eletrize</title>
     <link rel="stylesheet" href="fonts-raleway.css" />
     <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png" />
@@ -751,14 +754,10 @@
                         <div class="tv-volume-column">
                             <div class="tv-volume-buttons">
                                 <button class="tv-btn-square" onclick="tvCommand(this, 'vol-up')" data-device-id="254" aria-label="Volume +">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="18 15 12 9 6 15"></polyline>
-                                    </svg>
+                                    <img src="images/icons/arrow-up.svg" alt="Volume +" class="tv-btn-icon-img">
                                 </button>
                                 <button class="tv-btn-square" onclick="tvCommand(this, 'vol-down')" data-device-id="256" aria-label="Volume -">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
+                                    <img src="images/icons/arrow-down.svg" alt="Volume -" class="tv-btn-icon-img">
                                 </button>
                             </div>
                         </div>
@@ -778,14 +777,10 @@
                         <div class="tv-channels-column">
                             <div class="tv-channels-buttons">
                                 <button class="tv-btn-square" onclick="tvCommand(this, 'ch-up')" data-device-id="257" aria-label="Canal +">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="18 15 12 9 6 15"></polyline>
-                                    </svg>
+                                    <img src="images/icons/arrow-up.svg" alt="Canal +" class="tv-btn-icon-img">
                                 </button>
                                 <button class="tv-btn-square" onclick="tvCommand(this, 'ch-down')" data-device-id="258" aria-label="Canal -">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
+                                    <img src="images/icons/arrow-down.svg" alt="Canal -" class="tv-btn-icon-img">
                                 </button>
                             </div>
                         </div>
@@ -839,33 +834,25 @@
                         <div class="tv-directional-pad">
                             <!-- Linha 1: UP -->
                             <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'up')" data-device-id="247" aria-label="Cima">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="18 15 12 9 6 15"></polyline>
-                                </svg>
+                                <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
                             </button>
                             
                             <!-- Linha 2: LEFT, OK, RIGHT -->
                             <div class="tv-directional-row-line">
                                 <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'left')" data-device-id="248" aria-label="Esquerda">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="15 18 9 12 15 6"></polyline>
-                                    </svg>
+                                    <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
                                 </button>
                                 <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'ok')" data-device-id="249" aria-label="OK">
-                                    <span>OK</span>
+                                    <div class="tv-ok-circle"></div>
                                 </button>
                                 <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'right')" data-device-id="250" aria-label="Direita">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="9 18 15 12 9 6"></polyline>
-                                    </svg>
+                                    <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
                                 </button>
                             </div>
                             
                             <!-- Linha 3: DOWN -->
                             <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'down')" data-device-id="251" aria-label="Baixo">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
+                                <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
                             </button>
                         </div>
                     </div>
@@ -900,7 +887,7 @@
             </div>
 
             <!-- BLOCO 7: LOGO ELETRIZE -->
-            <div class="tv-logo-section">
+            <div class="tv-control-section tv-logo-section">
                 <img src="images/icons/Eletrize.svg" alt="Eletrize" class="tv-eletrize-logo">
             </div>
         </div>
