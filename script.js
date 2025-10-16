@@ -1,5 +1,5 @@
 // ========================================
-// DETECÇÃO DE DISPOSITIVOS APPLE E ANDROID
+// DETECÇÃO DE DISPOSITIVOS
 // ========================================
 
 // Detectar iPad Mini 6 especificamente
@@ -48,27 +48,17 @@ function isMobilePhone() {
   return (isIPhone || (isAndroid && isSmallScreen)) && !isTablet;
 }
 
-function detectAppleDevice() {
+// Detectar dispositivo geral (Apple, Android ou Desktop)
+function detectDevice() {
   const userAgent = navigator.userAgent.toLowerCase();
-  const isApple =
-    /ipad|iphone|mac os x/.test(userAgent) && navigator.maxTouchPoints > 1;
-
-  if (isApple) {
-    document.documentElement.dataset.device = "apple";
-    console.log(
-      "🍎 Dispositivo Apple detectado - aplicando estilos específicos"
-    );
-  }
-}
-
-function detectAndroidDevice() {
-  const userAgent = navigator.userAgent.toLowerCase();
+  
+  const isApple = /ipad|iphone|mac os x/.test(userAgent) && navigator.maxTouchPoints > 1;
   const isAndroid = /android/.test(userAgent);
   
-  if (isAndroid) {
-    document.documentElement.dataset.device = "android";
+  if (isApple || isAndroid) {
+    document.documentElement.dataset.device = "mobile";
     console.log(
-      "🤖 Dispositivo Android detectado - aplicando estilos específicos"
+      `📱 Dispositivo mobile detectado (${isApple ? "Apple" : "Android"})`
     );
   }
 }
@@ -162,50 +152,32 @@ function showOrientationOverlay() {
 }
 
 // Função para aplicar estilos baseado em orientação e localização
-function updateAppleDeviceStyles() {
-  const isApple = document.documentElement.dataset.device === "apple";
-  const isAndroid = document.documentElement.dataset.device === "android";
+function updateDeviceStyles() {
   const isMobile = isMobilePhone();
   const isLandscape = window.innerWidth > window.innerHeight;
   const onTVPage = isOnTVControlPage();
 
-  // Se for celular (mobile) e estiver no controle remoto da TV
-  if ((isApple || isAndroid) && isMobile && onTVPage) {
+  // Regra prioritária: Celulares em landscape no controle remoto são bloqueados
+  if (isMobile && isLandscape && onTVPage) {
     const overlay = showOrientationOverlay();
-    
-    if (isLandscape) {
-      // Mostrar mensagem se estiver em landscape
-      overlay.classList.add("active");
-      document.documentElement.dataset.appleLayout = "mobile-blocked";
-      console.log("📵 Celular em landscape no controle remoto - bloqueado");
-    } else {
-      // Esconder mensagem se voltar para portrait
-      overlay.classList.remove("active");
-      document.documentElement.dataset.appleLayout = "default";
-      console.log("✅ Celular em portrait - liberado");
-    }
-  } else if (isApple && isLandscape && onTVPage && !isMobile) {
-    // Apple em landscape (tablet/iPad) no controle remoto
-    document.documentElement.dataset.appleLayout = "tv-landscape";
-    console.log(
-      "📺 Layout Apple em landscape no controle remoto - margem 20px"
-    );
+    overlay.classList.add("active");
+    document.documentElement.dataset.layoutState = "mobile-blocked";
+    console.log("📵 Celular em landscape no controle remoto - bloqueado");
   } else {
-    document.documentElement.dataset.appleLayout = "default";
     const overlay = showOrientationOverlay();
     overlay.classList.remove("active");
+    document.documentElement.dataset.layoutState = "default";
   }
 }
 
 // Executar detecção ao carregar
 detectIPadMini6();
-detectAppleDevice();
-detectAndroidDevice();
-updateAppleDeviceStyles();
+detectDevice();
+updateDeviceStyles();
 
 // Monitorar mudanças de orientação
-window.addEventListener("orientationchange", updateAppleDeviceStyles);
-window.addEventListener("resize", updateAppleDeviceStyles);
+window.addEventListener("orientationchange", updateDeviceStyles);
+window.addEventListener("resize", updateDeviceStyles);
 
 // ========================================
 // CONFIGURAÇÕES GERAIS

@@ -4736,23 +4736,15 @@ div {
 }
 
 /* ========================================
-   ESTILOS ESPECÍFICOS PARA DISPOSITIVOS APPLE
+   ESTILOS PARA TODOS OS DISPOSITIVOS
    ======================================== */
 
-/* Apple em layout padrão - colado na navbar */
-[data-device="apple"] .tv-control-wrapper {
+/* Todos os dispositivos: colados na navbar */
+.tv-control-wrapper {
   bottom: 87px; /* colado na navbar (77px + 10px padrão) */
 }
 
-/* Apple em landscape no controle remoto da TV - 20px de margem */
-[data-device="apple"][data-apple-layout="tv-landscape"] .tv-control-wrapper {
-  bottom: 97px; /* 77px navbar + 20px margem */
-}
-
-/* ========================================
-   FIX ESPECÍFICO PARA iPAD MINI 6
-   ======================================== */
-
+/* FIX ESPECÍFICO PARA iPAD MINI 6 */
 [data-device="ipad-mini-6"] .tv-control-wrapper {
   position: fixed !important;
   top: 103px !important;
@@ -4760,10 +4752,6 @@ div {
   right: 21px !important;
   bottom: 87px !important;
   max-height: calc(100vh - 190px) !important;
-}
-
-[data-device="ipad-mini-6"] * {
-  box-sizing: border-box;
 }
 
 /* ========================================
