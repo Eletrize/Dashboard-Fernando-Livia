@@ -3945,7 +3945,7 @@ div {
   top: 103px;
   left: 21px;
   right: 21px;
-  bottom: 77px;
+  bottom: 87px;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -3958,14 +3958,14 @@ div {
 @media screen and (min-width: 768px) and (orientation: landscape) {
   .tv-control-wrapper {
     overflow: hidden;
-    height: calc(100vh - 180px);
+    height: calc(100vh - 190px);
   }
 }
 
 @media (min-width: 900px) {
   .tv-control-wrapper {
     overflow: hidden;
-    height: calc(100vh - 180px);
+    height: calc(100vh - 190px);
     padding: 15px;
     gap: 15px;
   }
@@ -4026,16 +4026,6 @@ div {
   width: 100%;
 }
 
-.tv-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-}
-
-.tv-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
 .tv-btn svg {
   flex-shrink: 0;
 }
@@ -4047,12 +4037,6 @@ div {
   font-size: 16px;
   padding: 20px;
   margin-bottom: 20px;
-}
-
-.tv-btn--power:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
 }
 
 /* Grupo de botões Power On/Off */
@@ -4080,15 +4064,6 @@ div {
   border-radius: 12px;
 }
 
-.tv-btn--power-on:hover:not(:disabled) {
-  background: rgba(34, 197, 94, 0.3);
-  border-color: rgba(34, 197, 94, 0.5);
-}
-
-.tv-btn--power-on:active:not(:disabled) {
-  background: rgba(34, 197, 94, 0.4);
-}
-
 /* Botão OFF - Vermelho */
 .tv-btn--power-off {
   flex: 1;
@@ -4101,15 +4076,6 @@ div {
   padding: 12px 16px;
   height: 52px;
   border-radius: 12px;
-}
-
-.tv-btn--power-off:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.tv-btn--power-off:active:not(:disabled) {
-  background: rgba(239, 68, 68, 0.4);
 }
 
 /* Botões secundários */
@@ -4448,17 +4414,6 @@ div {
   }
 }
 
-.tv-directional-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
-.tv-directional-btn:active:not(:disabled) {
-  transform: scale(0.95);
-  background: rgba(100, 150, 255, 0.2);
-}
-
 .tv-directional-btn svg {
   width: 24px;
   height: 24px;
@@ -4472,15 +4427,6 @@ div {
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 1px;
-}
-
-.tv-directional-btn--ok:hover:not(:disabled) {
-  background: rgba(100, 150, 255, 0.3);
-  border-color: rgba(100, 150, 255, 0.5);
-}
-
-.tv-directional-btn--ok:active:not(:disabled) {
-  background: rgba(100, 150, 255, 0.4);
 }
 
 /* Círculo branco para OK */
@@ -4626,17 +4572,6 @@ div {
   }
 }
 
-.tv-btn-square:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
-.tv-btn-square:active:not(:disabled) {
-  transform: scale(0.95);
-  background: rgba(100, 150, 255, 0.2);
-}
-
 .tv-btn-square svg {
   width: 24px;
   height: 24px;
@@ -4683,24 +4618,9 @@ div {
   transition: all 0.3s ease;
 }
 
-.tv-btn-icon:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.tv-btn-icon:active:not(:disabled) {
-  transform: scale(0.95);
-}
-
 .tv-btn-icon--mute {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.2);
-}
-
-.tv-btn-icon--mute:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
 }
 
 .tv-channel-controls {
@@ -4736,7 +4656,7 @@ div {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   color: #fff;
-  font-size: 18px;
+  font-size: 28px;
   font-weight: 600;
   height: 72px;
   width: 100%;
@@ -4751,18 +4671,8 @@ div {
   .tv-numpad-btn {
     height: 100%;
     width: 100%;
+    font-size: 36px;
   }
-}
-
-.tv-numpad-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
-.tv-numpad-btn:active:not(:disabled) {
-  transform: scale(0.95);
-  background: rgba(100, 150, 255, 0.2);
 }
 
 .tv-numpad-btn--empty {
@@ -4798,10 +4708,6 @@ div {
   transition: opacity 0.3s ease;
 }
 
-.tv-eletrize-logo:hover {
-  opacity: 0.9;
-}
-
 /* ========================================
    CONTROLES DE REPRODUÇÃO
    ======================================== */
@@ -4827,16 +4733,6 @@ div {
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-}
-
-.tv-btn-icon-small:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.tv-btn-icon-small:active:not(:disabled) {
-  transform: scale(0.95);
 }
 
 /* ========================================
