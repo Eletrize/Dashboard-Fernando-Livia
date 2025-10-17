@@ -6,17 +6,17 @@
 function detectIPadMini6() {
   const userAgent = navigator.userAgent.toLowerCase();
   const isIPad = /ipad/.test(userAgent);
-  
+
   // Verificar tamanho: iPad Mini 6 tem 2048x1536 (portrait)
   const screenWidth = window.screen.width;
   const screenHeight = window.screen.height;
-  
+
   // iPad Mini 6: ~1024x768 em modo reportado pelo navegador (scaled)
-  const isIPadMini6 = isIPad && (
-    (screenWidth === 1024 && screenHeight === 768) ||
-    (screenWidth === 768 && screenHeight === 1024)
-  );
-  
+  const isIPadMini6 =
+    isIPad &&
+    ((screenWidth === 1024 && screenHeight === 768) ||
+      (screenWidth === 768 && screenHeight === 1024));
+
   if (isIPadMini6) {
     document.documentElement.dataset.device = "ipad-mini-6";
     console.log(
@@ -27,34 +27,35 @@ function detectIPadMini6() {
     );
     return true;
   }
-  
+
   return false;
 }
 
 // Detectar se é um celular (não tablet)
 function isMobilePhone() {
   const userAgent = navigator.userAgent.toLowerCase();
-  
+
   // Considerar celular se:
   // 1. iPhone ou Android com tela pequena
   // 2. Largura máxima < 768px (breakpoint de tablet)
   const isIPhone = /iphone/.test(userAgent);
   const isAndroid = /android/.test(userAgent);
   const isSmallScreen = window.innerWidth < 768;
-  
+
   // iPad e tablets maiores não são celulares
   const isTablet = /ipad|galaxy tab|sm-t/.test(userAgent);
-  
+
   return (isIPhone || (isAndroid && isSmallScreen)) && !isTablet;
 }
 
 // Detectar dispositivo geral (Apple, Android ou Desktop)
 function detectDevice() {
   const userAgent = navigator.userAgent.toLowerCase();
-  
-  const isApple = /ipad|iphone|mac os x/.test(userAgent) && navigator.maxTouchPoints > 1;
+
+  const isApple =
+    /ipad|iphone|mac os x/.test(userAgent) && navigator.maxTouchPoints > 1;
   const isAndroid = /android/.test(userAgent);
-  
+
   if (isApple || isAndroid) {
     document.documentElement.dataset.device = "mobile";
     console.log(
@@ -74,7 +75,7 @@ function isOnTVControlPage() {
 // Função para criar/mostrar overlay de orientação
 function showOrientationOverlay() {
   let overlay = document.getElementById("orientation-overlay");
-  
+
   if (!overlay) {
     overlay = document.createElement("div");
     overlay.id = "orientation-overlay";
@@ -85,7 +86,7 @@ function showOrientationOverlay() {
       </div>
     `;
     document.body.appendChild(overlay);
-    
+
     // Adicionar estilos dinamicamente se não existirem
     if (!document.getElementById("orientation-overlay-styles")) {
       const style = document.createElement("style");
@@ -147,7 +148,7 @@ function showOrientationOverlay() {
       document.head.appendChild(style);
     }
   }
-  
+
   return overlay;
 }
 
@@ -373,39 +374,39 @@ let tvPowerState = "off"; // Estado inicial: desligado
 
 function updateTVPowerState(newState) {
   tvPowerState = newState;
-  
+
   // Selecionar botões ON e OFF
   const btnOn = document.querySelector(".tv-btn--power-on");
   const btnOff = document.querySelector(".tv-btn--power-off");
-  
+
   // Selecionar todos os outros controles
   const otherControls = document.querySelectorAll(
     ".tv-volume-canais-wrapper, .tv-commands-grid, .tv-directional-pad, .tv-numpad, .tv-logo-section"
   );
-  
+
   if (newState === "on") {
     // TV ligada
     btnOn?.classList.add("active");
     btnOff?.classList.remove("active");
-    
+
     // Mostrar outros controles
-    otherControls.forEach(control => {
+    otherControls.forEach((control) => {
       control.style.opacity = "1";
       control.style.pointerEvents = "auto";
     });
-    
+
     console.log("📺 TV LIGADA - Controles visíveis");
   } else {
     // TV desligada
     btnOff?.classList.add("active");
     btnOn?.classList.remove("active");
-    
+
     // Esconder outros controles
-    otherControls.forEach(control => {
+    otherControls.forEach((control) => {
       control.style.opacity = "0.3";
       control.style.pointerEvents = "none";
     });
-    
+
     console.log("📺 TV DESLIGADA - Controles desabilitados");
   }
 }
@@ -449,39 +450,45 @@ function tvCommand(el, command) {
 }
 
 // Controle do Slider de Volume
-let volumeSliderInitialized = false;
-
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
-  
+
   if (!slider || !display) {
     console.log("⚠️ Slider ou display não encontrado");
     return;
   }
-  
-  // Evitar inicializar múltiplas vezes
-  if (volumeSliderInitialized) {
-    console.log("✅ Slider já inicializado");
-    return;
-  }
-  
+
   console.log("🎚️ Inicializando slider de volume");
-  
+
+  // Remover event listeners antigos para evitar duplicação
+  const newSlider = slider.cloneNode(false);
+  slider.parentNode.replaceChild(newSlider, slider);
+
+  // Pegar referência ao novo slider
+  const updatedSlider = document.getElementById("tv-volume-slider");
+
   // Atualizar display quando slider mudar
-  slider.addEventListener("input", (e) => {
+  updatedSlider.addEventListener("input", (e) => {
     const value = e.target.value;
+    const max = e.target.max || 100;
+    const percentage = (value / max) * 100;
+
     display.textContent = value;
-    console.log(`🎚️ Volume display atualizado: ${value}`);
+    updatedSlider.style.setProperty("--volume-progress", percentage + "%");
+
+    console.log(
+      `🎚️ Volume display atualizado: ${value} (${percentage.toFixed(1)}%)`
+    );
   });
-  
+
   // Enviar comando ao soltar o slider
-  slider.addEventListener("change", (e) => {
+  updatedSlider.addEventListener("change", (e) => {
     const value = e.target.value;
-    const deviceId = slider.dataset.deviceId;
-    
+    const deviceId = updatedSlider.dataset.deviceId;
+
     console.log(`🔊 Volume alterado para: ${value}`);
-    
+
     // Enviar comando para Hubitat
     if (deviceId) {
       sendHubitatCommand(deviceId, `setLevel-${value}`)
@@ -493,8 +500,7 @@ function initVolumeSlider() {
         });
     }
   });
-  
-  volumeSliderInitialized = true;
+
   console.log("✅ Slider de volume inicializado com sucesso");
 }
 
@@ -502,10 +508,9 @@ function initVolumeSlider() {
 document.addEventListener("DOMContentLoaded", () => {
   updateTVPowerState("off");
   initVolumeSlider();
-  
+
   // Re-inicializar quando a página mudar (para SPAs)
   window.addEventListener("hashchange", () => {
-    volumeSliderInitialized = false;
     setTimeout(() => {
       initVolumeSlider();
     }, 100);

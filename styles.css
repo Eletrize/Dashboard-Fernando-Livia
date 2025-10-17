@@ -34,6 +34,47 @@
    ============================================ */
 
 /* ========================================
+   BLOQUEIO DE ORIENTAÇÃO PAISAGEM EM CELULARES
+   ======================================== */
+
+/* Aviso de rotação para celulares em modo paisagem (até 767px de largura) */
+@media only screen and (max-width: 767px) and (orientation: landscape) {
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.98);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  body::after {
+    content: '📱\A\APor favor, gire seu\Acelular para o\Amodo retrato';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999999;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-family: 'Raleway', sans-serif;
+  }
+  
+  body > *:not(::before):not(::after) {
+    display: none !important;
+  }
+}
+
+/* ========================================
    PREVENIR ZOOM E GESTOS
    ======================================== */
 
@@ -4279,6 +4320,7 @@ div {
 /* Container para Volume e Canais lado a lado (mobile) */
 .tv-volume-canais-wrapper {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
@@ -4421,31 +4463,31 @@ div {
   font-size: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border-radius: 12px;
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
 }
 
 @media (min-width: 900px) {
   .tv-directional-btn {
-    width: 90px;
-    height: 90px;
+    width: 110px;
+    height: 110px;
     font-size: 16px;
   }
 
   .tv-directional-btn svg {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 
   .tv-directional-btn .tv-btn-icon-img {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 }
 
 .tv-directional-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 
 /* UP Button (quadrado) */
@@ -4460,16 +4502,16 @@ div {
 
 /* Círculo branco para OK */
 .tv-ok-circle {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   background: #ffffff;
   border-radius: 50%;
 }
 
 @media (min-width: 900px) {
   .tv-ok-circle {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -4479,8 +4521,9 @@ div {
 
 .tv-volume-channels-inline {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 16px;
   padding: 0;
   background: transparent;
   border: none;
@@ -4494,6 +4537,7 @@ div {
   align-items: center;
   gap: 8px;
   flex: 1;
+  width: 100%;
 }
 
 @media (min-width: 900px) {
@@ -4509,6 +4553,7 @@ div {
   align-items: center;
   gap: 8px;
   flex: 1;
+  width: 100%;
 }
 
 @media (min-width: 900px) {
@@ -4521,24 +4566,31 @@ div {
 .tv-volume-buttons {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   flex: 1;
+  width: 100%;
 }
 
-/* Botões de Canais em coluna (2 linhas) */
+/* Botões de Canais em coluna (2 linhas) - MODO RETRATO: linha com 2 colunas */
 .tv-channels-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  gap: 12px;
   flex: 1;
+  width: 100%;
 }
 
 /* Media query para modo paisagem (>=900px) */
 @media (min-width: 900px) {
+  .tv-volume-channels-inline {
+    flex-direction: row;
+    gap: 32px;
+  }
+
   /* Volume em linha (2 colunas) */
   .tv-volume-buttons {
     flex-direction: row;
-    gap: 6px;
+    gap: 12px;
     flex: 1;
     height: 100%;
   }
@@ -4546,7 +4598,7 @@ div {
   /* Canais em linha (2 colunas) */
   .tv-channels-buttons {
     flex-direction: row;
-    gap: 6px;
+    gap: 12px;
     flex: 1;
     height: 100%;
   }
@@ -4572,7 +4624,13 @@ div {
   appearance: none;
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.7) var(--volume-progress, 50%),
+    rgba(255, 255, 255, 0.15) var(--volume-progress, 50%),
+    rgba(255, 255, 255, 0.15) 100%
+  );
   border-radius: 4px;
   outline: none;
   transition: all 0.3s ease;
@@ -4583,53 +4641,85 @@ div {
   appearance: none;
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.15);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 1),
+    rgba(200, 220, 255, 0.8)
+  );
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(100, 150, 255, 0.4),
+    0 0 8px rgba(255, 255, 255, 0.6), inset -1px -1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .tv-volume-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.15);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 1),
+    rgba(200, 220, 255, 0.8)
+  );
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(100, 150, 255, 0.4),
+    0 0 8px rgba(255, 255, 255, 0.6), inset -1px -1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .tv-volume-slider::-webkit-slider-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: scale(1.1);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 1),
+    rgba(220, 235, 255, 0.9)
+  );
+  border-color: rgba(255, 255, 255, 1);
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(100, 150, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .tv-volume-slider::-moz-range-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: scale(1.1);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 1),
+    rgba(220, 235, 255, 0.9)
+  );
+  border-color: rgba(255, 255, 255, 1);
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(100, 150, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .tv-volume-slider:active::-webkit-slider-thumb {
   transform: scale(1.15);
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.7);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 1),
+    rgba(200, 220, 255, 0.8)
+  );
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 16px rgba(100, 150, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .tv-volume-slider:active::-moz-range-thumb {
   transform: scale(1.15);
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.7);
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 1),
+    rgba(200, 220, 255, 0.8)
+  );
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 16px rgba(100, 150, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(0, 0, 0, 0.2);
 }
 
 @media (min-width: 900px) {
@@ -4671,8 +4761,9 @@ div {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 100%;
+  height: 70px;
+  min-width: 100px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   padding: 0;
@@ -4682,13 +4773,13 @@ div {
   .tv-btn-square {
     width: 100%;
     height: 100%;
-    min-width: 80px;
-    min-height: 80px;
+    min-width: 100px;
+    min-height: 100px;
   }
 
   .tv-btn-square svg {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -4705,8 +4796,8 @@ div {
 
 @media (min-width: 900px) {
   .tv-btn-icon-img {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
 }
 
