@@ -179,18 +179,9 @@ detectIPadMini6();
 detectDevice();
 updateDeviceStyles();
 
-// Dynamic app height var to counter mobile browser UI chrome (iOS Safari/PWA)
-function setAppHeight() {
-  const vh = window.innerHeight;
-  document.documentElement.style.setProperty("--app-height", vh + "px");
-}
-setAppHeight();
-
 // Monitorar mudanças de orientação
 window.addEventListener("orientationchange", updateDeviceStyles);
 window.addEventListener("resize", updateDeviceStyles);
-window.addEventListener("orientationchange", setAppHeight);
-window.addEventListener("resize", setAppHeight);
 
 // ========================================
 // CONFIGURAÇÕES GERAIS
