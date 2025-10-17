@@ -81,8 +81,8 @@ function showOrientationOverlay() {
     overlay.id = "orientation-overlay";
     overlay.innerHTML = `
       <div class="orientation-overlay-content">
-        <div class="orientation-icon">📱</div>
-        <p class="orientation-message">Rotacione seu dispositivo para o modo retrato</p>
+        <img src="images/icons/icon-rotatephone.svg" alt="Rotacione o dispositivo" class="orientation-icon">
+        <p class="orientation-message">Rotacione o dispositivo</p>
       </div>
     `;
     document.body.appendChild(overlay);
@@ -117,9 +117,11 @@ function showOrientationOverlay() {
         }
 
         .orientation-icon {
-          font-size: 120px;
+          width: 120px;
+          height: 120px;
           margin-bottom: 20px;
           animation: rotate 2s infinite;
+          filter: brightness(0) invert(1);
         }
 
         .orientation-message {
@@ -137,7 +139,8 @@ function showOrientationOverlay() {
 
         @media (max-width: 480px) {
           .orientation-icon {
-            font-size: 80px;
+            width: 80px;
+            height: 80px;
           }
 
           .orientation-message {

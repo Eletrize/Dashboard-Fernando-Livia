@@ -34,47 +34,6 @@
    ============================================ */
 
 /* ========================================
-   BLOQUEIO DE ORIENTAÇÃO PAISAGEM EM CELULARES
-   ======================================== */
-
-/* Aviso de rotação para celulares em modo paisagem (até 767px de largura) */
-@media only screen and (max-width: 767px) and (orientation: landscape) {
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.98);
-    z-index: 999999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  body::after {
-    content: '📱\A\APor favor, gire seu\Acelular para o\Amodo retrato';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999999;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    white-space: pre-wrap;
-    line-height: 1.6;
-    font-family: 'Raleway', sans-serif;
-  }
-  
-  body > *:not(::before):not(::after) {
-    display: none !important;
-  }
-}
-
-/* ========================================
    PREVENIR ZOOM E GESTOS
    ======================================== */
 
@@ -4339,6 +4298,13 @@ div {
   -webkit-backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
+}
+
+/* Modo Paisagem (landscape) - Volume e Canais lado a lado */
+@media (orientation: landscape) {
+  .tv-volume-canais-wrapper {
+    flex-direction: row;
+  }
 }
 
 @media (min-width: 900px) {
