@@ -380,7 +380,7 @@ function updateTVPowerState(newState) {
   
   // Selecionar todos os outros controles
   const otherControls = document.querySelectorAll(
-    ".tv-volume-canais-wrapper, .tv-comandos, .tv-directional-pad, .tv-numpad, .tv-logo-section"
+    ".tv-volume-canais-wrapper, .tv-commands-grid, .tv-directional-pad, .tv-numpad, .tv-logo-section"
   );
   
   if (newState === "on") {
@@ -448,9 +448,43 @@ function tvCommand(el, command) {
     });
 }
 
+// Controle do Slider de Volume
+function initVolumeSlider() {
+  const slider = document.getElementById("tv-volume-slider");
+  const display = document.getElementById("tv-volume-display");
+  
+  if (!slider || !display) return;
+  
+  // Atualizar display quando slider mudar
+  slider.addEventListener("input", (e) => {
+    const value = e.target.value;
+    display.textContent = value;
+  });
+  
+  // Enviar comando ao soltar o slider
+  slider.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const deviceId = slider.dataset.deviceId;
+    
+    console.log(`🔊 Volume alterado para: ${value}`);
+    
+    // Enviar comando para Hubitat
+    if (deviceId) {
+      sendHubitatCommand(deviceId, `setLevel-${value}`)
+        .then(() => {
+          console.log(`✅ Volume definido para ${value}`);
+        })
+        .catch((error) => {
+          console.error(`❌ Erro ao definir volume:`, error);
+        });
+    }
+  });
+}
+
 // Inicializar estado ao carregar
 document.addEventListener("DOMContentLoaded", () => {
   updateTVPowerState("off");
+  initVolumeSlider();
 });
 
 function setRoomControlUI(el, state) {

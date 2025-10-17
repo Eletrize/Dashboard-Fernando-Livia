@@ -746,22 +746,20 @@
                 <div class="tv-control-section">
                     <header class="tv-section-header">
                         <h3 class="tv-section-title">Volume</h3>
+                        <span class="tv-volume-value" id="tv-volume-display">50</span>
                         <div class="tv-section-line"></div>
                     </header>
-                    <div class="tv-control-group tv-volume-channels-inline">
-                        
-                        <!-- Coluna Volume -->
-                        <div class="tv-volume-column">
-                            <div class="tv-volume-buttons">
-                                <button class="tv-btn-square" onclick="tvCommand(this, 'vol-up')" data-device-id="254" aria-label="Volume +">
-                                    <img src="images/icons/arrow-up.svg" alt="Volume +" class="tv-btn-icon-img">
-                                </button>
-                                <button class="tv-btn-square" onclick="tvCommand(this, 'vol-down')" data-device-id="256" aria-label="Volume -">
-                                    <img src="images/icons/arrow-down.svg" alt="Volume -" class="tv-btn-icon-img">
-                                </button>
-                            </div>
-                        </div>
-
+                    <div class="tv-control-group tv-volume-slider-container">
+                        <input 
+                            type="range" 
+                            class="tv-volume-slider" 
+                            id="tv-volume-slider"
+                            min="0" 
+                            max="100" 
+                            value="50"
+                            data-device-id="254"
+                            aria-label="Controle de Volume"
+                        >
                     </div>
                 </div>
 
