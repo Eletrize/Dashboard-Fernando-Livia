@@ -16,7 +16,8 @@ export async function onRequest(context) {
 
   try {
     const base = env.HUBITAT_BASE_URL.replace(/\/$/, '');
-    const url = `${base}/all?access_token=${env.HUBITAT_ACCESS_TOKEN}`;
+    // Usar /devices/all para obter JSON completo com todos os atributos
+    const url = `${base}/devices/all?access_token=${env.HUBITAT_ACCESS_TOKEN}`;
     
     console.log('📡 Buscando dados do Hubitat:', url);
 

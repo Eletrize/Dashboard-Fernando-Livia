@@ -27,9 +27,13 @@ export async function onRequest(context) {
   }
 
   try {
-    let cmdUrl = `${env.HUBITAT_BASE_URL}/${device}/${encodeURIComponent(command)}`;
+    // Montar URL: base/devices/{deviceId}/{command}/{value}?access_token=token
+    const base = env.HUBITAT_BASE_URL.replace(/\/$/, '');
+    let cmdUrl = `${base}/devices/${device}/${encodeURIComponent(command)}`;
     if (value) cmdUrl += `/${encodeURIComponent(value)}`;
     cmdUrl += `?access_token=${env.HUBITAT_ACCESS_TOKEN}`;
+
+    console.log('📡 Enviando comando:', cmdUrl);
 
     const response = await fetch(cmdUrl);
     
