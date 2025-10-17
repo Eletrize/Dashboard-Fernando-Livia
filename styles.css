@@ -4697,24 +4697,12 @@ div {
   width: 24px;
   height: 24px;
   display: block;
-  margin: 0;
-  padding: 0;
-}
-
-.tv-numpad-btn--icon-centered img {
-  width: 22px;
-  height: 22px;
 }
 
 @media (min-width: 900px) {
   .tv-numpad-btn--icon img {
     width: 32px;
     height: 32px;
-  }
-
-  .tv-numpad-btn--icon-centered img {
-    width: 30px;
-    height: 30px;
   }
 }
 
