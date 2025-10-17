@@ -29,7 +29,13 @@ export async function onRequest(context) {
   try {
     // Montar URL: base/devices/{deviceId}/{command}/{value}?access_token=token
     const base = env.HUBITAT_BASE_URL.replace(/\/$/, '');
-    let cmdUrl = `${base}/devices/${device}/${encodeURIComponent(command)}`;
+    
+    // Se a base já contém /devices, não adicionar novamente
+    const hasDevicesPath = base.includes('/devices');
+    let cmdUrl = hasDevicesPath 
+      ? `${base}/${device}/${encodeURIComponent(command)}`
+      : `${base}/devices/${device}/${encodeURIComponent(command)}`;
+    
     if (value) cmdUrl += `/${encodeURIComponent(value)}`;
     cmdUrl += `?access_token=${env.HUBITAT_ACCESS_TOKEN}`;
 
