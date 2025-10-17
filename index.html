@@ -746,22 +746,20 @@
                 <div class="tv-control-section">
                     <header class="tv-section-header">
                         <h3 class="tv-section-title">Volume</h3>
+                        <span class="tv-volume-value" id="tv-volume-display">50</span>
                         <div class="tv-section-line"></div>
                     </header>
                     <div class="tv-control-group tv-volume-slider-container">
-                        <div class="tv-volume-slider-wrapper">
-                            <span class="tv-volume-value" id="tv-volume-display">50</span>
-                            <input 
-                                type="range" 
-                                class="tv-volume-slider" 
-                                id="tv-volume-slider"
-                                min="0" 
-                                max="100" 
-                                value="50"
-                                data-device-id="254"
-                                aria-label="Controle de Volume"
-                            >
-                        </div>
+                        <input 
+                            type="range" 
+                            class="tv-volume-slider" 
+                            id="tv-volume-slider"
+                            min="0" 
+                            max="100" 
+                            value="50"
+                            data-device-id="254"
+                            aria-label="Controle de Volume"
+                        >
                     </div>
                 </div>
 
@@ -3020,6 +3018,15 @@
         spaRoot.innerHTML = pages[page]();
 
         setupAppInfoMenu();
+        
+        // Inicializar slider de volume se estiver na página de TV
+        if (page === "ambiente1-tv") {
+          setTimeout(() => {
+            if (typeof initVolumeSlider === "function") {
+              initVolumeSlider();
+            }
+          }, 100);
+        }
 
         // Constrói a lista de cômodos na Home
 

@@ -449,16 +449,30 @@ function tvCommand(el, command) {
 }
 
 // Controle do Slider de Volume
+let volumeSliderInitialized = false;
+
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
   
-  if (!slider || !display) return;
+  if (!slider || !display) {
+    console.log("⚠️ Slider ou display não encontrado");
+    return;
+  }
+  
+  // Evitar inicializar múltiplas vezes
+  if (volumeSliderInitialized) {
+    console.log("✅ Slider já inicializado");
+    return;
+  }
+  
+  console.log("🎚️ Inicializando slider de volume");
   
   // Atualizar display quando slider mudar
   slider.addEventListener("input", (e) => {
     const value = e.target.value;
     display.textContent = value;
+    console.log(`🎚️ Volume display atualizado: ${value}`);
   });
   
   // Enviar comando ao soltar o slider
@@ -479,12 +493,23 @@ function initVolumeSlider() {
         });
     }
   });
+  
+  volumeSliderInitialized = true;
+  console.log("✅ Slider de volume inicializado com sucesso");
 }
 
 // Inicializar estado ao carregar
 document.addEventListener("DOMContentLoaded", () => {
   updateTVPowerState("off");
   initVolumeSlider();
+  
+  // Re-inicializar quando a página mudar (para SPAs)
+  window.addEventListener("hashchange", () => {
+    volumeSliderInitialized = false;
+    setTimeout(() => {
+      initVolumeSlider();
+    }, 100);
+  });
 });
 
 function setRoomControlUI(el, state) {
