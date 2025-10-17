@@ -249,7 +249,7 @@ textarea {
   top: 30px;
   z-index: 1;
   color: #fff;
-  font-size: 31.5px;
+  font-size: 25.2px;
   font-family: "Raleway", Arial, sans-serif;
   font-weight: 300;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -4305,13 +4305,6 @@ div {
   flex-direction: column;
 }
 
-/* Modo Paisagem (landscape) - Volume e Canais lado a lado */
-@media (orientation: landscape) {
-  .tv-volume-canais-wrapper {
-    flex-direction: row;
-  }
-}
-
 @media (min-width: 900px) {
   .tv-control-section {
     flex: 1;
@@ -4440,19 +4433,19 @@ div {
 
 @media (min-width: 900px) {
   .tv-directional-btn {
-    width: 110px;
-    height: 110px;
+    width: 90px;
+    height: 90px;
     font-size: 16px;
   }
 
   .tv-directional-btn svg {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 
   .tv-directional-btn .tv-btn-icon-img {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 }
 
