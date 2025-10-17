@@ -2195,6 +2195,80 @@
 
         `,
 
+        "ambiente1-musica": () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container ambiente1-page ambiente1-musica-page">
+
+    <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('ambiente1')">
+            <img src="images/icons/back-button.svg" alt="Voltar">
+        </button>
+        <h1 class="page-title">Música</h1>
+    </div>
+
+    <div class="music-page-wrapper">
+        <main class="music-container" data-component="music-control">
+            
+            <!-- Album Art -->
+            <section class="music-album-section">
+                <div class="music-album-art">
+                    <img src="images/icons/icon-musica.svg" alt="Album Art" class="album-placeholder">
+                </div>
+            </section>
+
+            <!-- Controles Principais -->
+            <section class="music-controls-section">
+                
+                <!-- Volume Slider -->
+                <div class="music-volume-wrapper">
+                    <div class="music-volume-header">
+                        <h3 class="music-section-title">Volume</h3>
+                        <span class="music-volume-value" id="music-volume-display">50</span>
+                    </div>
+                    <div class="music-volume-slider-container">
+                        <input 
+                            type="range" 
+                            class="music-volume-slider" 
+                            id="music-volume-slider"
+                            min="0" 
+                            max="100" 
+                            value="50"
+                            aria-label="Controle de Volume"
+                        >
+                    </div>
+                </div>
+
+                <!-- Player Controls -->
+                <div class="music-player-controls">
+                    <button class="music-btn music-btn--play" onclick="musicControl(this, 'play')" aria-label="Play">
+                        <img src="images/icons/icon-play.svg" alt="Play">
+                    </button>
+                    <button class="music-btn music-btn--pause" onclick="musicControl(this, 'pause')" aria-label="Pause">
+                        <img src="images/icons/icon-pause.svg" alt="Pause">
+                    </button>
+                </div>
+
+                <!-- Volume Controls -->
+                <div class="music-volume-buttons">
+                    <button class="music-btn music-btn--small" onclick="musicControl(this, 'volume-down')" aria-label="Volume Baixo">
+                        <img src="images/icons/arrow-down.svg" alt="Volume -">
+                    </button>
+                    <button class="music-btn music-btn--small" onclick="musicControl(this, 'volume-up')" aria-label="Volume Alto">
+                        <img src="images/icons/arrow-up.svg" alt="Volume +">
+                    </button>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+</div>
+
+        `,
+
         "ambiente3-piscina-luzes": () => `
 
 <div class="top-bar-custom"></div>
