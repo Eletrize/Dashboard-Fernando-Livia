@@ -54,7 +54,7 @@ textarea {
 
 @media (orientation: portrait) {
   .room-card {
-    min-height: 300px;
+    min-height: 240px;
   }
 }
 /* Fileira de �cones nos cards de c�modos */
@@ -221,7 +221,7 @@ textarea {
 
 .room-card {
   width: 100%;
-  height: 300px;
+  height: 240px;
   background: #222;
   position: relative;
   overflow: hidden;
@@ -249,10 +249,20 @@ textarea {
   top: 30px;
   z-index: 1;
   color: #fff;
-  font-size: 35px;
+  font-size: 31.5px;
   font-family: "Raleway", Arial, sans-serif;
   font-weight: 300;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.room-card,
+.room-card-link {
+  outline: none !important;
+}
+
+.room-card-link:focus-visible,
+.room-card:focus-visible {
+  outline: none !important;
 }
 
 .under-construction {
@@ -273,15 +283,14 @@ textarea {
 
 .room-master-btn,
 .room-curtain-master-btn {
-  width: 72px;
-  height: 72px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-radius: 18px;
-  box-shadow: var(--glass-shadow), var(--glass-inner-top),
-    var(--glass-inner-bottom);
+  box-shadow: none;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -291,11 +300,10 @@ textarea {
   box-sizing: border-box;
   z-index: 11;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
   position: absolute;
   bottom: 16px;
-  transition: transform 0.1s ease, background 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform 0.1s ease, opacity 0.2s ease, border-color 0.2s ease;
 }
 
 .room-master-btn {
@@ -315,6 +323,7 @@ textarea {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  display: none;
 }
 
 .room-master-btn::before,
@@ -340,18 +349,14 @@ textarea {
 
 .room-master-btn:hover:not(.loading),
 .room-curtain-master-btn:hover:not(.loading) {
-  transform: translateY(-2px) scale(1.04);
-  background: var(--glass-bg-hover);
-  border-color: rgba(255, 255, 255, 0.38);
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22), var(--glass-inner-top),
-    var(--glass-inner-bottom);
+  transform: scale(1.1);
+  opacity: 0.8;
 }
 
 .room-master-btn:active:not(.loading),
 .room-curtain-master-btn:active:not(.loading) {
-  transform: translateY(1px) scale(0.97);
-  background: var(--glass-bg-active);
-  border-color: var(--glass-border-strong);
+  transform: scale(0.95);
+  opacity: 1;
   box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.28),
     0 6px 14px rgba(0, 0, 0, 0.16);
 }
