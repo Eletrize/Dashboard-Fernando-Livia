@@ -365,11 +365,62 @@ function togglePoolControl(el, action) {
       }
     });
 }
+// ========================================
+// CONTROLE DE PODER DA TV
+// ========================================
+
+let tvPowerState = "off"; // Estado inicial: desligado
+
+function updateTVPowerState(newState) {
+  tvPowerState = newState;
+  
+  // Selecionar botões ON e OFF
+  const btnOn = document.querySelector(".tv-btn--power-on");
+  const btnOff = document.querySelector(".tv-btn--power-off");
+  
+  // Selecionar todos os outros controles
+  const otherControls = document.querySelectorAll(
+    ".tv-volume-canais-wrapper, .tv-comandos, .tv-directional-pad, .tv-numpad, .tv-logo-section"
+  );
+  
+  if (newState === "on") {
+    // TV ligada
+    btnOn?.classList.add("active");
+    btnOff?.classList.remove("active");
+    
+    // Mostrar outros controles
+    otherControls.forEach(control => {
+      control.style.opacity = "1";
+      control.style.pointerEvents = "auto";
+    });
+    
+    console.log("📺 TV LIGADA - Controles visíveis");
+  } else {
+    // TV desligada
+    btnOff?.classList.add("active");
+    btnOn?.classList.remove("active");
+    
+    // Esconder outros controles
+    otherControls.forEach(control => {
+      control.style.opacity = "0.3";
+      control.style.pointerEvents = "none";
+    });
+    
+    console.log("📺 TV DESLIGADA - Controles desabilitados");
+  }
+}
 
 // Controle de TV
 function tvCommand(el, command) {
   const deviceId = el.dataset.deviceId;
   if (!command || !deviceId) return;
+
+  // Controlar estado de poder
+  if (command === "on") {
+    updateTVPowerState("on");
+  } else if (command === "off") {
+    updateTVPowerState("off");
+  }
 
   // Feedback visual
   el.style.transform = "scale(0.95)";
@@ -396,6 +447,11 @@ function tvCommand(el, command) {
       );
     });
 }
+
+// Inicializar estado ao carregar
+document.addEventListener("DOMContentLoaded", () => {
+  updateTVPowerState("off");
+});
 
 function setRoomControlUI(el, state) {
   const ICON_ON = "images/icons/icon-small-light-on.svg";

@@ -4062,6 +4062,13 @@ div {
   padding: 12px 16px;
   height: 52px;
   border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.tv-btn--power-on.active {
+  background: rgba(34, 197, 94, 0.5);
+  border-color: rgba(34, 197, 94, 0.7);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
 }
 
 /* Botão OFF - Vermelho */
@@ -4076,6 +4083,13 @@ div {
   padding: 12px 16px;
   height: 52px;
   border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.tv-btn--power-off.active {
+  background: rgba(239, 68, 68, 0.5);
+  border-color: rgba(239, 68, 68, 0.7);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
 }
 
 /* Botões secundários */
@@ -4126,6 +4140,7 @@ div {
   margin: 0;
   flex: 1;
   align-items: center;
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
 
 .tv-commands-grid .tv-btn--icon-only {
@@ -4265,6 +4280,7 @@ div {
 .tv-volume-canais-wrapper {
   display: flex;
   gap: 10px;
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
 
 .tv-volume-canais-wrapper .tv-control-section {
@@ -4355,6 +4371,7 @@ div {
   flex-direction: column;
   gap: 8px;
   align-items: center;
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
 
 @media (min-width: 900px) {
@@ -4638,6 +4655,7 @@ div {
   width: 100%;
   flex: 1;
   align-content: start;
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
 
 @media (min-width: 900px) {
@@ -4725,6 +4743,7 @@ div {
   border-radius: 20px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
 
 .tv-eletrize-logo {
