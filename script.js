@@ -386,6 +386,9 @@ function updateTVPowerState(newState) {
   const otherControls = document.querySelectorAll(
     ".tv-volume-canais-wrapper, .tv-commands-grid, .tv-directional-pad, .tv-numpad, .tv-logo-section"
   );
+  
+  // Selecionar títulos das seções de controle
+  const titles = document.querySelectorAll(".tv-section-title");
 
   if (newState === "on") {
     // TV ligada
@@ -397,6 +400,11 @@ function updateTVPowerState(newState) {
       control.style.opacity = "1";
       control.style.pointerEvents = "auto";
     });
+    
+    // Mostrar títulos
+    titles.forEach((title) => {
+      title.style.opacity = "1";
+    });
 
     console.log("📺 TV LIGADA - Controles visíveis");
   } else {
@@ -404,10 +412,15 @@ function updateTVPowerState(newState) {
     btnOff?.classList.add("active");
     btnOn?.classList.remove("active");
 
-    // Esconder outros controles
+    // Escurecer e desabilitar outros controles
     otherControls.forEach((control) => {
-      control.style.opacity = "0.3";
+      control.style.opacity = "0.15";
       control.style.pointerEvents = "none";
+    });
+    
+    // Apagar títulos
+    titles.forEach((title) => {
+      title.style.opacity = "0.2";
     });
 
     console.log("📺 TV DESLIGADA - Controles desabilitados");
