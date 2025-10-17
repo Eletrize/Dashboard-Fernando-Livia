@@ -40,6 +40,12 @@
 html,
 /* Prevenir que a barra de endereço empurre o container */
 html {
+  /* Viewport vars and safe-areas */
+  --navbar-height: 77px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --navbar-clearance: calc(var(--navbar-height) + var(--safe-bottom));
+  --app-height: 100dvh; /* updated dynamically via JS for iOS */
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
@@ -109,10 +115,10 @@ textarea {
 /* Frame de rolagem dos cards na Home */
 .rooms-frame {
   width: 100%;
-  height: calc(100vh - 115px); /* Viewport height - apenas o top offset */
+  height: calc(var(--app-height) - 115px); /* Viewport height - apenas o top offset */
   position: absolute;
   left: 0;
-  top: 115px;
+  top: calc(115px + var(--safe-top));
   overflow-y: auto;
   overflow-x: hidden;
   background: #101010;
@@ -125,7 +131,7 @@ textarea {
 @media (min-width: 768px) {
   .rooms-frame {
     height: calc(
-      100vh - 115px - 33px
+      var(--app-height) - 115px - 33px
     ); /* Reduzir um pouco a altura para garantir visibilidade */
   }
 }
@@ -148,8 +154,8 @@ textarea {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 77px;
-  top: 103px;
+  bottom: var(--navbar-clearance);
+  top: calc(103px + var(--safe-top));
   height: auto;
   overflow-y: auto;
   box-sizing: border-box;
@@ -168,8 +174,8 @@ textarea {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 77px;
-    top: 103px;
+    bottom: var(--navbar-clearance);
+    top: calc(103px + var(--safe-top));
     height: auto;
     overflow-y: auto;
     box-sizing: border-box;
@@ -277,10 +283,10 @@ textarea {
 
 .under-construction {
   position: absolute;
-  top: 115px;
+  top: calc(115px + var(--safe-top));
   left: 0;
   right: 0;
-  bottom: 90px; /* navbar height */
+  bottom: var(--navbar-clearance); /* navbar height + safe bottom */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -605,7 +611,7 @@ body {
   color: #fff;
   width: 100%;
   height: 100%;
-  min-height: 100vh;
+  min-height: var(--app-height);
   overflow-x: hidden;
   overflow-y: hidden;
   background-size: cover;
@@ -657,7 +663,6 @@ body,
 div {
   -ms-overflow-style: none;
 }
-
 :root {
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-bg-hover: rgba(255, 255, 255, 0.08);
@@ -823,9 +828,9 @@ div {
   opacity: 0;
   transition: opacity 0.3s ease;
   background: 101010;
-  min-height: calc(100vh - 16px);
+  min-height: calc(var(--app-height) - 16px);
   box-sizing: border-box;
-  padding-bottom: 97px; /* Espa�o para a barra de navega��o fixa (77px altura + 20px margem) */
+  padding-bottom: calc(20px + var(--navbar-clearance)); /* Espaço para navbar + safe bottom */
 }
 
 .page.active {
@@ -842,7 +847,7 @@ div {
 
 .curtains-page {
   position: relative;
-  min-height: 100vh;
+  min-height: var(--app-height);
   padding: 0;
   padding-bottom: 0;
   background: #101010;
@@ -885,13 +890,13 @@ div {
   }
   /* Ajustar espaço inferior para o conteúdo não sobrepor a navbar */
   .container {
-    padding-bottom: 130px; /* Aumentado para garantir visibilidade do último card */
+    padding-bottom: calc(130px + var(--safe-bottom)); /* garantir visibilidade do último card */
   }
   .page {
-    padding-bottom: 130px; /* Aumentado para garantir visibilidade do último card */
+    padding-bottom: calc(130px + var(--safe-bottom)); /* garantir visibilidade do último card */
   }
   .controls-grid {
-    bottom: 97px; /* evitar sobreposi��o na grade de p�ginas internas */
+    bottom: calc(97px + var(--safe-bottom)); /* evitar sobreposição na grade internas */
   }
 }
 
@@ -1001,7 +1006,7 @@ div {
 
 .page-header {
   position: absolute;
-  top: 40px;
+  top: calc(40px + var(--safe-top));
   left: 20px;
   right: 20px;
   display: flex;
@@ -1107,10 +1112,10 @@ div {
 
 .controls-grid {
   position: absolute;
-  top: 115px;
+  top: calc(115px + var(--safe-top));
   left: 21px;
   right: 21px;
-  bottom: 90px; /* navbar height */
+  bottom: var(--navbar-clearance); /* navbar + safe bottom */
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: 131px;
@@ -1128,10 +1133,10 @@ div {
 
 .control-card {
   --glass-radius: 16px;
-  overflow: hidden;
+  top: calc(115px + var(--safe-top));
   display: flex;
   flex-direction: column;
-  align-items: center;
+  bottom: var(--navbar-clearance); /* navbar height + safe area */
   justify-content: center;
   gap: 5px;
   color: white;
@@ -1165,10 +1170,10 @@ div {
 /* Container principal da p�gina AC */
 .ac-page-wrapper {
   position: absolute;
-  top: 103px; /* 93px (header) + 10px (dist�ncia da linha branca) */
+  top: calc(103px + var(--safe-top)); /* 93px (header) + 10px + safe area */
   left: 0;
   right: 0;
-  bottom: 90px; /* Altura da navbar */
+  bottom: var(--navbar-clearance); /* Altura da navbar + safe bottom */
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -2619,10 +2624,10 @@ div {
 /* Room controls (inner pages): vertical list of 3 buttons */
 .room-controls-list {
   position: absolute;
-  top: 115px;
+  top: calc(115px + var(--safe-top));
   left: 21px;
   right: 21px;
-  bottom: 90px; /* navbar height */
+  bottom: var(--navbar-clearance); /* navbar height + safe bottom */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3526,10 +3531,10 @@ div {
 /* Layout da página de cortinas */
 .curtain-layout {
   position: absolute;
-  top: 120px; /* 10px abaixo da linha branca do header */
+  top: calc(120px + var(--safe-top)); /* 10px abaixo da linha branca do header */
   left: 21px;
   right: 21px;
-  bottom: 77px; /* altura da navbar inferior */
+  bottom: var(--navbar-clearance); /* altura da navbar inferior + safe area */
   overflow-y: auto;
   padding-bottom: 20px;
   display: grid;
@@ -3616,7 +3621,7 @@ div {
 
 /* Grid de cortinas dentro de cada seção */
 .curtain-section__grid {
-  display: flex;
+  /* existing styles retained; ensure container between header and navbar uses safe areas if positioned */
   flex-direction: column;
   gap: 16px;
 }
@@ -3642,10 +3647,10 @@ div {
 */
 .ambiente1-page .ambiente1-controls-wrapper.ambiente-grid {
   position: absolute;
-  top: 103px; /* 10px abaixo da linha branca (90px + 3px + 10px) */
+  top: calc(103px + var(--safe-top)); /* 10px abaixo da linha branca + safe area */
   left: 21px;
   right: 21px;
-  bottom: 77px !important; /* Colado à navbar (77px altura) */
+  bottom: var(--navbar-clearance) !important; /* Colado à navbar + safe bottom */
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr;
@@ -3692,10 +3697,9 @@ div {
 .ambiente8-page .ambiente8-controls-wrapper.ambiente-grid,
 .ambiente9-page .ambiente9-controls-wrapper.ambiente-grid {
   position: absolute;
-  top: 103px;
-  left: 21px;
+  top: calc(103px + var(--safe-top));
+  bottom: var(--navbar-clearance) !important; /* Colado à navbar + safe bottom */
   right: 21px;
-  bottom: 77px !important; /* Colado à navbar (77px altura) */
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr;
@@ -3752,10 +3756,10 @@ div {
 /* Wrapper para páginas de luzes */
 [class*="-luzes-wrapper"] {
   position: absolute;
-  top: 103px; /* 10px abaixo da linha branca (90px + 3px + 10px) */
+  top: calc(103px + var(--safe-top)); /* 10px abaixo da linha branca + safe top */
   left: 21px;
   right: 21px;
-  bottom: 77px;
+  bottom: var(--navbar-clearance);
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr;
@@ -3769,10 +3773,10 @@ div {
 /* Wrapper para páginas de cortinas */
 [class*="-cortinas-wrapper"] {
   position: absolute;
-  top: 103px; /* 10px abaixo da linha branca (90px + 3px + 10px) */
+  top: calc(103px + var(--safe-top)); /* 10px abaixo da linha branca + safe top */
   left: 21px;
   right: 21px;
-  bottom: 77px;
+  bottom: var(--navbar-clearance);
   z-index: 1;
   overflow-y: auto;
   padding-bottom: 0;
@@ -3796,10 +3800,10 @@ div {
 
 [class*="-piscina-wrapper"] {
   position: absolute;
-  top: 103px;
+  top: calc(103px + var(--safe-top));
   left: 21px;
   right: 21px;
-  bottom: 77px;
+  bottom: var(--navbar-clearance);
   z-index: 1;
   overflow-y: auto;
   padding-bottom: 0;
@@ -3957,10 +3961,10 @@ div {
 /* Wrapper principal com layout em 3 colunas para landscape */
 .tv-control-wrapper {
   position: absolute;
-  top: 103px;
+  top: calc(103px + var(--safe-top));
   left: 21px;
   right: 21px;
-  bottom: 87px;
+  bottom: calc(var(--navbar-clearance) + 10px); /* 10px padrão usado antes */
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -3973,14 +3977,14 @@ div {
 @media screen and (min-width: 768px) and (orientation: landscape) {
   .tv-control-wrapper {
     overflow: hidden;
-    height: calc(100vh - 190px);
+    height: calc(var(--app-height) - 190px);
   }
 }
 
 @media (min-width: 900px) {
   .tv-control-wrapper {
     overflow: hidden;
-    height: calc(100vh - 190px);
+    height: calc(var(--app-height) - 190px);
     padding: 15px;
     gap: 15px;
   }
@@ -4954,17 +4958,17 @@ div {
 
 /* Todos os dispositivos: colados na navbar */
 .tv-control-wrapper {
-  bottom: 87px; /* colado na navbar (77px + 10px padrão) */
+  bottom: calc(var(--navbar-clearance) + 10px); /* colado na navbar (77px + 10px) + safe bottom */
 }
 
 /* FIX ESPECÍFICO PARA iPAD MINI 6 */
 [data-device="ipad-mini-6"] .tv-control-wrapper {
   position: fixed !important;
-  top: 103px !important;
+  top: calc(103px + var(--safe-top)) !important;
   left: 21px !important;
   right: 21px !important;
-  bottom: 87px !important;
-  max-height: calc(100vh - 190px) !important;
+  bottom: calc(var(--navbar-clearance) + 10px) !important;
+  max-height: calc(var(--app-height) - 190px) !important;
 }
 
 /* ========================================
