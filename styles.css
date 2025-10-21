@@ -1011,11 +1011,6 @@ div {
   min-height: 40px;
 }
 
-/* Espaçamento específico para a página de Música na Varanda */
-.ambiente1-musica-page .ambiente1-musica-wrapper {
-  margin-top: 10px; /* garantir 10px abaixo da linha branca */
-}
-
 /* Página de Cortinas - Design Minimalista Modo Escuro */
 /* Controles de cortina minimalistas para páginas individuais */
 .curtain-control-minimal {
@@ -1204,6 +1199,22 @@ div {
   gap: 12px;
   font-family: "Raleway", sans-serif;
 }
+
+/* === ESTILOS ESPECÍFICOS: PÁGINA MÚSICA (Varanda) === */
+.ambiente1-musica-page .ambiente1-musica-wrapper {
+  position: absolute;
+  top: 103px; /* alinhado com outras páginas, incluindo 10px abaixo da linha branca */
+  left: 0;
+  right: 0;
+  bottom: 90px; /* altura da navbar fixa */
+  padding: 10px 16px;
+  overflow-y: auto;
+}
+
+.ambiente1-musica-page .ambiente1-musica-wrapper .control-card.control-card--full-width {
+  margin-top: 10px; /* distância de 10px da linha branca superior */
+}
+
 
 /* === DISPLAY DE TEMPERATURA === */
 .ac-temperature-section {
