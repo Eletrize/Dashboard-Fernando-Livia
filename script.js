@@ -3395,6 +3395,8 @@ function initMusicPlayerUI() {
   // Estado do volume
   let isMuted = false;
   let volumeBeforeMute = 50;
+  // Guardar estado anterior de mute quando o master for desligado
+  let previousMutedState = false;
   
   // Estado master power
   let isPowerOn = true;
@@ -3526,6 +3528,8 @@ function initMusicPlayerUI() {
       masterOffBtn.setAttribute('aria-pressed', 'false');
       playerInner.classList.remove('power-off');
       console.log('⚡ Player ligado');
+      // Restaurar estado de mute que havia antes do power-off
+      setMuted(previousMutedState);
     } else {
       masterOffBtn.classList.add('music-master-btn--active');
       masterOffBtn.setAttribute('aria-pressed', 'true');
@@ -3533,6 +3537,9 @@ function initMusicPlayerUI() {
       masterOnBtn.setAttribute('aria-pressed', 'false');
       playerInner.classList.add('power-off');
       console.log('⚫ Player desligado');
+      // Salvar estado atual de mute e forçar mute enquanto estiver desligado
+      previousMutedState = isMuted;
+      setMuted(true);
     }
   }
 
