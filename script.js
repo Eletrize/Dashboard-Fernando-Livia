@@ -3387,14 +3387,14 @@ window.debugEletrize = {
 
 /* --- Music player metadata update functions --- */
 
-// URL do endpoint completo do Hubitat Cloud para metadados
-const HUBITAT_FULL_API = "https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0";
 
 // Função para atualizar metadados do Denon
 function updateDenonMetadata() {
   console.log("🎵 Buscando metadados do Denon AVR via Hubitat Cloud...");
   
-  fetch(HUBITAT_FULL_API)
+  // Pedir ao Cloudflare function para retornar o JSON completo do Hubitat
+  // (a function usa a variável HUBITAT_FULL_URL do ambiente quando configurada)
+  fetch('/functions/polling?full=1')
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
