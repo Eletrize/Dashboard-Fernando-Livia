@@ -1466,6 +1466,8 @@ div {
   border-radius: 8px;
   padding: 0 16px;
   box-sizing: border-box;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* Slider Input - Resetando todos os estilos padrão */
@@ -1474,110 +1476,118 @@ div {
   -moz-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  height: 6px;
+  background: transparent;
+  border-radius: 3px;
   outline: none;
   margin: 0;
   padding: 0;
   cursor: pointer;
   position: relative;
+  z-index: 2;
 }
 
 /* Chrome, Safari, Edge - Track */
 .music-volume-slider::-webkit-slider-runnable-track {
   width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
   cursor: pointer;
+  border: none;
 }
 
 /* Chrome, Safari, Edge - Thumb */
 .music-volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #ffffff;
-  cursor: grab;
+  cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   margin-top: -7px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  z-index: 3;
 }
 
 .music-volume-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 
 .music-volume-slider::-webkit-slider-thumb:active {
   cursor: grabbing;
-  transform: scale(1.1);
+  transform: scale(1.05);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* Firefox - Track */
 .music-volume-slider::-moz-range-track {
   width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
   cursor: pointer;
   border: none;
 }
 
 /* Firefox - Thumb */
 .music-volume-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #ffffff;
-  cursor: grab;
+  cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .music-volume-slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 
 .music-volume-slider::-moz-range-thumb:active {
   cursor: grabbing;
-  transform: scale(1.1);
+  transform: scale(1.05);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* Edge/IE - Track */
 .music-volume-slider::-ms-track {
   width: 100%;
-  height: 4px;
-  background: transparent;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
   border-color: transparent;
   color: transparent;
   cursor: pointer;
+  border-radius: 3px;
 }
 
 .music-volume-slider::-ms-fill-lower {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
 }
 
 .music-volume-slider::-ms-fill-upper {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
 }
 
 /* Edge/IE - Thumb */
 .music-volume-slider::-ms-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #ffffff;
-  cursor: grab;
+  cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   border: none;
+  margin-top: 0;
 }
 
 .music-volume-slider-container:hover {
@@ -1588,11 +1598,14 @@ div {
 /* Estado mutado - apenas desabilita interação */
 .music-volume-section[data-muted="true"] .music-volume-slider-container {
   opacity: 0.5;
-  pointer-events: none;
+  pointer-events: none !important;
+  cursor: not-allowed;
 }
 
 .music-volume-section[data-muted="true"] .music-volume-slider {
   opacity: 0.5;
+  pointer-events: none !important;
+  cursor: not-allowed;
 }
 
 /* === CONTROLES MASTER ON/OFF === */
@@ -1663,11 +1676,22 @@ div {
 /* Estado apagado quando OFF está ativo */
 .music-player-inner.power-off .tv-btn-icon-small,
 .music-player-inner.power-off .music-volume-mute-btn,
-.music-player-inner.power-off .music-volume-slider-container,
 .music-player-inner.power-off .music-zone-btn {
   opacity: 0.3;
   pointer-events: none;
   filter: grayscale(0.5);
+}
+
+/* Slider de volume mantém interação mesmo quando power-off */
+.music-player-inner.power-off .music-volume-slider-container {
+  opacity: 0.3;
+  filter: grayscale(0.5);
+  pointer-events: auto;
+}
+
+.music-player-inner.power-off .music-volume-slider {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* Fade out/in para info e album art */

@@ -3484,12 +3484,24 @@ function initMusicPlayerUI() {
       setMuted(!isMuted);
     });
 
+    // Event listener para input (arrastar o slider)
     volumeSlider.addEventListener('input', (e) => {
-      if (!isMuted) {
-        const value = e.target.value;
-        console.log('🔊 Volume ajustado para:', value);
-      }
+      const value = e.target.value;
+      console.log('🔊 Volume ajustado para:', value);
     });
+
+    // Event listener para change (quando solta o slider)
+    volumeSlider.addEventListener('change', (e) => {
+      const value = e.target.value;
+      console.log('🔊 Volume finalizado em:', value);
+    });
+
+    // Garantir que o slider seja interativo
+    volumeSlider.style.pointerEvents = 'auto';
+    
+    console.log('🎵 Slider de volume configurado:', volumeSlider);
+  } else {
+    console.warn('⚠️ Botão mute ou slider não encontrados');
   }
 
   // Controle master On/Off
