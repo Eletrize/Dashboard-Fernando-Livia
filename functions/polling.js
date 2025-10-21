@@ -1,110 +1,161 @@
-﻿// Polling function - busca estados de todos os dispositivos usando URL completa
-// Formato de resposta padronizado para o frontend:
-// { success:true, source:'hubitat', deviceCount:n, data:[ { id, attributes:{switch:'on', volume:50, ...} }, ... ] }
+﻿/**
+ * Polling function - retorna dados de dispositivos do Hubitat
+ * Usa HUBITAT_FULL_URL (obrigatório) que já contém o access_token
+ * 
+ * Parâmetros de query:
+ * - full=1 : retorna o payload completo do Hubitat sem processamento
+ * 
+ * Retorna sempre JSON válido
+ */
 export async function onRequest(context) {
-  const { env } = context;
-  const urlObj = new URL(context.request.url);
-  const wantFull = urlObj.searchParams.get('full') === '1' || urlObj.searchParams.get('full') === 'true';
+  const { env, request } = context;
+  
+  // Extrair parâmetro 'full' da URL
+  const url = new URL(request.url);
+  const wantFull = url.searchParams.get('full') === '1';
 
-  // Priorizar HUBITAT_FULL_URL se existir, senão usar BASE_URL + TOKEN
-  let url;
-
-  if (env.HUBITAT_FULL_URL) {
-    url = env.HUBITAT_FULL_URL;
-    console.log("📡 Usando HUBITAT_FULL_URL");
-  } else if (env.HUBITAT_BASE_URL && env.HUBITAT_ACCESS_TOKEN) {
-    const base = env.HUBITAT_BASE_URL.replace(/\/$/, "");
-    url = `${base}/devices/all?access_token=${env.HUBITAT_ACCESS_TOKEN}`;
-    console.log("📡 Usando HUBITAT_BASE_URL + TOKEN");
-  } else {
+  // Validar que HUBITAT_FULL_URL está configurado
+  if (!env.HUBITAT_FULL_URL) {
     return new Response(
       JSON.stringify({
         success: false,
-        error:
-          "Variável HUBITAT_FULL_URL ou (HUBITAT_BASE_URL + HUBITAT_ACCESS_TOKEN) necessária",
+        error: "HUBITAT_FULL_URL não configurado nas variáveis de ambiente"
       }),
       {
         status: 500,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
-        },
+          "Cache-Control": "no-cache"
+        }
       }
     );
   }
 
   try {
-    console.log("📡 Buscando dados do Hubitat:", url);
+    console.log("📡 [Polling] Requisitando:", env.HUBITAT_FULL_URL);
 
-    const response = await fetch(url, {
-      cf: { cacheTtl: 0, cacheEverything: false },
+    // Fazer request ao Hubitat
+    const response = await fetch(env.HUBITAT_FULL_URL, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      },
+      cf: {
+        cacheTtl: 0,
+        cacheEverything: false
+      }
     });
 
-    // IMPORTANT: Read response text FIRST before trying JSON parsing
-    // This prevents the stream from being consumed twice
-    const rawText = await response.text();
-    
+    console.log("📡 [Polling] Response status:", response.status);
+    console.log("📡 [Polling] Content-Type:", response.headers.get("content-type"));
+
+    // Ler resposta como texto PRIMEIRO
+    const responseText = await response.text();
+    console.log("📡 [Polling] Response length:", responseText.length, "bytes");
+
+    // Verificar se a resposta é bem-sucedida
     if (!response.ok) {
-      console.error(`❌ HTTP ${response.status} - Response:`, rawText.substring(0, 500));
-      throw new Error(`HTTP ${response.status}: ${rawText.substring(0, 200)}`);
+      console.error("❌ [Polling] HTTP Error", response.status);
+      console.error("❌ [Polling] Response:", responseText.substring(0, 500));
+      
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: `Hubitat retornou HTTP ${response.status}`,
+          details: responseText.substring(0, 200)
+        }),
+        {
+          status: response.status,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache"
+          }
+        }
+      );
     }
 
-    // Try to parse JSON from the text
-    let raw;
+    // Tentar parsear como JSON
+    let data;
     try {
-      raw = JSON.parse(rawText);
-    } catch (jsonError) {
-      console.error("❌ Invalid JSON response from Hubitat:", rawText.substring(0, 500));
-      throw new Error(`Invalid JSON from Hubitat: ${rawText.substring(0, 200)}`);
+      data = JSON.parse(responseText);
+      console.log("✅ [Polling] JSON parsed successfully");
+    } catch (parseError) {
+      console.error("❌ [Polling] Failed to parse JSON:", parseError.message);
+      console.error("❌ [Polling] Response text:", responseText.substring(0, 500));
+      
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Hubitat não retornou JSON válido",
+          details: responseText.substring(0, 200)
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache"
+          }
+        }
+      );
     }
 
-    console.log("📡 Dados recebidos do Hubitat", Array.isArray(raw) ? `(${raw.length} dispositivos)` : "(raw)", raw);
-
-    // If the client asked for the full payload, return it as-is
+    // Se cliente pediu payload completo, retornar direto
     if (wantFull) {
-      return new Response(JSON.stringify({ success: true, source: 'hubitat', full: true, payload: raw }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      });
+      console.log("📡 [Polling] Retornando payload completo");
+      return new Response(
+        JSON.stringify(data),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache"
+          }
+        }
+      );
     }
 
-    // Garantir que é array para o response padrão
-    const list = Array.isArray(raw) ? raw : [];
-
-    // Log detalhado dos primeiros dispositivos para debug
-    console.log(
-      "📡 Amostra dos primeiros 3 dispositivos:",
-      JSON.stringify(list.slice(0, 3), null, 2)
-    );
+    // Normalizar resposta (garantir array)
+    const devices = Array.isArray(data) ? data : [];
+    console.log(`✅ [Polling] Retornando ${devices.length} dispositivos`);
 
     return new Response(
       JSON.stringify({
         success: true,
         source: "hubitat",
-        deviceCount: list.length,
-        data: list,
+        deviceCount: devices.length,
+        data: devices
       }),
       {
         status: 200,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
-        },
+          "Cache-Control": "no-cache"
+        }
       }
     );
+
   } catch (error) {
-    console.error("❌ Erro na função polling:", error);
+    console.error("❌ [Polling] Exception:", error.message);
+    console.error("❌ [Polling] Stack:", error.stack);
+    
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: "Erro ao buscar dados do Hubitat",
+        details: error.message
       }),
       {
         status: 500,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
-        },
+          "Cache-Control": "no-cache"
+        }
       }
     );
   }
