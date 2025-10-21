@@ -1331,8 +1331,8 @@ div {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 /* Estilos específicos para os botões de música */
@@ -1342,7 +1342,7 @@ div {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  width: 52px;
+  flex: 1;
   height: 52px;
   display: flex;
   align-items: center;
@@ -1350,7 +1350,7 @@ div {
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 0 2px;
+  margin: 0 1px;
 }
 
 .music-player-card .tv-btn-icon-small img {
@@ -1458,10 +1458,10 @@ div {
 
 .music-volume-slider {
   width: 100%;
-  height: 4px;
+  height: 20px;
   -webkit-appearance: none;
   appearance: none;
-  background: rgba(255, 255, 255, 0.2);
+  background: transparent;
   border-radius: 2px;
   cursor: pointer;
   outline: none;
@@ -1477,7 +1477,7 @@ div {
   height: 20px;
   background: #fff;
   border-radius: 50%;
-  cursor: pointer;
+  cursor: grab;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border: none;
 }
@@ -1497,7 +1497,7 @@ div {
   height: 20px;
   background: #fff;
   border-radius: 50%;
-  cursor: pointer;
+  cursor: grab;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border: none;
 }
@@ -1509,11 +1509,21 @@ div {
 
 .music-volume-slider::-moz-range-thumb:active {
   transform: scale(1.1);
+  cursor: grabbing;
 }
 
 /* Track do Firefox */
 .music-volume-slider::-moz-range-track {
   background: transparent;
+  border: none;
+}
+
+/* Track do webkit */
+.music-volume-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
   border: none;
 }
 
@@ -5260,8 +5270,10 @@ div {
 .tv-playback-controls {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  padding-top: 8px;
+  gap: 2px;
+  padding: 0 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tv-btn-icon-small {
@@ -5269,8 +5281,8 @@ div {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  width: 52px;
+  border-radius: 8px;
+  flex: 1;
   height: 52px;
   display: flex;
   align-items: center;
@@ -5278,6 +5290,7 @@ div {
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
+  max-width: none;
 }
 
 /* ========================================
