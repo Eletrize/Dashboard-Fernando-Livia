@@ -1597,36 +1597,91 @@ div {
 
 /* === CONTROLES MASTER ON/OFF === */
 .music-master-controls {
+  width: 100%;
   display: flex;
+  align-items: center;
   gap: 12px;
+  margin-top: 15px;
   padding: 0 10px;
   box-sizing: border-box;
-  align-items: center;
-  margin-top: 15px;
 }
 
-.music-master-controls .tv-btn-icon-small {
-  flex: 0 0 calc((100% - 12px) / 2);
+.music-master-btn {
+  flex: 1;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Raleway', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.master-on {
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+.music-master-btn:hover {
+  transform: scale(1.02);
 }
 
-.master-off {
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+.music-master-btn:active {
+  transform: scale(0.98);
 }
 
-.music-off-active .tv-btn-icon-small {
+/* Botão ON - Verde quando ativo */
+.music-master-btn--on.music-master-btn--active {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.5);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.3),
+              inset 0 0 15px rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+}
+
+.music-master-btn--on.music-master-btn--active:hover {
+  box-shadow: 0 0 25px rgba(76, 175, 80, 0.4),
+              inset 0 0 20px rgba(76, 175, 80, 0.15);
+}
+
+/* Botão OFF - Vermelho quando ativo */
+.music-master-btn--off.music-master-btn--active {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.5);
+  box-shadow: 0 0 20px rgba(244, 67, 54, 0.3),
+              inset 0 0 15px rgba(244, 67, 54, 0.1);
+  color: #F44336;
+}
+
+.music-master-btn--off.music-master-btn--active:hover {
+  box-shadow: 0 0 25px rgba(244, 67, 54, 0.4),
+              inset 0 0 20px rgba(244, 67, 54, 0.15);
+}
+
+/* Estado apagado quando OFF está ativo */
+.music-player-inner.power-off .tv-btn-icon-small,
+.music-player-inner.power-off .music-volume-mute-btn,
+.music-player-inner.power-off .music-volume-slider-container,
+.music-player-inner.power-off .music-zone-btn {
   opacity: 0.3;
+  pointer-events: none;
+  filter: grayscale(0.5);
 }
 
-.music-off-active .music-album {
-  display: none;
+/* Fade out/in para info e album art */
+.music-album,
+.music-info {
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  opacity: 1;
+  visibility: visible;
 }
 
-.music-off-active .music-info {
-  display: none;
+.music-player-inner.power-off .music-album,
+.music-player-inner.power-off .music-info {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* === DISPLAY DE TEMPERATURA === */

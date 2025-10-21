@@ -3381,8 +3381,11 @@ function initMusicPlayerUI() {
   const volumeSection = document.querySelector('.music-volume-section');
   const volumeIconUnmuted = document.querySelector('.volume-icon-unmuted');
   const volumeIconMuted = document.querySelector('.volume-icon-muted');
+  const masterOnBtn = document.getElementById('music-master-on');
+  const masterOffBtn = document.getElementById('music-master-off');
+  const playerInner = document.querySelector('.music-player-inner');
 
-  console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn });
+  console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn, masterOnBtn, masterOffBtn });
 
   if (!playBtn || !pauseBtn || !nextBtn || !prevBtn) {
     console.warn('⚠️ Botões de controle não encontrados');
@@ -3392,6 +3395,9 @@ function initMusicPlayerUI() {
   // Estado do volume
   let isMuted = false;
   let volumeBeforeMute = 50;
+  
+  // Estado master power
+  let isPowerOn = true;
 
   function setPlaying(isPlaying) {
     playBtn.disabled = isPlaying;
@@ -3486,43 +3492,44 @@ function initMusicPlayerUI() {
     });
   }
 
-  // Master on/off controls
-  const masterOnBtn = document.getElementById('music-master-on');
-  const masterOffBtn = document.getElementById('music-master-off');
-  const musicPlayerInner = document.querySelector('.music-player-inner');
-
-  function setMaster(state) {
-    console.log('🎵 Alterando estado master para:', state);
-    if (state === 'on') {
-      masterOnBtn.classList.add('master-on--active');
+  // Controle master On/Off
+  function setMasterPower(powerOn) {
+    isPowerOn = powerOn;
+    
+    if (powerOn) {
+      masterOnBtn.classList.add('music-master-btn--active');
       masterOnBtn.setAttribute('aria-pressed', 'true');
-      masterOffBtn.classList.remove('master-off--active');
+      masterOffBtn.classList.remove('music-master-btn--active');
       masterOffBtn.setAttribute('aria-pressed', 'false');
-      musicPlayerInner.classList.remove('music-off-active');
-      console.log('🎵 Master ON ativado');
+      playerInner.classList.remove('power-off');
+      console.log('⚡ Player ligado');
     } else {
-      masterOffBtn.classList.add('master-off--active');
+      masterOffBtn.classList.add('music-master-btn--active');
       masterOffBtn.setAttribute('aria-pressed', 'true');
-      masterOnBtn.classList.remove('master-on--active');
+      masterOnBtn.classList.remove('music-master-btn--active');
       masterOnBtn.setAttribute('aria-pressed', 'false');
-      musicPlayerInner.classList.add('music-off-active');
-      console.log('🎵 Master OFF ativado');
+      playerInner.classList.add('power-off');
+      console.log('⚫ Player desligado');
     }
   }
 
-  if (masterOnBtn && masterOffBtn) {
+  if (masterOnBtn && masterOffBtn && playerInner) {
     masterOnBtn.addEventListener('click', () => {
-      setMaster('on');
+      if (!isPowerOn) {
+        setMasterPower(true);
+      }
     });
 
     masterOffBtn.addEventListener('click', () => {
-      setMaster('off');
+      if (isPowerOn) {
+        setMasterPower(false);
+      }
     });
   }
 
   // initialize
   setPlaying(false);
-  setMaster('on');
+  setMasterPower(true); // Iniciar com o player ligado
   console.log('🎵 Player de música inicializado');
 }
 
