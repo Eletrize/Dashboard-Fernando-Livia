@@ -3381,9 +3381,6 @@ function initMusicPlayerUI() {
   const volumeSection = document.querySelector('.music-volume-section');
   const volumeIconUnmuted = document.querySelector('.volume-icon-unmuted');
   const volumeIconMuted = document.querySelector('.volume-icon-muted');
-  const powerOnBtn = document.getElementById('music-power-on');
-  const powerOffBtn = document.getElementById('music-power-off');
-  const musicCard = document.querySelector('.music-player-card');
 
   console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn });
 
@@ -3489,34 +3486,39 @@ function initMusicPlayerUI() {
     });
   }
 
-  // Power On/Off controls
-  if (powerOnBtn && powerOffBtn && musicCard) {
-    function setAllPower(on) {
-      if (on) {
-        powerOnBtn.setAttribute('aria-pressed', 'true');
-        powerOffBtn.setAttribute('aria-pressed', 'false');
-        musicCard.removeAttribute('data-all-off');
-        console.log('🔆 Tudo ligado');
-      } else {
-        powerOnBtn.setAttribute('aria-pressed', 'false');
-        powerOffBtn.setAttribute('aria-pressed', 'true');
-        musicCard.setAttribute('data-all-off', 'true');
-        console.log('⚫ Tudo desligado');
-      }
+  // Master On/Off
+  const masterOnBtn = document.getElementById('music-master-on');
+  const masterOffBtn = document.getElementById('music-master-off');
+  const musicCard = document.querySelector('.music-player-card');
+
+  function setMasterState(isOn) {
+    if (!masterOnBtn || !masterOffBtn || !musicCard) return;
+    if (isOn) {
+      masterOnBtn.setAttribute('aria-pressed', 'true');
+      masterOffBtn.setAttribute('aria-pressed', 'false');
+      musicCard.classList.remove('music-master-off');
+      console.log('🔆 Master ON');
+    } else {
+      masterOnBtn.setAttribute('aria-pressed', 'false');
+      masterOffBtn.setAttribute('aria-pressed', 'true');
+      musicCard.classList.add('music-master-off');
+      console.log('🔅 Master OFF - controles apagados');
     }
+  }
 
-    powerOnBtn.addEventListener('click', (e) => {
+  if (masterOnBtn && masterOffBtn) {
+    masterOnBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      setAllPower(true);
+      setMasterState(true);
     });
 
-    powerOffBtn.addEventListener('click', (e) => {
+    masterOffBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      setAllPower(false);
+      setMasterState(false);
     });
 
-    // inicializar com ligado
-    setAllPower(true);
+    // initialize master state as ON
+    setMasterState(true);
   }
 
   // initialize
