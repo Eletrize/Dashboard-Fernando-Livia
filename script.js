@@ -3381,6 +3381,9 @@ function initMusicPlayerUI() {
   const volumeSection = document.querySelector('.music-volume-section');
   const volumeIconUnmuted = document.querySelector('.volume-icon-unmuted');
   const volumeIconMuted = document.querySelector('.volume-icon-muted');
+  const powerOnBtn = document.getElementById('music-power-on');
+  const powerOffBtn = document.getElementById('music-power-off');
+  const musicCard = document.querySelector('.music-player-card');
 
   console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn });
 
@@ -3484,6 +3487,36 @@ function initMusicPlayerUI() {
         console.log('🔊 Volume ajustado para:', value);
       }
     });
+  }
+
+  // Power On/Off controls
+  if (powerOnBtn && powerOffBtn && musicCard) {
+    function setAllPower(on) {
+      if (on) {
+        powerOnBtn.setAttribute('aria-pressed', 'true');
+        powerOffBtn.setAttribute('aria-pressed', 'false');
+        musicCard.removeAttribute('data-all-off');
+        console.log('🔆 Tudo ligado');
+      } else {
+        powerOnBtn.setAttribute('aria-pressed', 'false');
+        powerOffBtn.setAttribute('aria-pressed', 'true');
+        musicCard.setAttribute('data-all-off', 'true');
+        console.log('⚫ Tudo desligado');
+      }
+    }
+
+    powerOnBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setAllPower(true);
+    });
+
+    powerOffBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setAllPower(false);
+    });
+
+    // inicializar com ligado
+    setAllPower(true);
   }
 
   // initialize

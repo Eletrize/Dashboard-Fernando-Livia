@@ -1595,6 +1595,58 @@ div {
   opacity: 0.5;
 }
 
+/* === MUSIC POWER ON/OFF === */
+.music-power-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.music-power-controls {
+  display: flex;
+  width: 100%;
+  gap: 12px; /* same gap as volume */
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.music-power-btn {
+  border-radius: 8px;
+  height: 52px;
+  flex: 0 0 calc((100% - 12px) / 2); /* two buttons with one gap of 12px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.music-power-btn[aria-pressed="true"][data-power="on"] {
+  box-shadow: 0 6px 24px rgba(76, 175, 80, 0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+  border-color: rgba(76,175,80,0.45);
+}
+
+.music-power-btn[aria-pressed="true"][data-power="off"] {
+  box-shadow: 0 6px 24px rgba(239,68,68,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+  border-color: rgba(239,68,68,0.45);
+}
+
+/* Dimmed state when everything is off */
+.music-player-card[data-all-off="true"] .tv-btn-icon-small,
+.music-player-card[data-all-off="true"] .music-volume-mute-btn {
+  opacity: 0.35;
+  filter: grayscale(60%);
+  pointer-events: none;
+}
+
+.music-player-card[data-all-off="true"] .music-album-img,
+.music-player-card[data-all-off="true"] .music-track,
+.music-player-card[data-all-off="true"] .music-artist {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* === DISPLAY DE TEMPERATURA === */
 .ac-temperature-section {
   display: flex;
