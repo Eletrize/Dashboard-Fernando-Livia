@@ -1331,7 +1331,7 @@ div {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 0;
+  padding: 0 10px; /* match volume section outer padding */
   box-sizing: border-box;
 }
 
@@ -1339,9 +1339,16 @@ div {
   display: flex;
   width: 100%;
   gap: 12px; /* same gap as volume section */
-  padding: 0 10px;
+  padding: 0 16px; /* inner padding like slider container */
   box-sizing: border-box;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  height: 52px; /* match volume control height */
+  align-items: center;
 }
 
 /* Estilos específicos para os botões de música */
@@ -1351,7 +1358,7 @@ div {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  flex: 0 0 48px; /* fixed lateral width to match volume module */
+  flex: 1; /* expand to fill the playback control block */
   height: 52px;
   display: flex;
   align-items: center;
