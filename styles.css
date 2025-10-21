@@ -1230,11 +1230,19 @@ div {
   gap: 12px;
 }
 
+.music-player-card .music-album-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
 .music-player-card .music-album {
-  width: 46%;
-  max-width: 380px;
+  width: calc(100% - 40px); /* 20px margins on each side */
+  max-width: calc(100% - 40px);
   aspect-ratio: 1 / 1;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--glass-shadow);
 }
