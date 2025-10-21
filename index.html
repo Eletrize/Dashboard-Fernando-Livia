@@ -3303,6 +3303,15 @@
             }
           }, 100);
         }
+
+        // Inicializa player de música na página de música da varanda
+        if (page === "ambiente1-musica") {
+          setTimeout(() => {
+            if (typeof initMusicPlayerUI === "function") {
+              initMusicPlayerUI();
+            }
+          }, 100);
+        }
       }
 
       // Home: Master On/Off por ambiente (funções movidas para script.js)

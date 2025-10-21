@@ -1241,8 +1241,10 @@ div {
 .music-player-card .music-zones-container {
   display: flex;
   gap: 12px;
-  width: calc(100% - 40px);
+  width: calc(100% - 20px);
   margin-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .music-zone-btn {
@@ -1258,6 +1260,14 @@ div {
   font-family: "Raleway", sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.music-zone-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
 }
 
 .music-zone-btn:active {
@@ -1271,13 +1281,15 @@ div {
 }
 
 .music-player-card .music-album {
-  width: calc(100% - 40px); /* 20px margins on each side */
-  max-width: calc(100% - 40px);
+  width: calc(100% - 20px);
+  max-width: calc(100% - 20px);
   aspect-ratio: 1 / 1;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--glass-shadow);
   margin-bottom: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .music-player-card .music-album-img {
@@ -1291,6 +1303,8 @@ div {
   text-align: center;
   padding: 0;
   margin-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .music-player-card .music-track {
@@ -1309,6 +1323,8 @@ div {
   width: 100%;
   display: flex;
   justify-content: center;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 /* Estilos específicos para os botões de música */
