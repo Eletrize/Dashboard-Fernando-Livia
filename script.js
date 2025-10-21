@@ -569,6 +569,12 @@ async function updateDenonVolumeFromServer() {
       const percentage = (volumeValue / max) * 100;
       slider.style.setProperty("--volume-progress", percentage + "%");
 
+      // Keep music slider in sync if present
+      const musicSlider = document.getElementById('music-volume-slider');
+      if (musicSlider) {
+        musicSlider.value = volumeValue;
+        musicSlider.style.setProperty('--volume-percent', percentage + '%');
+      }
       console.log(`🔊 Volume do Denon atualizado: ${volumeValue}`);
     }
   } catch (error) {
@@ -593,6 +599,13 @@ function updateDenonVolumeUI(volume) {
     `🔊 Volume recebido: ${volume}, convertido: ${volumeValue}, slider atual: ${slider.value}`
   );
 
+  // Respeitar proteção se o usuário acabou de enviar um comando manual
+  const lastCmd = recentCommands.get('322');
+  if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
+    console.log('🔒 updateDenonVolumeUI: comando manual recente detectado, ignorando atualização de polling');
+    return;
+  }
+
   // Só atualizar se o valor for diferente do atual para evitar conflitos
   if (parseInt(slider.value) !== volumeValue) {
     slider.value = volumeValue;
@@ -603,6 +616,13 @@ function updateDenonVolumeUI(volume) {
     slider.style.setProperty("--volume-progress", percentage + "%");
 
     console.log(`✅ Volume do Denon atualizado via polling: ${volumeValue}`);
+    // Atualizar também o slider do player de música, se presente
+    const musicSlider = document.getElementById('music-volume-slider');
+    if (musicSlider) {
+      musicSlider.value = volumeValue;
+      musicSlider.style.setProperty('--volume-percent', percentage + '%');
+      if (typeof updateVolumeBar === 'function') updateVolumeBar();
+    }
   } else {
     console.log(`ℹ️ Volume já está em ${volumeValue}, não atualizando`);
   }
@@ -3683,6 +3703,28 @@ function initMusicPlayerUI() {
       const value = e.target.value;
       console.log("🔊 Volume finalizado em:", value);
     });
+
+    // If there's a separate music slider, wire it to send commands to Denon (device 322)
+    const musicSlider = document.getElementById('music-volume-slider');
+    if (musicSlider) {
+      musicSlider.addEventListener('input', (e) => {
+        // update visual bar for music slider
+        const v = parseInt(e.target.value);
+        musicSlider.style.setProperty('--volume-percent', (v/100)*100 + '%');
+      });
+
+      musicSlider.addEventListener('change', (e) => {
+        const value = e.target.value;
+        const DENON_CMD_ID = '322';
+        console.log(`🔊 Music slider changed -> sending setVolume ${value} to Denon (${DENON_CMD_ID})`);
+        // Mark recent command to prevent polling overwrite
+        recentCommands.set(DENON_CMD_ID, Date.now());
+        // Send command
+        sendHubitatCommand(DENON_CMD_ID, 'setVolume', value)
+          .then(() => console.log('✅ setVolume sent to Denon via music slider'))
+          .catch(err => console.error('❌ Error sending setVolume from music slider:', err));
+      });
+    }
 
     // Garantir que o slider seja interativo
     volumeSlider.style.pointerEvents = "auto";
