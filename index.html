@@ -630,8 +630,12 @@
   </div>
 
   <div class="ambiente1-musica-wrapper ambiente-grid">
-    <div class="control-card control-card--full-width music-player-card" style="padding: 24px; text-align: center;">
+    <div class="control-card control-card--full-width music-player-card">
       <div class="music-player-inner">
+        <div class="music-zones-container">
+          <button class="music-zone-btn music-zone-btn--active" id="music-zone-1" data-zone="1" aria-pressed="true">Zona 1</button>
+          <button class="music-zone-btn" id="music-zone-2" data-zone="2" aria-pressed="false">Zona 2</button>
+        </div>
         <div class="music-album-title" id="music-album-title">Nome do Álbum</div>
         <div class="music-album">
           <img src="images/Images/photo-varanda.jpg" alt="Album art" class="music-album-img" />
