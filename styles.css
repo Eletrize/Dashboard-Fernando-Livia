@@ -1595,70 +1595,39 @@ div {
   opacity: 0.5;
 }
 
-/* === MUSIC MASTER ON/OFF === */
-.music-master-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 8px 10px 0 10px;
-  box-sizing: border-box;
-}
-
+/* === CONTROLES MASTER ON/OFF === */
 .music-master-controls {
   display: flex;
-  gap: 12px; /* same gap as volume */
-  width: 100%;
+  gap: 12px;
   padding: 0 10px;
   box-sizing: border-box;
-}
-
-.music-master-btn {
-  flex: 0 0 calc((100% - 12px) / 2); /* two buttons + one gap(12px) */
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.04);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.25s ease;
+  margin-top: 15px;
 }
 
-.music-master-btn:active { transform: translateY(1px); }
-
-.music-master-on {
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.08), inset 0 1px 0 rgba(255,255,255,0.02);
+.music-master-controls .tv-btn-icon-small {
+  flex: 0 0 calc((100% - 12px) / 2);
 }
 
-.music-master-off {
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.08), inset 0 1px 0 rgba(255,255,255,0.02);
+.master-on {
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
-/* State when master is off: dim controls and hide album info */
-.music-player-card.music-master-off .tv-btn-icon-small,
-.music-player-card.music-master-off .music-volume-mute-btn,
-.music-player-card.music-master-off .music-master-btn {
-  opacity: 0.32;
-  filter: grayscale(60%);
+.master-off {
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
 }
 
-.music-player-card.music-master-off .music-album-img,
-.music-player-card.music-master-off .music-track,
-.music-player-card.music-master-off .music-artist {
-  opacity: 0;
-  visibility: hidden;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  pointer-events: none;
+.music-off-active .tv-btn-icon-small {
+  opacity: 0.3;
 }
 
-/* colored glow when active */
-.music-master-on[aria-pressed="true"] { box-shadow: 0 0 22px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.03); }
-.music-master-off[aria-pressed="true"] { box-shadow: 0 0 22px rgba(239,68,68,0.25), inset 0 1px 0 rgba(255,255,255,0.03); }
+.music-off-active .music-album {
+  display: none;
+}
+
+.music-off-active .music-info {
+  display: none;
+}
 
 /* === DISPLAY DE TEMPERATURA === */
 .ac-temperature-section {

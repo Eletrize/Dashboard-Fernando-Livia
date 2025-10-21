@@ -3486,43 +3486,43 @@ function initMusicPlayerUI() {
     });
   }
 
-  // Master On/Off
+  // Master on/off controls
   const masterOnBtn = document.getElementById('music-master-on');
   const masterOffBtn = document.getElementById('music-master-off');
-  const musicCard = document.querySelector('.music-player-card');
+  const musicPlayerInner = document.querySelector('.music-player-inner');
 
-  function setMasterState(isOn) {
-    if (!masterOnBtn || !masterOffBtn || !musicCard) return;
-    if (isOn) {
+  function setMaster(state) {
+    console.log('🎵 Alterando estado master para:', state);
+    if (state === 'on') {
+      masterOnBtn.classList.add('master-on--active');
       masterOnBtn.setAttribute('aria-pressed', 'true');
+      masterOffBtn.classList.remove('master-off--active');
       masterOffBtn.setAttribute('aria-pressed', 'false');
-      musicCard.classList.remove('music-master-off');
-      console.log('🔆 Master ON');
+      musicPlayerInner.classList.remove('music-off-active');
+      console.log('🎵 Master ON ativado');
     } else {
-      masterOnBtn.setAttribute('aria-pressed', 'false');
+      masterOffBtn.classList.add('master-off--active');
       masterOffBtn.setAttribute('aria-pressed', 'true');
-      musicCard.classList.add('music-master-off');
-      console.log('🔅 Master OFF - controles apagados');
+      masterOnBtn.classList.remove('master-on--active');
+      masterOnBtn.setAttribute('aria-pressed', 'false');
+      musicPlayerInner.classList.add('music-off-active');
+      console.log('🎵 Master OFF ativado');
     }
   }
 
   if (masterOnBtn && masterOffBtn) {
-    masterOnBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      setMasterState(true);
+    masterOnBtn.addEventListener('click', () => {
+      setMaster('on');
     });
 
-    masterOffBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      setMasterState(false);
+    masterOffBtn.addEventListener('click', () => {
+      setMaster('off');
     });
-
-    // initialize master state as ON
-    setMasterState(true);
   }
 
   // initialize
   setPlaying(false);
+  setMaster('on');
   console.log('🎵 Player de música inicializado');
 }
 
