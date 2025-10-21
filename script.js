@@ -3378,8 +3378,6 @@ function initMusicPlayerUI() {
   const zone2Btn = document.getElementById('music-zone-2');
   const muteBtn = document.getElementById('music-mute');
   const volumeSlider = document.getElementById('music-volume-slider');
-  const volumeFill = document.querySelector('.music-volume-fill');
-  const volumeThumb = document.querySelector('.music-volume-thumb');
   const volumeSection = document.querySelector('.music-volume-section');
   const volumeIconUnmuted = document.querySelector('.volume-icon-unmuted');
   const volumeIconMuted = document.querySelector('.volume-icon-muted');
@@ -3419,12 +3417,6 @@ function initMusicPlayerUI() {
     }
   }
 
-  function updateVolumeUI(value) {
-    const percentage = value;
-    if (volumeFill) volumeFill.style.width = percentage + '%';
-    if (volumeThumb) volumeThumb.style.left = percentage + '%';
-  }
-
   function setMuted(muted) {
     isMuted = muted;
     muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
@@ -3438,11 +3430,9 @@ function initMusicPlayerUI() {
     if (muted) {
       volumeBeforeMute = parseInt(volumeSlider.value);
       volumeSlider.value = 0;
-      updateVolumeUI(0);
       console.log('🔇 Volume mutado. Volume anterior:', volumeBeforeMute);
     } else {
       volumeSlider.value = volumeBeforeMute;
-      updateVolumeUI(volumeBeforeMute);
       console.log('🔊 Volume desmutado. Volume restaurado:', volumeBeforeMute);
     }
   }
@@ -3491,13 +3481,9 @@ function initMusicPlayerUI() {
     volumeSlider.addEventListener('input', (e) => {
       if (!isMuted) {
         const value = e.target.value;
-        updateVolumeUI(value);
         console.log('🔊 Volume ajustado para:', value);
       }
     });
-
-    // Inicializar volume
-    updateVolumeUI(50);
   }
 
   // initialize
