@@ -630,10 +630,34 @@
   </div>
 
   <div class="ambiente1-musica-wrapper ambiente-grid">
-    <div class="control-card control-card--full-width" style="padding: 24px; text-align: center;">
-      <img class="control-icon" src="images/icons/icon-musica.svg" alt="Música" style="width:64px;height:64px;">
-      <div class="control-label">Página de Música (em desenvolvimento)</div>
-      <p style="margin-top:12px;color:#bbb;">Aqui você poderá controlar players, playlists e entrada de áudio.</p>
+    <div class="control-card control-card--full-width music-player-card" style="padding: 24px; text-align: center;">
+      <div class="music-player-inner">
+        <div class="music-album">
+          <img src="images/Images/photo-varanda.jpg" alt="Album art" class="music-album-img" />
+        </div>
+
+        <div class="music-info">
+          <div class="music-track" id="music-track">Nome da Música</div>
+          <div class="music-artist" id="music-artist">Nome do Artista</div>
+        </div>
+
+        <div class="music-controls">
+          <div class="tv-playback-controls">
+            <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
+              <img src="images/icons/arrow-left.svg" alt="Prev" style="width:20px;height:20px;">
+            </button>
+            <button class="tv-btn-icon-small" aria-label="Play" id="music-play">
+              <img src="images/icons/icon-play.svg" alt="Play" style="width:20px;height:20px;">
+            </button>
+            <button class="tv-btn-icon-small" aria-label="Pause" id="music-pause">
+              <img src="images/icons/icon-pause.svg" alt="Pause" style="width:20px;height:20px;">
+            </button>
+            <button class="tv-btn-icon-small" aria-label="Next" id="music-next">
+              <img src="images/icons/arrow-right.svg" alt="Next" style="width:20px;height:20px;">
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

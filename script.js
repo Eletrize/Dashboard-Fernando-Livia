@@ -3368,6 +3368,49 @@ window.debugEletrize = {
   },
 };
 
+/* --- Music player UI handlers (simple local behavior for now) --- */
+function initMusicPlayerUI() {
+  const playBtn = document.getElementById('music-play');
+  const pauseBtn = document.getElementById('music-pause');
+  const nextBtn = document.getElementById('music-next');
+  const prevBtn = document.getElementById('music-prev');
+
+  if (!playBtn || !pauseBtn || !nextBtn || !prevBtn) return;
+
+  function setPlaying(isPlaying) {
+    playBtn.disabled = isPlaying;
+    pauseBtn.disabled = !isPlaying;
+    playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+    pauseBtn.setAttribute('aria-pressed', isPlaying ? 'false' : 'true');
+  }
+
+  playBtn.addEventListener('click', () => {
+    console.log('▶️ Play clicked');
+    setPlaying(true);
+  });
+
+  pauseBtn.addEventListener('click', () => {
+    console.log('⏸️ Pause clicked');
+    setPlaying(false);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    console.log('⏭️ Next clicked');
+  });
+
+  prevBtn.addEventListener('click', () => {
+    console.log('⏮️ Previous clicked');
+  });
+
+  // initialize
+  setPlaying(false);
+}
+
+// Initialize when SPA navigation might insert the music page
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initMusicPlayerUI, 100);
+});
+
 // Versão ultra-básica para browsers problemáticos
 function initUltraBasicMode() {
   try {

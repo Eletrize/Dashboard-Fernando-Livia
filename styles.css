@@ -1220,6 +1220,63 @@ div {
   min-height: 0; /* permitir que o flex item encolha corretamente */
 }
 
+/* Estilos da player de música */
+.music-player-card .music-player-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  gap: 12px;
+}
+
+.music-player-card .music-album {
+  width: 46%;
+  max-width: 380px;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+}
+
+.music-player-card .music-album-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.music-player-card .music-info {
+  text-align: center;
+  padding: 6px 8px;
+}
+
+.music-player-card .music-track {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.music-player-card .music-artist {
+  font-size: 14px;
+  color: #bdbdbd;
+  margin-top: 4px;
+}
+
+.music-player-card .music-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 0 0;
+}
+
+.tv-btn-icon-small img { pointer-events: none; }
+
+.tv-btn-icon-small[aria-pressed="true"] {
+  transform: scale(0.98);
+  opacity: 0.95;
+}
+
 
 /* === DISPLAY DE TEMPERATURA === */
 .ac-temperature-section {
