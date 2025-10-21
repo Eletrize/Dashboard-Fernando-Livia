@@ -2096,20 +2096,9 @@ async function updateDeviceStatesFromServer() {
             console.warn("⚠️ Denon encontrado mas sem atributo volume:", d);
           }
           
-          // Capturar metadados de música se estivermos na página de música
-          if (window.location.hash.includes("ambiente1-musica")) {
-            const artist = d.attributes?.artist;
-            const track = d.attributes?.trackDescription;
-            const currentArtist = document.getElementById('music-artist')?.textContent;
-            const currentTrack = document.getElementById('music-track')?.textContent;
-            
-            // Se artista ou música mudou, atualizar UI
-            if ((artist && artist !== currentArtist) || (track && track !== currentTrack)) {
-              console.log("🎵 Mudança de música detectada no Denon!");
-              // Atualizar metadados imediatamente
-              setTimeout(() => updateDenonMetadata(), 100);
-            }
-          }
+          // Nota: Metadados de música (artista, álbum, capa) são buscados
+          // via updateDenonMetadata() que usa o endpoint full do Hubitat,
+          // pois o polling normal não contém essas informações
         }
       });
     }
@@ -3398,29 +3387,65 @@ window.debugEletrize = {
 
 /* --- Music player metadata update functions --- */
 
+// URL do endpoint completo do Hubitat Cloud para metadados
+const HUBITAT_FULL_API = "https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0";
+
 // Função para atualizar metadados do Denon
 function updateDenonMetadata() {
-  console.log("🎵 Buscando metadados do Denon AVR...");
+  console.log("🎵 Buscando metadados do Denon AVR via Hubitat Cloud...");
   
-  fetch("/functions/polling")
-    .then(response => response.json())
+  fetch(HUBITAT_FULL_API)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then(data => {
+      console.log("🎵 Resposta completa do Hubitat:", data);
+      
       // Procurar o Denon AVR (ID 322) nos dados
-      const denonDevice = data.find(device => device.id === 322);
+      // O formato pode ser um array direto ou um objeto com propriedade devices
+      const devices = Array.isArray(data) ? data : (data.devices || []);
+      const denonDevice = devices.find(device => device.id === "322" || device.id === 322);
       
       if (denonDevice) {
-        console.log("🎵 Dados do Denon recebidos:", denonDevice);
+        console.log("🎵 Denon encontrado:", denonDevice);
+        console.log("🎵 Atributos do Denon:", denonDevice.attributes);
         
-        // Extrair metadados
-        const artist = denonDevice.attributes.find(attr => attr.name === "artist")?.currentValue || "Desconhecido";
-        const track = denonDevice.attributes.find(attr => attr.name === "trackDescription")?.currentValue || "Sem título";
-        const album = denonDevice.attributes.find(attr => attr.name === "albumName")?.currentValue || "Álbum desconhecido";
-        const albumArt = denonDevice.attributes.find(attr => attr.name === "albumArtUrl")?.currentValue || null;
+        // Extrair metadados - o formato pode variar
+        let artist = "Desconhecido";
+        let track = "Sem título";
+        let album = "Álbum desconhecido";
+        let albumArt = null;
+        
+        // Tentar extrair de diferentes formatos possíveis
+        if (Array.isArray(denonDevice.attributes)) {
+          // Formato array: [{name: "artist", currentValue: "..."}, ...]
+          const artistAttr = denonDevice.attributes.find(attr => attr.name === "artist" || attr.name === "trackArtist");
+          const trackAttr = denonDevice.attributes.find(attr => attr.name === "trackDescription" || attr.name === "track");
+          const albumAttr = denonDevice.attributes.find(attr => attr.name === "albumName" || attr.name === "album");
+          const albumArtAttr = denonDevice.attributes.find(attr => attr.name === "albumArtUrl" || attr.name === "albumArtURI");
+          
+          artist = artistAttr?.currentValue || artistAttr?.value || artist;
+          track = trackAttr?.currentValue || trackAttr?.value || track;
+          album = albumAttr?.currentValue || albumAttr?.value || album;
+          albumArt = albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
+        } else if (denonDevice.attributes && typeof denonDevice.attributes === 'object') {
+          // Formato objeto: {artist: "...", trackDescription: "...", ...}
+          artist = denonDevice.attributes.artist || denonDevice.attributes.trackArtist || artist;
+          track = denonDevice.attributes.trackDescription || denonDevice.attributes.track || track;
+          album = denonDevice.attributes.albumName || denonDevice.attributes.album || album;
+          albumArt = denonDevice.attributes.albumArtUrl || denonDevice.attributes.albumArtURI || albumArt;
+        }
+        
+        console.log("🎵 Metadados extraídos:", { artist, track, album, albumArt });
         
         // Atualizar UI
         updateMusicPlayerUI(artist, track, album, albumArt);
       } else {
-        console.log("⚠️ Denon AVR não encontrado nos dados do polling");
+        console.log("⚠️ Denon AVR (ID 322) não encontrado nos dados");
+        console.log("Dispositivos disponíveis:", devices.map(d => ({ id: d.id, name: d.name || d.label })));
       }
     })
     .catch(error => {
