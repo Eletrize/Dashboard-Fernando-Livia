@@ -1011,6 +1011,11 @@ div {
   min-height: 40px;
 }
 
+/* Espaçamento específico para a página de Música na Varanda */
+.ambiente1-musica-page .ambiente1-musica-wrapper {
+  margin-top: 10px; /* garantir 10px abaixo da linha branca */
+}
+
 /* Página de Cortinas - Design Minimalista Modo Escuro */
 /* Controles de cortina minimalistas para páginas individuais */
 .curtain-control-minimal {
