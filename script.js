@@ -3439,9 +3439,13 @@ function initMusicPlayerUI() {
       volumeBeforeMute = parseInt(volumeSlider.value);
       volumeSlider.value = 0;
       console.log('🔇 Volume mutado. Volume anterior:', volumeBeforeMute);
+      // Atualiza a barra visual para 0% quando mutado
+      if (typeof updateVolumeBar === 'function') updateVolumeBar();
     } else {
       volumeSlider.value = volumeBeforeMute;
       console.log('🔊 Volume desmutado. Volume restaurado:', volumeBeforeMute);
+      // Atualiza a barra visual para o valor restaurado
+      if (typeof updateVolumeBar === 'function') updateVolumeBar();
     }
   }
 
