@@ -201,6 +201,7 @@ const ALL_LIGHT_IDS = [
   "256", // Ambiente 5 - Luz 2 (Funcionarios-LuzVermelha)
   "257", // Ambiente 6 - Luz 1 (Funcionarios-Banheiro)
   "258", // Ambiente 6 - Luz 2 (Funcionarios-Paineis)
+  "322", // Denon AVR - Receiver (para atualização de volume)
 ];
 
 // ID do dispositivo de Ar Condicionado (MolSmart - GW3 - AC)
@@ -386,7 +387,7 @@ function updateTVPowerState(newState) {
   const otherControls = document.querySelectorAll(
     ".tv-volume-canais-wrapper, .tv-commands-grid, .tv-directional-pad, .tv-numpad, .tv-logo-section"
   );
-  
+
   // Selecionar títulos das seções de controle
   const titles = document.querySelectorAll(".tv-section-title");
 
@@ -400,7 +401,7 @@ function updateTVPowerState(newState) {
       control.style.opacity = "1";
       control.style.pointerEvents = "auto";
     });
-    
+
     // Mostrar títulos
     titles.forEach((title) => {
       title.style.opacity = "1";
@@ -417,7 +418,7 @@ function updateTVPowerState(newState) {
       control.style.opacity = "0.15";
       control.style.pointerEvents = "none";
     });
-    
+
     // Apagar títulos
     titles.forEach((title) => {
       title.style.opacity = "0.2";
@@ -469,20 +470,27 @@ function tvCommand(el, command) {
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
+  const DENON_DEVICE_ID = "322"; // ID do Denon AVR no Hubitat
 
   if (!slider || !display) {
     console.log("⚠️ Slider ou display não encontrado");
     return;
   }
 
-  console.log("🎚️ Inicializando slider de volume");
+  console.log("🎚️ Inicializando slider de volume do Denon AVR");
+
+  // Definir o device ID no slider
+  slider.dataset.deviceId = DENON_DEVICE_ID;
 
   // Remover event listeners antigos para evitar duplicação
-  const newSlider = slider.cloneNode(false);
+  const newSlider = slider.cloneNode(true);
   slider.parentNode.replaceChild(newSlider, slider);
 
   // Pegar referência ao novo slider
   const updatedSlider = document.getElementById("tv-volume-slider");
+
+  // Buscar volume atual do Denon e atualizar o slider
+  updateDenonVolumeFromServer();
 
   // Atualizar display quando slider mudar
   updatedSlider.addEventListener("input", (e) => {
@@ -501,26 +509,104 @@ function initVolumeSlider() {
   // Enviar comando ao soltar o slider
   updatedSlider.addEventListener("change", (e) => {
     const value = e.target.value;
-    const deviceId = updatedSlider.dataset.deviceId;
 
-    console.log(`🔊 Volume alterado para: ${value}`);
+    console.log(`🔊 Volume alterado para: ${value} - enviando para Denon AVR`);
 
-    // Enviar comando para Hubitat
-    if (deviceId) {
-      sendHubitatCommand(deviceId, `setLevel-${value}`)
-        .then(() => {
-          console.log(`✅ Volume definido para ${value}`);
-        })
-        .catch((error) => {
-          console.error(`❌ Erro ao definir volume:`, error);
-        });
-    }
+    // Enviar comando setVolume para o Denon AVR
+    sendHubitatCommand(DENON_DEVICE_ID, "setVolume", value)
+      .then(() => {
+        console.log(`✅ Volume do Denon definido para ${value}`);
+      })
+      .catch((error) => {
+        console.error(`❌ Erro ao definir volume do Denon:`, error);
+      });
   });
 
-  console.log("✅ Slider de volume inicializado com sucesso");
+  console.log("✅ Slider de volume do Denon AVR inicializado com sucesso");
 }
 
-// Inicializar estado ao carregar
+// Função para atualizar o volume do Denon a partir do servidor
+async function updateDenonVolumeFromServer() {
+  const DENON_DEVICE_ID = "322";
+  const slider = document.getElementById("tv-volume-slider");
+  const display = document.getElementById("tv-volume-display");
+
+  if (!slider || !display) return;
+
+  try {
+    const pollingUrl = isProduction
+      ? `${POLLING_URL}?devices=${DENON_DEVICE_ID}`
+      : null;
+
+    if (!pollingUrl) {
+      console.log("❌ Não é possível buscar volume em desenvolvimento");
+      return;
+    }
+
+    const response = await fetch(pollingUrl);
+    if (!response.ok) throw new Error(`Polling failed: ${response.status}`);
+
+    const data = await response.json();
+
+    // Processar resposta para pegar o volume
+    let volume = null;
+
+    if (data.devices && data.devices[DENON_DEVICE_ID]) {
+      volume = data.devices[DENON_DEVICE_ID].volume;
+    } else if (Array.isArray(data.data)) {
+      const denonData = data.data.find((d) => d.id === DENON_DEVICE_ID);
+      if (denonData && denonData.attributes) {
+        volume = denonData.attributes.volume;
+      }
+    }
+
+    if (volume !== null && volume !== undefined) {
+      const volumeValue = parseInt(volume);
+      slider.value = volumeValue;
+      display.textContent = volumeValue;
+
+      const max = slider.max || 100;
+      const percentage = (volumeValue / max) * 100;
+      slider.style.setProperty("--volume-progress", percentage + "%");
+
+      console.log(`🔊 Volume do Denon atualizado: ${volumeValue}`);
+    }
+  } catch (error) {
+    console.error("❌ Erro ao buscar volume do Denon:", error);
+  }
+}
+
+// Função para atualizar a UI do volume do Denon (chamada pelo polling)
+function updateDenonVolumeUI(volume) {
+  const slider = document.getElementById("tv-volume-slider");
+  const display = document.getElementById("tv-volume-display");
+
+  console.log("🔊 updateDenonVolumeUI chamada com volume:", volume);
+
+  if (!slider || !display) {
+    console.warn("⚠️ Slider ou display não encontrado na página");
+    return;
+  }
+
+  const volumeValue = parseInt(volume);
+  console.log(
+    `🔊 Volume recebido: ${volume}, convertido: ${volumeValue}, slider atual: ${slider.value}`
+  );
+
+  // Só atualizar se o valor for diferente do atual para evitar conflitos
+  if (parseInt(slider.value) !== volumeValue) {
+    slider.value = volumeValue;
+    display.textContent = volumeValue;
+
+    const max = slider.max || 100;
+    const percentage = (volumeValue / max) * 100;
+    slider.style.setProperty("--volume-progress", percentage + "%");
+
+    console.log(`✅ Volume do Denon atualizado via polling: ${volumeValue}`);
+  } else {
+    console.log(`ℹ️ Volume já está em ${volumeValue}, não atualizando`);
+  }
+} // Inicializar estado ao carregar
 document.addEventListener("DOMContentLoaded", () => {
   updateTVPowerState("off");
   initVolumeSlider();
@@ -1981,6 +2067,22 @@ async function updateDeviceStatesFromServer() {
         }
 
         devicesMap[d.id] = { state, success: true };
+
+        // Se for o Denon AVR (ID 322), também capturar o volume
+        if (d.id === "322") {
+          console.log("🔊 DEBUG Denon encontrado:", {
+            id: d.id,
+            attributes: d.attributes,
+            volume: d.attributes?.volume,
+          });
+
+          if (d.attributes && d.attributes.volume !== undefined) {
+            devicesMap[d.id].volume = d.attributes.volume;
+            console.log(`🔊 Volume capturado do Denon: ${d.attributes.volume}`);
+          } else {
+            console.warn("⚠️ Denon encontrado mas sem atributo volume:", d);
+          }
+        }
       });
     }
     if (!devicesMap) {
@@ -1999,6 +2101,21 @@ async function updateDeviceStatesFromServer() {
 
         // Atualizar UI (função já verifica se elemento está pendente)
         updateDeviceUI(deviceId, deviceData.state);
+
+        // Se for o Denon AVR e tiver volume, atualizar o slider
+        if (deviceId === "322") {
+          console.log("🔊 DEBUG - Processando Denon no polling:", {
+            deviceId,
+            volume: deviceData.volume,
+            hasVolume: deviceData.volume !== undefined,
+          });
+
+          if (deviceData.volume !== undefined) {
+            updateDenonVolumeUI(deviceData.volume);
+          } else {
+            console.warn("⚠️ Denon sem volume no deviceData:", deviceData);
+          }
+        }
       }
     });
 

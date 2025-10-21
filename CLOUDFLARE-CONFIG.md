@@ -9,16 +9,19 @@ Este documento explica como configurar as variáveis de ambiente necessárias pa
 Esta opção é mais simples e garante que você está usando o endpoint correto do Hubitat.
 
 #### **HUBITAT_FULL_URL**
+
 ```
 https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0
 ```
 
 #### **HUBITAT_BASE_URL** (para comandos)
+
 ```
 https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices
 ```
 
 #### **HUBITAT_ACCESS_TOKEN**
+
 ```
 0aa81379-277a-42cb-95be-a4fb67e353f0
 ```
@@ -30,11 +33,13 @@ https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devi
 Se preferir separar a URL base do token:
 
 #### **HUBITAT_BASE_URL**
+
 ```
 https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices
 ```
 
 #### **HUBITAT_ACCESS_TOKEN**
+
 ```
 0aa81379-277a-42cb-95be-a4fb67e353f0
 ```
@@ -79,11 +84,13 @@ wrangler pages secret put HUBITAT_ACCESS_TOKEN
 ## ✅ Como Funciona
 
 ### Função de Polling (`/functions/polling`)
+
 - **Prioridade 1**: Usa `HUBITAT_FULL_URL` se existir
 - **Prioridade 2**: Usa `HUBITAT_BASE_URL/devices/all?access_token=HUBITAT_ACCESS_TOKEN`
 - **Resultado**: Retorna JSON completo com todos os atributos dos dispositivos (incluindo volume do Denon)
 
 ### Função de Comandos (`/functions/hubitat-proxy`)
+
 - Usa `HUBITAT_BASE_URL/devices/{deviceId}/{command}/{value}?access_token=HUBITAT_ACCESS_TOKEN`
 - **Exemplo**: Para definir volume 50 no Denon (ID 322):
   - `.../devices/322/setVolume/50?access_token=...`
@@ -93,12 +100,15 @@ wrangler pages secret put HUBITAT_ACCESS_TOKEN
 ## 🔍 Testando a Configuração
 
 ### Testar Polling
+
 Acesse no navegador:
+
 ```
 https://seu-site.pages.dev/functions/polling
 ```
 
 Deve retornar JSON com:
+
 ```json
 {
   "success": true,
@@ -121,7 +131,9 @@ Deve retornar JSON com:
 ```
 
 ### Testar Comando
+
 Acesse no navegador:
+
 ```
 https://seu-site.pages.dev/functions/hubitat-proxy?device=322&command=setVolume&value=50
 ```
@@ -140,14 +152,17 @@ https://seu-site.pages.dev/functions/hubitat-proxy?device=322&command=setVolume&
 ## 🆘 Troubleshooting
 
 ### "Variável não configurada"
+
 - Verifique se digitou o nome EXATAMENTE como está aqui (maiúsculas/minúsculas)
 - Faça redeploy após adicionar variáveis
 
 ### "Volume não atualiza"
+
 - Verifique se `HUBITAT_FULL_URL` está configurada
 - Abra o Console (F12) e veja os logs com 🔊
 - Teste a URL diretamente no navegador
 
 ### "Comando não funciona"
+
 - Verifique se `HUBITAT_BASE_URL` termina com `/devices`
 - Teste a URL do comando diretamente no navegador
