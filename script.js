@@ -3416,7 +3416,15 @@ function updateDenonMetadata() {
       const devices = Array.isArray(data) ? data : (data.devices || []);
   // O ID do dispositivo que fornece metadados do Denon é 326
   const DENON_METADATA_DEVICE_ID = "326";
-  const denonDevice = devices.find(device => device.id === DENON_METADATA_DEVICE_ID || device.id === parseInt(DENON_METADATA_DEVICE_ID, 10));
+  let denonDevice = devices.find(device => String(device.id) === DENON_METADATA_DEVICE_ID || device.id === parseInt(DENON_METADATA_DEVICE_ID, 10));
+  // Fallback: procurar por dispositivos cujo nome/label contenha 'denon', 'receiver' ou 'av'
+  if (!denonDevice) {
+    denonDevice = devices.find((device) => {
+      const name = String(device.name || device.label || "").toLowerCase();
+      return name.includes("denon") || name.includes("receiver") || name.includes("av");
+    });
+    if (denonDevice) console.log("🔎 Denon metadata device encontrado por name/label:", denonDevice);
+  }
       
       if (denonDevice) {
         console.log("🎵 Denon encontrado:", denonDevice);
