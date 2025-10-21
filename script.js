@@ -3484,20 +3484,31 @@ function initMusicPlayerUI() {
       setMuted(!isMuted);
     });
 
+    // Função para atualizar a barra de volume
+    function updateVolumeBar() {
+      const value = parseInt(volumeSlider.value);
+      const percent = (value / 100) * 100;
+      volumeSlider.style.setProperty('--volume-percent', percent + '%');
+      console.log('🔊 Volume ajustado para:', value, '% -', percent + '%');
+    }
+
     // Event listener para input (arrastar o slider)
     volumeSlider.addEventListener('input', (e) => {
-      const value = e.target.value;
-      console.log('🔊 Volume ajustado para:', value);
+      updateVolumeBar();
     });
 
     // Event listener para change (quando solta o slider)
     volumeSlider.addEventListener('change', (e) => {
+      updateVolumeBar();
       const value = e.target.value;
       console.log('🔊 Volume finalizado em:', value);
     });
 
     // Garantir que o slider seja interativo
     volumeSlider.style.pointerEvents = 'auto';
+    
+    // Inicializar a barra com o valor padrão
+    updateVolumeBar();
     
     console.log('🎵 Slider de volume configurado:', volumeSlider);
   } else {

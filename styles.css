@@ -1491,7 +1491,7 @@ div {
 .music-volume-slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) 100%);
   border-radius: 3px;
   cursor: pointer;
   border: none;
@@ -1528,7 +1528,7 @@ div {
 .music-volume-slider::-moz-range-track {
   width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) 100%);
   border-radius: 3px;
   cursor: pointer;
   border: none;
@@ -1561,7 +1561,7 @@ div {
 .music-volume-slider::-ms-track {
   width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) 100%);
   border-color: transparent;
   color: transparent;
   cursor: pointer;
@@ -1569,7 +1569,7 @@ div {
 }
 
 .music-volume-slider::-ms-fill-lower {
-  background: rgba(255, 255, 255, 0.25);
+  background: #ffffff;
   border-radius: 3px;
 }
 
@@ -1686,12 +1686,12 @@ div {
 .music-player-inner.power-off .music-volume-slider-container {
   opacity: 0.3;
   filter: grayscale(0.5);
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .music-player-inner.power-off .music-volume-slider {
-  pointer-events: auto;
-  cursor: pointer;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 /* Fade out/in para info e album art */
