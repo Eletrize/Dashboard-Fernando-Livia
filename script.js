@@ -617,6 +617,19 @@ document.addEventListener("DOMContentLoaded", () => {
       initVolumeSlider();
     }, 100);
   });
+  
+  // Listener específico para página de música
+  window.addEventListener("hashchange", () => {
+    if (window.location.hash.includes("ambiente1-musica")) {
+      setTimeout(() => {
+        initMusicPlayerUI();
+        updateDenonMetadata();
+        startMusicMetadataPolling();
+      }, 300);
+    } else {
+      stopMusicMetadataPolling();
+    }
+  });
 });
 
 function setRoomControlUI(el, state) {
@@ -2068,7 +2081,7 @@ async function updateDeviceStatesFromServer() {
 
         devicesMap[d.id] = { state, success: true };
 
-        // Se for o Denon AVR (ID 322), também capturar o volume
+        // Se for o Denon AVR (ID 322), também capturar o volume e metadados
         if (d.id === "322") {
           console.log("🔊 DEBUG Denon encontrado:", {
             id: d.id,
@@ -2081,6 +2094,21 @@ async function updateDeviceStatesFromServer() {
             console.log(`🔊 Volume capturado do Denon: ${d.attributes.volume}`);
           } else {
             console.warn("⚠️ Denon encontrado mas sem atributo volume:", d);
+          }
+          
+          // Capturar metadados de música se estivermos na página de música
+          if (window.location.hash.includes("ambiente1-musica")) {
+            const artist = d.attributes?.artist;
+            const track = d.attributes?.trackDescription;
+            const currentArtist = document.getElementById('music-artist')?.textContent;
+            const currentTrack = document.getElementById('music-track')?.textContent;
+            
+            // Se artista ou música mudou, atualizar UI
+            if ((artist && artist !== currentArtist) || (track && track !== currentTrack)) {
+              console.log("🎵 Mudança de música detectada no Denon!");
+              // Atualizar metadados imediatamente
+              setTimeout(() => updateDenonMetadata(), 100);
+            }
           }
         }
       });
@@ -3368,27 +3396,126 @@ window.debugEletrize = {
   },
 };
 
+/* --- Music player metadata update functions --- */
+
+// Função para atualizar metadados do Denon
+function updateDenonMetadata() {
+  console.log("🎵 Buscando metadados do Denon AVR...");
+  
+  fetch("/functions/polling")
+    .then(response => response.json())
+    .then(data => {
+      // Procurar o Denon AVR (ID 322) nos dados
+      const denonDevice = data.find(device => device.id === 322);
+      
+      if (denonDevice) {
+        console.log("🎵 Dados do Denon recebidos:", denonDevice);
+        
+        // Extrair metadados
+        const artist = denonDevice.attributes.find(attr => attr.name === "artist")?.currentValue || "Desconhecido";
+        const track = denonDevice.attributes.find(attr => attr.name === "trackDescription")?.currentValue || "Sem título";
+        const album = denonDevice.attributes.find(attr => attr.name === "albumName")?.currentValue || "Álbum desconhecido";
+        const albumArt = denonDevice.attributes.find(attr => attr.name === "albumArtUrl")?.currentValue || null;
+        
+        // Atualizar UI
+        updateMusicPlayerUI(artist, track, album, albumArt);
+      } else {
+        console.log("⚠️ Denon AVR não encontrado nos dados do polling");
+      }
+    })
+    .catch(error => {
+      console.error("❌ Erro ao buscar metadados do Denon:", error);
+    });
+}
+
+// Função para atualizar a UI do player com os metadados
+function updateMusicPlayerUI(artist, track, album, albumArt) {
+  // Obter elementos do DOM
+  const artistElement = document.getElementById('music-artist');
+  const trackElement = document.getElementById('music-track');
+  const albumElement = document.getElementById('music-album-title');
+  const albumImgElement = document.querySelector('.music-album-img');
+  
+  // Atualizar texto se os elementos existirem
+  if (artistElement) artistElement.textContent = artist;
+  if (trackElement) trackElement.textContent = track;
+  if (albumElement) albumElement.textContent = album;
+  
+  // Atualizar imagem do álbum
+  if (albumImgElement) {
+    if (albumArt && albumArt !== "null" && albumArt !== "") {
+      albumImgElement.src = albumArt;
+      albumImgElement.onerror = function() {
+        // Se a imagem falhar, use placeholder
+        this.src = "images/Images/photo-varanda.jpg";
+      };
+    } else {
+      // Usar placeholder se não houver capa
+      albumImgElement.src = "images/Images/photo-varanda.jpg";
+    }
+  }
+  
+  console.log(`🎵 UI atualizada: "${track}" por ${artist} (${album})`);
+}
+
+// Variável global para o intervalo de polling de metadados
+let musicMetadataInterval = null;
+
+// Função para iniciar polling específico de metadados do player
+function startMusicMetadataPolling() {
+  // Parar polling anterior se existir
+  stopMusicMetadataPolling();
+  
+  console.log("🎵 Iniciando polling de metadados a cada 3 segundos");
+  
+  // Iniciar novo polling a cada 3 segundos
+  musicMetadataInterval = setInterval(() => {
+    if (window.location.hash.includes("ambiente1-musica")) {
+      updateDenonMetadata();
+    } else {
+      // Se saímos da página, parar o polling
+      stopMusicMetadataPolling();
+    }
+  }, 3000);
+}
+
+// Função para parar o polling de metadados
+function stopMusicMetadataPolling() {
+  if (musicMetadataInterval) {
+    clearInterval(musicMetadataInterval);
+    musicMetadataInterval = null;
+    console.log("🎵 Polling de metadados parado");
+  }
+}
+
 /* --- Music player UI handlers (simple local behavior for now) --- */
 function initMusicPlayerUI() {
-  const playBtn = document.getElementById('music-play');
-  const pauseBtn = document.getElementById('music-pause');
-  const nextBtn = document.getElementById('music-next');
-  const prevBtn = document.getElementById('music-prev');
-  const zone1Btn = document.getElementById('music-zone-1');
-  const zone2Btn = document.getElementById('music-zone-2');
-  const muteBtn = document.getElementById('music-mute');
-  const volumeSlider = document.getElementById('music-volume-slider');
-  const volumeSection = document.querySelector('.music-volume-section');
-  const volumeIconUnmuted = document.querySelector('.volume-icon-unmuted');
-  const volumeIconMuted = document.querySelector('.volume-icon-muted');
-  const masterOnBtn = document.getElementById('music-master-on');
-  const masterOffBtn = document.getElementById('music-master-off');
-  const playerInner = document.querySelector('.music-player-inner');
+  const playBtn = document.getElementById("music-play");
+  const pauseBtn = document.getElementById("music-pause");
+  const nextBtn = document.getElementById("music-next");
+  const prevBtn = document.getElementById("music-prev");
+  const zone1Btn = document.getElementById("music-zone-1");
+  const zone2Btn = document.getElementById("music-zone-2");
+  const muteBtn = document.getElementById("music-mute");
+  const volumeSlider = document.getElementById("music-volume-slider");
+  const volumeSection = document.querySelector(".music-volume-section");
+  const volumeIconUnmuted = document.querySelector(".volume-icon-unmuted");
+  const volumeIconMuted = document.querySelector(".volume-icon-muted");
+  const masterOnBtn = document.getElementById("music-master-on");
+  const masterOffBtn = document.getElementById("music-master-off");
+  const playerInner = document.querySelector(".music-player-inner");
 
-  console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn, masterOnBtn, masterOffBtn });
+  console.log("🎵 Inicializando player de música...", {
+    playBtn,
+    pauseBtn,
+    zone1Btn,
+    zone2Btn,
+    masterOnBtn,
+    masterOffBtn,
+  });
 
   if (!playBtn || !pauseBtn || !nextBtn || !prevBtn) {
-    console.warn('⚠️ Botões de controle não encontrados');
+    console.warn("⚠️ Botões de controle não encontrados");
     return;
   }
 
@@ -3397,96 +3524,96 @@ function initMusicPlayerUI() {
   let volumeBeforeMute = 50;
   // Guardar estado anterior de mute quando o master for desligado
   let previousMutedState = false;
-  
+
   // Estado master power
   let isPowerOn = true;
 
   function setPlaying(isPlaying) {
     playBtn.disabled = isPlaying;
     pauseBtn.disabled = !isPlaying;
-    playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
-    pauseBtn.setAttribute('aria-pressed', isPlaying ? 'false' : 'true');
+    playBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+    pauseBtn.setAttribute("aria-pressed", isPlaying ? "false" : "true");
   }
 
   function setZone(zoneNum) {
-    console.log('🎵 Alterando zona para:', zoneNum);
+    console.log("🎵 Alterando zona para:", zoneNum);
     if (zoneNum === 1) {
-      zone1Btn.classList.add('music-zone-btn--active');
-      zone1Btn.setAttribute('aria-pressed', 'true');
-      zone2Btn.classList.remove('music-zone-btn--active');
-      zone2Btn.setAttribute('aria-pressed', 'false');
-      console.log('🎵 Zona 1 ativada');
+      zone1Btn.classList.add("music-zone-btn--active");
+      zone1Btn.setAttribute("aria-pressed", "true");
+      zone2Btn.classList.remove("music-zone-btn--active");
+      zone2Btn.setAttribute("aria-pressed", "false");
+      console.log("🎵 Zona 1 ativada");
     } else {
-      zone2Btn.classList.add('music-zone-btn--active');
-      zone2Btn.setAttribute('aria-pressed', 'true');
-      zone1Btn.classList.remove('music-zone-btn--active');
-      zone1Btn.setAttribute('aria-pressed', 'false');
-      console.log('🎵 Zona 2 ativada');
+      zone2Btn.classList.add("music-zone-btn--active");
+      zone2Btn.setAttribute("aria-pressed", "true");
+      zone1Btn.classList.remove("music-zone-btn--active");
+      zone1Btn.setAttribute("aria-pressed", "false");
+      console.log("🎵 Zona 2 ativada");
     }
   }
 
   function setMuted(muted) {
     isMuted = muted;
-    muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
-    volumeSection.setAttribute('data-muted', muted ? 'true' : 'false');
-    
+    muteBtn.setAttribute("aria-pressed", muted ? "true" : "false");
+    volumeSection.setAttribute("data-muted", muted ? "true" : "false");
+
     if (volumeIconUnmuted && volumeIconMuted) {
-      volumeIconUnmuted.style.display = muted ? 'none' : 'block';
-      volumeIconMuted.style.display = muted ? 'block' : 'none';
+      volumeIconUnmuted.style.display = muted ? "none" : "block";
+      volumeIconMuted.style.display = muted ? "block" : "none";
     }
 
     if (muted) {
       volumeBeforeMute = parseInt(volumeSlider.value);
       volumeSlider.value = 0;
-      console.log('🔇 Volume mutado. Volume anterior:', volumeBeforeMute);
+      console.log("🔇 Volume mutado. Volume anterior:", volumeBeforeMute);
       // Atualiza a barra visual para 0% quando mutado
-      if (typeof updateVolumeBar === 'function') updateVolumeBar();
+      if (typeof updateVolumeBar === "function") updateVolumeBar();
     } else {
       volumeSlider.value = volumeBeforeMute;
-      console.log('🔊 Volume desmutado. Volume restaurado:', volumeBeforeMute);
+      console.log("🔊 Volume desmutado. Volume restaurado:", volumeBeforeMute);
       // Atualiza a barra visual para o valor restaurado
-      if (typeof updateVolumeBar === 'function') updateVolumeBar();
+      if (typeof updateVolumeBar === "function") updateVolumeBar();
     }
   }
 
-  playBtn.addEventListener('click', () => {
-    console.log('▶️ Play clicked');
+  playBtn.addEventListener("click", () => {
+    console.log("▶️ Play clicked");
     setPlaying(true);
   });
 
-  pauseBtn.addEventListener('click', () => {
-    console.log('⏸️ Pause clicked');
+  pauseBtn.addEventListener("click", () => {
+    console.log("⏸️ Pause clicked");
     setPlaying(false);
   });
 
-  nextBtn.addEventListener('click', () => {
-    console.log('⏭️ Next clicked');
+  nextBtn.addEventListener("click", () => {
+    console.log("⏭️ Next clicked");
   });
 
-  prevBtn.addEventListener('click', () => {
-    console.log('⏮️ Previous clicked');
+  prevBtn.addEventListener("click", () => {
+    console.log("⏮️ Previous clicked");
   });
 
   if (zone1Btn && zone2Btn) {
-    console.log('🎵 Configurando event listeners das zonas');
-    zone1Btn.addEventListener('click', (e) => {
-      console.log('🎵 Zona 1 clicada');
+    console.log("🎵 Configurando event listeners das zonas");
+    zone1Btn.addEventListener("click", (e) => {
+      console.log("🎵 Zona 1 clicada");
       e.preventDefault();
       setZone(1);
     });
 
-    zone2Btn.addEventListener('click', (e) => {
-      console.log('🎵 Zona 2 clicada');
+    zone2Btn.addEventListener("click", (e) => {
+      console.log("🎵 Zona 2 clicada");
       e.preventDefault();
       setZone(2);
     });
   } else {
-    console.warn('⚠️ Botões de zona não encontrados');
+    console.warn("⚠️ Botões de zona não encontrados");
   }
 
   // Controle de volume
   if (muteBtn && volumeSlider) {
-    muteBtn.addEventListener('click', () => {
+    muteBtn.addEventListener("click", () => {
       setMuted(!isMuted);
     });
 
@@ -3494,53 +3621,53 @@ function initMusicPlayerUI() {
     function updateVolumeBar() {
       const value = parseInt(volumeSlider.value);
       const percent = (value / 100) * 100;
-      volumeSlider.style.setProperty('--volume-percent', percent + '%');
-      console.log('🔊 Volume ajustado para:', value, '% -', percent + '%');
+      volumeSlider.style.setProperty("--volume-percent", percent + "%");
+      console.log("🔊 Volume ajustado para:", value, "% -", percent + "%");
     }
 
     // Event listener para input (arrastar o slider)
-    volumeSlider.addEventListener('input', (e) => {
+    volumeSlider.addEventListener("input", (e) => {
       updateVolumeBar();
     });
 
     // Event listener para change (quando solta o slider)
-    volumeSlider.addEventListener('change', (e) => {
+    volumeSlider.addEventListener("change", (e) => {
       updateVolumeBar();
       const value = e.target.value;
-      console.log('🔊 Volume finalizado em:', value);
+      console.log("🔊 Volume finalizado em:", value);
     });
 
     // Garantir que o slider seja interativo
-    volumeSlider.style.pointerEvents = 'auto';
-    
+    volumeSlider.style.pointerEvents = "auto";
+
     // Inicializar a barra com o valor padrão
     updateVolumeBar();
-    
-    console.log('🎵 Slider de volume configurado:', volumeSlider);
+
+    console.log("🎵 Slider de volume configurado:", volumeSlider);
   } else {
-    console.warn('⚠️ Botão mute ou slider não encontrados');
+    console.warn("⚠️ Botão mute ou slider não encontrados");
   }
 
   // Controle master On/Off
   function setMasterPower(powerOn) {
     isPowerOn = powerOn;
-    
+
     if (powerOn) {
-      masterOnBtn.classList.add('music-master-btn--active');
-      masterOnBtn.setAttribute('aria-pressed', 'true');
-      masterOffBtn.classList.remove('music-master-btn--active');
-      masterOffBtn.setAttribute('aria-pressed', 'false');
-      playerInner.classList.remove('power-off');
-      console.log('⚡ Player ligado');
+      masterOnBtn.classList.add("music-master-btn--active");
+      masterOnBtn.setAttribute("aria-pressed", "true");
+      masterOffBtn.classList.remove("music-master-btn--active");
+      masterOffBtn.setAttribute("aria-pressed", "false");
+      playerInner.classList.remove("power-off");
+      console.log("⚡ Player ligado");
       // Restaurar estado de mute que havia antes do power-off
       setMuted(previousMutedState);
     } else {
-      masterOffBtn.classList.add('music-master-btn--active');
-      masterOffBtn.setAttribute('aria-pressed', 'true');
-      masterOnBtn.classList.remove('music-master-btn--active');
-      masterOnBtn.setAttribute('aria-pressed', 'false');
-      playerInner.classList.add('power-off');
-      console.log('⚫ Player desligado');
+      masterOffBtn.classList.add("music-master-btn--active");
+      masterOffBtn.setAttribute("aria-pressed", "true");
+      masterOnBtn.classList.remove("music-master-btn--active");
+      masterOnBtn.setAttribute("aria-pressed", "false");
+      playerInner.classList.add("power-off");
+      console.log("⚫ Player desligado");
       // Salvar estado atual de mute e forçar mute enquanto estiver desligado
       previousMutedState = isMuted;
       setMuted(true);
@@ -3548,13 +3675,13 @@ function initMusicPlayerUI() {
   }
 
   if (masterOnBtn && masterOffBtn && playerInner) {
-    masterOnBtn.addEventListener('click', () => {
+    masterOnBtn.addEventListener("click", () => {
       if (!isPowerOn) {
         setMasterPower(true);
       }
     });
 
-    masterOffBtn.addEventListener('click', () => {
+    masterOffBtn.addEventListener("click", () => {
       if (isPowerOn) {
         setMasterPower(false);
       }
@@ -3564,11 +3691,18 @@ function initMusicPlayerUI() {
   // initialize
   setPlaying(false);
   setMasterPower(true); // Iniciar com o player ligado
-  console.log('🎵 Player de música inicializado');
+  
+  // Buscar metadados iniciais do Denon
+  updateDenonMetadata();
+  
+  // Iniciar polling de metadados
+  startMusicMetadataPolling();
+  
+  console.log("🎵 Player de música inicializado");
 }
 
 // Initialize when SPA navigation might insert the music page
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   setTimeout(initMusicPlayerUI, 100);
 });
 

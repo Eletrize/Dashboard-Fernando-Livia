@@ -1221,7 +1221,9 @@ div {
   flex-direction: column;
 }
 
-.ambiente1-musica-page .ambiente1-musica-wrapper .control-card.control-card--full-width {
+.ambiente1-musica-page
+  .ambiente1-musica-wrapper
+  .control-card.control-card--full-width {
   margin-top: 10px; /* distância de 10px da linha branca superior */
   width: 100%;
   flex: 1 1 auto; /* permitir que o card cresça para preencher o wrapper */
@@ -1386,7 +1388,9 @@ div {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.tv-btn-icon-small img { pointer-events: none; }
+.tv-btn-icon-small img {
+  pointer-events: none;
+}
 
 .tv-btn-icon-small[aria-pressed="true"] {
   transform: scale(0.98);
@@ -1491,7 +1495,13 @@ div {
 .music-volume-slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 6px;
-  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) 100%);
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #ffffff var(--volume-percent, 50%),
+    rgba(255, 255, 255, 0.25) var(--volume-percent, 50%),
+    rgba(255, 255, 255, 0.25) 100%
+  );
   border-radius: 3px;
   cursor: pointer;
   border: none;
@@ -1528,7 +1538,13 @@ div {
 .music-volume-slider::-moz-range-track {
   width: 100%;
   height: 6px;
-  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) 100%);
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #ffffff var(--volume-percent, 50%),
+    rgba(255, 255, 255, 0.25) var(--volume-percent, 50%),
+    rgba(255, 255, 255, 0.25) 100%
+  );
   border-radius: 3px;
   cursor: pointer;
   border: none;
@@ -1561,7 +1577,13 @@ div {
 .music-volume-slider::-ms-track {
   width: 100%;
   height: 6px;
-  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) var(--volume-percent, 50%), rgba(255, 255, 255, 0.25) 100%);
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #ffffff var(--volume-percent, 50%),
+    rgba(255, 255, 255, 0.25) var(--volume-percent, 50%),
+    rgba(255, 255, 255, 0.25) 100%
+  );
   border-color: transparent;
   color: transparent;
   cursor: pointer;
@@ -1628,7 +1650,7 @@ div {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: #fff;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 2px;
@@ -1650,13 +1672,13 @@ div {
   background: rgba(76, 175, 80, 0.2);
   border-color: rgba(76, 175, 80, 0.5);
   box-shadow: 0 0 20px rgba(76, 175, 80, 0.3),
-              inset 0 0 15px rgba(76, 175, 80, 0.1);
-  color: #4CAF50;
+    inset 0 0 15px rgba(76, 175, 80, 0.1);
+  color: #4caf50;
 }
 
 .music-master-btn--on.music-master-btn--active:hover {
   box-shadow: 0 0 25px rgba(76, 175, 80, 0.4),
-              inset 0 0 20px rgba(76, 175, 80, 0.15);
+    inset 0 0 20px rgba(76, 175, 80, 0.15);
 }
 
 /* Botão OFF - Vermelho quando ativo */
@@ -1664,13 +1686,13 @@ div {
   background: rgba(244, 67, 54, 0.2);
   border-color: rgba(244, 67, 54, 0.5);
   box-shadow: 0 0 20px rgba(244, 67, 54, 0.3),
-              inset 0 0 15px rgba(244, 67, 54, 0.1);
-  color: #F44336;
+    inset 0 0 15px rgba(244, 67, 54, 0.1);
+  color: #f44336;
 }
 
 .music-master-btn--off.music-master-btn--active:hover {
   box-shadow: 0 0 25px rgba(244, 67, 54, 0.4),
-              inset 0 0 20px rgba(244, 67, 54, 0.15);
+    inset 0 0 20px rgba(244, 67, 54, 0.15);
 }
 
 /* Estado apagado quando OFF está ativo */
