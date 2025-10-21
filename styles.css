@@ -1209,10 +1209,15 @@ div {
   bottom: 90px; /* altura da navbar fixa */
   padding: 10px 16px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .ambiente1-musica-page .ambiente1-musica-wrapper .control-card.control-card--full-width {
   margin-top: 10px; /* distância de 10px da linha branca superior */
+  width: 100%;
+  flex: 1 1 auto; /* permitir que o card cresça para preencher o wrapper */
+  min-height: 0; /* permitir que o flex item encolha corretamente */
 }
 
 
