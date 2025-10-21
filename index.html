@@ -661,6 +661,19 @@
             </button>
           </div>
         </div>
+
+        <div class="music-volume-section">
+          <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false">
+            <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
+            <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
+          </button>
+          <div class="music-volume-slider-container">
+            <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume">
+            <div class="music-volume-track"></div>
+            <div class="music-volume-fill" style="width: 50%;"></div>
+            <div class="music-volume-thumb" style="left: 50%;"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

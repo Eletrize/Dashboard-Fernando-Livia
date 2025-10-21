@@ -1151,6 +1151,14 @@ div {
     var(--glass-inner-bottom);
 }
 
+/* Desabilitar hover do control-card no music-player-card para evitar interferência com botões de zona */
+.music-player-card:hover {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner-top),
+    var(--glass-inner-bottom);
+}
+
 /* AparÃªncia de pressionado quando ligado */
 .control-card[data-state="on"] {
   transform: translateY(2px);
@@ -1333,7 +1341,7 @@ div {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
+  border-radius: 8px;
   width: 52px;
   height: 52px;
   display: flex;
@@ -1342,12 +1350,12 @@ div {
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 0 8px;
+  margin: 0 2px;
 }
 
 .music-player-card .tv-btn-icon-small img {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   opacity: 1;
   filter: brightness(0) invert(1);
   pointer-events: none;
@@ -1375,6 +1383,172 @@ div {
   opacity: 0.95;
 }
 
+/* === CONTROLE DE VOLUME === */
+.music-volume-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+  padding: 0 10px;
+}
+
+.music-volume-mute-btn {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.music-volume-mute-btn img {
+  width: 24px;
+  height: 24px;
+  opacity: 1;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.2s ease;
+}
+
+.music-volume-mute-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.music-volume-mute-btn:active {
+  transform: scale(0.95);
+}
+
+.music-volume-mute-btn[aria-pressed="true"] {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.music-volume-mute-btn[aria-pressed="true"]:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.music-volume-slider-container {
+  flex: 1;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 0 16px;
+}
+
+.music-volume-track {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.music-volume-fill {
+  position: absolute;
+  left: 16px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  pointer-events: none;
+  transition: width 0.1s ease;
+}
+
+.music-volume-thumb {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: left 0.1s ease;
+}
+
+.music-volume-slider {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
+  height: 52px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.music-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.music-volume-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+}
+
+.music-volume-slider:focus {
+  outline: none;
+}
+
+.music-volume-slider:hover ~ .music-volume-thumb {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.music-volume-slider:active ~ .music-volume-thumb {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.music-volume-slider-container:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Estado mutado */
+.music-volume-section[data-muted="true"] .music-volume-slider-container {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.music-volume-section[data-muted="true"] .music-volume-fill {
+  background: rgba(239, 68, 68, 0.6);
+}
+
+.music-volume-section[data-muted="true"] .music-volume-thumb {
+  background: rgba(239, 68, 68, 0.9);
+}
 
 /* === DISPLAY DE TEMPERATURA === */
 .ac-temperature-section {

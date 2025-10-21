@@ -3376,6 +3376,13 @@ function initMusicPlayerUI() {
   const prevBtn = document.getElementById('music-prev');
   const zone1Btn = document.getElementById('music-zone-1');
   const zone2Btn = document.getElementById('music-zone-2');
+  const muteBtn = document.getElementById('music-mute');
+  const volumeSlider = document.getElementById('music-volume-slider');
+  const volumeFill = document.querySelector('.music-volume-fill');
+  const volumeThumb = document.querySelector('.music-volume-thumb');
+  const volumeSection = document.querySelector('.music-volume-section');
+  const volumeIconUnmuted = document.querySelector('.volume-icon-unmuted');
+  const volumeIconMuted = document.querySelector('.volume-icon-muted');
 
   console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn });
 
@@ -3383,6 +3390,10 @@ function initMusicPlayerUI() {
     console.warn('⚠️ Botões de controle não encontrados');
     return;
   }
+
+  // Estado do volume
+  let isMuted = false;
+  let volumeBeforeMute = 50;
 
   function setPlaying(isPlaying) {
     playBtn.disabled = isPlaying;
@@ -3405,6 +3416,34 @@ function initMusicPlayerUI() {
       zone1Btn.classList.remove('music-zone-btn--active');
       zone1Btn.setAttribute('aria-pressed', 'false');
       console.log('🎵 Zona 2 ativada');
+    }
+  }
+
+  function updateVolumeUI(value) {
+    const percentage = value;
+    if (volumeFill) volumeFill.style.width = percentage + '%';
+    if (volumeThumb) volumeThumb.style.left = percentage + '%';
+  }
+
+  function setMuted(muted) {
+    isMuted = muted;
+    muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    volumeSection.setAttribute('data-muted', muted ? 'true' : 'false');
+    
+    if (volumeIconUnmuted && volumeIconMuted) {
+      volumeIconUnmuted.style.display = muted ? 'none' : 'block';
+      volumeIconMuted.style.display = muted ? 'block' : 'none';
+    }
+
+    if (muted) {
+      volumeBeforeMute = parseInt(volumeSlider.value);
+      volumeSlider.value = 0;
+      updateVolumeUI(0);
+      console.log('🔇 Volume mutado. Volume anterior:', volumeBeforeMute);
+    } else {
+      volumeSlider.value = volumeBeforeMute;
+      updateVolumeUI(volumeBeforeMute);
+      console.log('🔊 Volume desmutado. Volume restaurado:', volumeBeforeMute);
     }
   }
 
@@ -3441,6 +3480,24 @@ function initMusicPlayerUI() {
     });
   } else {
     console.warn('⚠️ Botões de zona não encontrados');
+  }
+
+  // Controle de volume
+  if (muteBtn && volumeSlider) {
+    muteBtn.addEventListener('click', () => {
+      setMuted(!isMuted);
+    });
+
+    volumeSlider.addEventListener('input', (e) => {
+      if (!isMuted) {
+        const value = e.target.value;
+        updateVolumeUI(value);
+        console.log('🔊 Volume ajustado para:', value);
+      }
+    });
+
+    // Inicializar volume
+    updateVolumeUI(50);
   }
 
   // initialize
