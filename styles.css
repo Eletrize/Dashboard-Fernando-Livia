@@ -1338,9 +1338,10 @@ div {
 .music-player-card .tv-playback-controls {
   display: flex;
   width: 100%;
-  gap: 2px;
+  gap: 12px; /* same gap as volume section */
   padding: 0 10px;
   box-sizing: border-box;
+  justify-content: center;
 }
 
 /* Estilos específicos para os botões de música */
@@ -1350,7 +1351,7 @@ div {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  flex: 1;
+  flex: 0 0 48px; /* fixed lateral width to match volume module */
   height: 52px;
   display: flex;
   align-items: center;
