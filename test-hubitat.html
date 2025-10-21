@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Hubitat API</title>
+</head>
+<body>
+    <h1>Test Direct Hubitat API</h1>
+    <button onclick="testDirect()">Test Direct Hubitat URL</button>
+    <button onclick="testPolling()">Test /polling Function</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testDirect() {
+            const result = document.getElementById('result');
+            result.textContent = 'Fetching direct from Hubitat...';
+            
+            try {
+                const url = 'https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0';
+                const response = await fetch(url);
+                const text = await response.text();
+                
+                result.textContent = `Status: ${response.status}\n`;
+                result.textContent += `Content-Type: ${response.headers.get('content-type')}\n\n`;
+                result.textContent += `Response (first 1000 chars):\n${text.substring(0, 1000)}`;
+                
+                // Try to parse as JSON
+                try {
+                    const json = JSON.parse(text);
+                    result.textContent += `\n\n✅ Valid JSON! ${Array.isArray(json) ? json.length : 0} devices`;
+                } catch (e) {
+                    result.textContent += `\n\n❌ Not valid JSON: ${e.message}`;
+                }
+            } catch (error) {
+                result.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function testPolling() {
+            const result = document.getElementById('result');
+            result.textContent = 'Fetching from /polling...';
+            
+            try {
+                const response = await fetch('/polling?full=1');
+                const text = await response.text();
+                
+                result.textContent = `Status: ${response.status}\n`;
+                result.textContent += `Content-Type: ${response.headers.get('content-type')}\n\n`;
+                result.textContent += `Response (first 1000 chars):\n${text.substring(0, 1000)}`;
+                
+                // Try to parse as JSON
+                try {
+                    const json = JSON.parse(text);
+                    result.textContent += `\n\n✅ Valid JSON!`;
+                    result.textContent += `\nData: ${JSON.stringify(json, null, 2).substring(0, 500)}`;
+                } catch (e) {
+                    result.textContent += `\n\n❌ Not valid JSON: ${e.message}`;
+                }
+            } catch (error) {
+                result.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
