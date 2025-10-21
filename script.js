@@ -3469,11 +3469,29 @@ function updateDenonMetadata() {
           album = albumAttr?.currentValue || albumAttr?.value || album;
           albumArt = albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
         } else if (denonDevice.attributes && typeof denonDevice.attributes === 'object') {
-          // Formato objeto: {artist: "...", trackDescription: "...", ...}
-          artist = denonDevice.attributes.artist || denonDevice.attributes.trackArtist || artist;
-          track = denonDevice.attributes.trackDescription || denonDevice.attributes.track || track;
-          album = denonDevice.attributes.albumName || denonDevice.attributes.album || album;
-          albumArt = denonDevice.attributes.albumArtUrl || denonDevice.attributes.albumArtURI || albumArt;
+          // Formato objeto: {artist: "...", trackDescription: "...", track: "...", album: "...", ...}
+          artist = denonDevice.attributes.artist || artist;
+          track = denonDevice.attributes.track || track;
+          album = denonDevice.attributes.album || album;
+          
+          // Para albumArt, verificar se existe albumArt com tag HTML ou extrair do trackData JSON
+          if (denonDevice.attributes.albumArt && typeof denonDevice.attributes.albumArt === 'string') {
+            // Extrair URL da tag <img src='...'> se for HTML
+            const imgMatch = denonDevice.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);
+            albumArt = imgMatch ? imgMatch[1] : null;
+          }
+          
+          // Se não encontrou albumArt, tentar extrair do trackData JSON
+          if (!albumArt && denonDevice.attributes.trackData) {
+            try {
+              const trackData = typeof denonDevice.attributes.trackData === 'string' 
+                ? JSON.parse(denonDevice.attributes.trackData) 
+                : denonDevice.attributes.trackData;
+              albumArt = trackData.image_url || null;
+            } catch (e) {
+              console.warn("⚠️ Erro ao parsear trackData:", e);
+            }
+          }
         }
         
         console.log("🎵 Metadados extraídos:", { artist, track, album, albumArt });
@@ -3643,22 +3661,42 @@ function initMusicPlayerUI() {
     }
   }
 
+  // Device IDs
+  const DENON_CMD_DEVICE_ID = "322"; // Denon AVR - comandos de volume, mute, power
+  const DENON_MUSIC_DEVICE_ID = "326"; // Denon AVR-S770H HEOS - controles de música
+
   playBtn.addEventListener("click", () => {
-    console.log("▶️ Play clicked");
-    setPlaying(true);
+    console.log("▶️ Play clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "play")
+      .then(() => {
+        console.log("✅ Comando play enviado com sucesso");
+        setPlaying(true);
+      })
+      .catch(err => console.error("❌ Erro ao enviar comando play:", err));
   });
 
   pauseBtn.addEventListener("click", () => {
-    console.log("⏸️ Pause clicked");
-    setPlaying(false);
+    console.log("⏸️ Pause clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "pause")
+      .then(() => {
+        console.log("✅ Comando pause enviado com sucesso");
+        setPlaying(false);
+      })
+      .catch(err => console.error("❌ Erro ao enviar comando pause:", err));
   });
 
   nextBtn.addEventListener("click", () => {
-    console.log("⏭️ Next clicked");
+    console.log("⏭️ Next clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "nextTrack")
+      .then(() => console.log("✅ Comando nextTrack enviado com sucesso"))
+      .catch(err => console.error("❌ Erro ao enviar comando nextTrack:", err));
   });
 
   prevBtn.addEventListener("click", () => {
-    console.log("⏮️ Previous clicked");
+    console.log("⏮️ Previous clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "previousTrack")
+      .then(() => console.log("✅ Comando previousTrack enviado com sucesso"))
+      .catch(err => console.error("❌ Erro ao enviar comando previousTrack:", err));
   });
 
   if (zone1Btn && zone2Btn) {
@@ -3681,7 +3719,16 @@ function initMusicPlayerUI() {
   // Controle de volume
   if (muteBtn && volumeSlider) {
     muteBtn.addEventListener("click", () => {
-      setMuted(!isMuted);
+      const newMutedState = !isMuted;
+      const command = newMutedState ? "mute" : "unmute";
+      console.log(`🔇 Mute button clicked - enviando comando "${command}" para device ${DENON_CMD_DEVICE_ID}`);
+      
+      sendHubitatCommand(DENON_CMD_DEVICE_ID, command)
+        .then(() => {
+          console.log(`✅ Comando ${command} enviado com sucesso`);
+          setMuted(newMutedState);
+        })
+        .catch(err => console.error(`❌ Erro ao enviar comando ${command}:`, err));
     });
 
     // Função para atualizar a barra de volume
@@ -3715,12 +3762,11 @@ function initMusicPlayerUI() {
 
       musicSlider.addEventListener('change', (e) => {
         const value = e.target.value;
-        const DENON_CMD_ID = '322';
-        console.log(`🔊 Music slider changed -> sending setVolume ${value} to Denon (${DENON_CMD_ID})`);
+        console.log(`🔊 Music slider changed -> sending setVolume ${value} to Denon (${DENON_CMD_DEVICE_ID})`);
         // Mark recent command to prevent polling overwrite
-        recentCommands.set(DENON_CMD_ID, Date.now());
+        recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
         // Send command
-        sendHubitatCommand(DENON_CMD_ID, 'setVolume', value)
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, 'setVolume', value)
           .then(() => console.log('✅ setVolume sent to Denon via music slider'))
           .catch(err => console.error('❌ Error sending setVolume from music slider:', err));
       });
@@ -3766,13 +3812,25 @@ function initMusicPlayerUI() {
   if (masterOnBtn && masterOffBtn && playerInner) {
     masterOnBtn.addEventListener("click", () => {
       if (!isPowerOn) {
-        setMasterPower(true);
+        console.log(`⚡ Power ON clicked - enviando comando "on" para device ${DENON_CMD_DEVICE_ID}`);
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, "on")
+          .then(() => {
+            console.log("✅ Comando on enviado com sucesso");
+            setMasterPower(true);
+          })
+          .catch(err => console.error("❌ Erro ao enviar comando on:", err));
       }
     });
 
     masterOffBtn.addEventListener("click", () => {
       if (isPowerOn) {
-        setMasterPower(false);
+        console.log(`⚫ Power OFF clicked - enviando comando "off" para device ${DENON_CMD_DEVICE_ID}`);
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, "off")
+          .then(() => {
+            console.log("✅ Comando off enviado com sucesso");
+            setMasterPower(false);
+          })
+          .catch(err => console.error("❌ Erro ao enviar comando off:", err));
       }
     });
   }
