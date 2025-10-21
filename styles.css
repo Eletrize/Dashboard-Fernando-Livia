@@ -1331,6 +1331,14 @@ div {
   width: 100%;
   display: flex;
   justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.music-player-card .tv-playback-controls {
+  display: flex;
+  width: 100%;
+  gap: 2px;
   padding: 0 10px;
   box-sizing: border-box;
 }
@@ -1350,7 +1358,7 @@ div {
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 0 1px;
+  margin: 0;
 }
 
 .music-player-card .tv-btn-icon-small img {
@@ -1391,6 +1399,7 @@ div {
   gap: 12px;
   margin-top: 15px;
   padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .music-volume-mute-btn {
@@ -1446,88 +1455,126 @@ div {
   height: 52px;
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  padding: 0 12px;
+  padding: 0 16px;
   box-sizing: border-box;
 }
 
+/* Slider Input - Resetando todos os estilos padrão */
 .music-volume-slider {
-  width: 100%;
-  height: 6px;
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
+  width: 100%;
+  height: 4px;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-  cursor: pointer;
+  border-radius: 2px;
   outline: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
 }
 
-/* Thumb do webkit (Chrome, Safari, Edge) */
+/* Chrome, Safari, Edge - Track */
+.music-volume-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+/* Chrome, Safari, Edge - Thumb */
 .music-volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #fff;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
+  background: #ffffff;
   cursor: grab;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  margin-top: -7px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .music-volume-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .music-volume-slider::-webkit-slider-thumb:active {
-  transform: scale(1.05);
   cursor: grabbing;
+  transform: scale(1.1);
 }
 
-/* Track do webkit */
-.music-volume-slider::-webkit-slider-runnable-track {
+/* Firefox - Track */
+.music-volume-slider::-moz-range-track {
   width: 100%;
-  height: 6px;
+  height: 4px;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
+  border-radius: 2px;
+  cursor: pointer;
   border: none;
 }
 
-/* Thumb do Firefox */
+/* Firefox - Thumb */
 .music-volume-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #fff;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
+  background: #ffffff;
   cursor: grab;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .music-volume-slider::-moz-range-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .music-volume-slider::-moz-range-thumb:active {
-  transform: scale(1.05);
   cursor: grabbing;
+  transform: scale(1.1);
 }
 
-/* Track do Firefox */
-.music-volume-slider::-moz-range-track {
+/* Edge/IE - Track */
+.music-volume-slider::-ms-track {
   width: 100%;
-  height: 6px;
+  height: 4px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+  cursor: pointer;
+}
+
+.music-volume-slider::-ms-fill-lower {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
+  border-radius: 2px;
+}
+
+.music-volume-slider::-ms-fill-upper {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+/* Edge/IE - Thumb */
+.music-volume-slider::-ms-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: grab;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   border: none;
 }
 
@@ -1536,7 +1583,7 @@ div {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* Estado mutado - apenas deabilita interação */
+/* Estado mutado - apenas desabilita interação */
 .music-volume-section[data-muted="true"] .music-volume-slider-container {
   opacity: 0.5;
   pointer-events: none;
