@@ -1,6 +1,6 @@
 ﻿/**
  * Polling function - retorna dados de dispositivos do Hubitat
- * Usa HUBITAT_FULL_URL (obrigatório) que já contém o access_token
+ * URL hardcoded com access_token incluído
  * 
  * Parâmetros de query:
  * - full=1 : retorna o payload completo do Hubitat sem processamento
@@ -8,35 +8,20 @@
  * Retorna sempre JSON válido
  */
 export async function onRequest(context) {
-  const { env, request } = context;
+  const { request } = context;
+  
+  // URL completa do Hubitat Cloud com access token
+  const HUBITAT_URL = "https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0";
   
   // Extrair parâmetro 'full' da URL
   const url = new URL(request.url);
   const wantFull = url.searchParams.get('full') === '1';
 
-  // Validar que HUBITAT_FULL_URL está configurado
-  if (!env.HUBITAT_FULL_URL) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "HUBITAT_FULL_URL não configurado nas variáveis de ambiente"
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "no-cache"
-        }
-      }
-    );
-  }
-
   try {
-    console.log("📡 [Polling] Requisitando:", env.HUBITAT_FULL_URL);
+    console.log("📡 [Polling] Requisitando:", HUBITAT_URL);
 
     // Fazer request ao Hubitat
-    const response = await fetch(env.HUBITAT_FULL_URL, {
+    const response = await fetch(HUBITAT_URL, {
       method: "GET",
       headers: {
         "Accept": "application/json"
