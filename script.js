@@ -2081,7 +2081,7 @@ async function updateDeviceStatesFromServer() {
 
         devicesMap[d.id] = { state, success: true };
 
-        // Se for o Denon AVR (ID 322), também capturar o volume e metadados
+  // Se for o Denon AVR (ID 322), também capturar o volume (comandos) - metadados virão do dispositivo 326
         if (d.id === "322") {
           console.log("🔊 DEBUG Denon encontrado:", {
             id: d.id,
@@ -3411,10 +3411,12 @@ function updateDenonMetadata() {
     .then(data => {
       console.log("🎵 Resposta completa do Hubitat:", data);
       
-      // Procurar o Denon AVR (ID 322) nos dados
+  // Procurar o Denon AVR pelos metadados (ID 326) nos dados
       // O formato pode ser um array direto ou um objeto com propriedade devices
       const devices = Array.isArray(data) ? data : (data.devices || []);
-      const denonDevice = devices.find(device => device.id === "322" || device.id === 322);
+  // O ID do dispositivo que fornece metadados do Denon é 326
+  const DENON_METADATA_DEVICE_ID = "326";
+  const denonDevice = devices.find(device => device.id === DENON_METADATA_DEVICE_ID || device.id === parseInt(DENON_METADATA_DEVICE_ID, 10));
       
       if (denonDevice) {
         console.log("🎵 Denon encontrado:", denonDevice);
@@ -3451,7 +3453,7 @@ function updateDenonMetadata() {
         // Atualizar UI
         updateMusicPlayerUI(artist, track, album, albumArt);
       } else {
-        console.log("⚠️ Denon AVR (ID 322) não encontrado nos dados");
+  console.log("⚠️ Denon AVR (ID 326) (metadados) não encontrado nos dados");
         console.log("Dispositivos disponíveis:", devices.map(d => ({ id: d.id, name: d.name || d.label })));
       }
     })
