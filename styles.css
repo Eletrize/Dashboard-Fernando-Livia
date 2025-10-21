@@ -1270,14 +1270,6 @@ div {
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
 }
 
-.music-player-card .music-album-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
 .music-player-card .music-album {
   width: calc(100% - 40px); /* 20px margins on each side */
   max-width: calc(100% - 40px);
@@ -1285,6 +1277,7 @@ div {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--glass-shadow);
+  margin-bottom: 15px;
 }
 
 .music-player-card .music-album-img {
@@ -1297,7 +1290,7 @@ div {
 .music-player-card .music-info {
   text-align: center;
   padding: 0;
-  margin-top: 15px;
+  margin-bottom: 20px;
 }
 
 .music-player-card .music-track {
@@ -1316,7 +1309,47 @@ div {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+}
+
+/* Estilos específicos para os botões de música */
+.music-player-card .tv-btn-icon-small {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 8px;
+}
+
+.music-player-card .tv-btn-icon-small img {
+  width: 20px;
+  height: 20px;
+  opacity: 1;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+}
+
+.music-player-card .tv-btn-icon-small:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.music-player-card .tv-btn-icon-small:active {
+  transform: scale(0.95);
+}
+
+.music-player-card .tv-btn-icon-small[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .tv-btn-icon-small img { pointer-events: none; }

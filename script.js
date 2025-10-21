@@ -3377,7 +3377,12 @@ function initMusicPlayerUI() {
   const zone1Btn = document.getElementById('music-zone-1');
   const zone2Btn = document.getElementById('music-zone-2');
 
-  if (!playBtn || !pauseBtn || !nextBtn || !prevBtn) return;
+  console.log('🎵 Inicializando player de música...', { playBtn, pauseBtn, zone1Btn, zone2Btn });
+
+  if (!playBtn || !pauseBtn || !nextBtn || !prevBtn) {
+    console.warn('⚠️ Botões de controle não encontrados');
+    return;
+  }
 
   function setPlaying(isPlaying) {
     playBtn.disabled = isPlaying;
@@ -3387,6 +3392,7 @@ function initMusicPlayerUI() {
   }
 
   function setZone(zoneNum) {
+    console.log('🎵 Alterando zona para:', zoneNum);
     if (zoneNum === 1) {
       zone1Btn.classList.add('music-zone-btn--active');
       zone1Btn.setAttribute('aria-pressed', 'true');
@@ -3420,20 +3426,26 @@ function initMusicPlayerUI() {
     console.log('⏮️ Previous clicked');
   });
 
-  if (zone1Btn) {
-    zone1Btn.addEventListener('click', () => {
+  if (zone1Btn && zone2Btn) {
+    console.log('🎵 Configurando event listeners das zonas');
+    zone1Btn.addEventListener('click', (e) => {
+      console.log('🎵 Zona 1 clicada');
+      e.preventDefault();
       setZone(1);
     });
-  }
 
-  if (zone2Btn) {
-    zone2Btn.addEventListener('click', () => {
+    zone2Btn.addEventListener('click', (e) => {
+      console.log('🎵 Zona 2 clicada');
+      e.preventDefault();
       setZone(2);
     });
+  } else {
+    console.warn('⚠️ Botões de zona não encontrados');
   }
 
   // initialize
   setPlaying(false);
+  console.log('🎵 Player de música inicializado');
 }
 
 // Initialize when SPA navigation might insert the music page
