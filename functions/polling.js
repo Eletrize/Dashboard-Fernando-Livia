@@ -39,10 +39,26 @@ export async function onRequest(context) {
     const response = await fetch(url, {
       cf: { cacheTtl: 0, cacheEverything: false },
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const raw = await response.json();
-  console.log("📡 Dados recebidos do Hubitat", Array.isArray(raw) ? `(${raw.length} dispositivos)` : "(raw)", raw);
+    // IMPORTANT: Read response text FIRST before trying JSON parsing
+    // This prevents the stream from being consumed twice
+    const rawText = await response.text();
+    
+    if (!response.ok) {
+      console.error(`❌ HTTP ${response.status} - Response:`, rawText.substring(0, 500));
+      throw new Error(`HTTP ${response.status}: ${rawText.substring(0, 200)}`);
+    }
+
+    // Try to parse JSON from the text
+    let raw;
+    try {
+      raw = JSON.parse(rawText);
+    } catch (jsonError) {
+      console.error("❌ Invalid JSON response from Hubitat:", rawText.substring(0, 500));
+      throw new Error(`Invalid JSON from Hubitat: ${rawText.substring(0, 200)}`);
+    }
+
+    console.log("📡 Dados recebidos do Hubitat", Array.isArray(raw) ? `(${raw.length} dispositivos)` : "(raw)", raw);
 
     // If the client asked for the full payload, return it as-is
     if (wantFull) {
