@@ -3,6 +3,8 @@
 // { success:true, source:'hubitat', deviceCount:n, data:[ { id, attributes:{switch:'on', volume:50, ...} }, ... ] }
 export async function onRequest(context) {
   const { env } = context;
+  const urlObj = new URL(context.request.url);
+  const wantFull = urlObj.searchParams.get('full') === '1' || urlObj.searchParams.get('full') === 'true';
 
   // Priorizar HUBITAT_FULL_URL se existir, senão usar BASE_URL + TOKEN
   let url;
@@ -40,9 +42,17 @@ export async function onRequest(context) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const raw = await response.json();
-    console.log("📡 Dados recebidos do Hubitat:", raw.length, "dispositivos");
+  console.log("📡 Dados recebidos do Hubitat", Array.isArray(raw) ? `(${raw.length} dispositivos)` : "(raw)", raw);
 
-    // Garantir que é array
+    // If the client asked for the full payload, return it as-is
+    if (wantFull) {
+      return new Response(JSON.stringify({ success: true, source: 'hubitat', full: true, payload: raw }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+
+    // Garantir que é array para o response padrão
     const list = Array.isArray(raw) ? raw : [];
 
     // Log detalhado dos primeiros dispositivos para debug
