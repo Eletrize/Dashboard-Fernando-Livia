@@ -5,6 +5,20 @@
 </head>
 <body>
     <h1>Test Hubitat API</h1>
+    <p><strong>Por que não podemos testar direto do navegador:</strong></p>
+    <ul>
+        <li>Seu app roda em <code>dashboard-fernando-livia.pages.dev</code></li>
+        <li>A API do Hubitat está em <code>cloud.hubitat.com</code></li>
+        <li>CORS bloqueia requisições entre domínios diferentes</li>
+        <li>Por isso usamos Cloudflare Functions como proxy</li>
+    </ul>
+    <p><strong>Arquitetura Atual (Correta):</strong></p>
+    <ol>
+        <li>Navegador → <code>/polling</code> (mesmo domínio ✅)</li>
+        <li>Cloudflare Function → <code>cloud.hubitat.com</code> (servidor para servidor ✅)</li>
+        <li>Cloudflare Function → Navegador (resposta JSON ✅)</li>
+    </ol>
+    <p><strong>Por que funciona:</strong> As Cloudflare Functions rodam no servidor, não no navegador, então não têm restrições de CORS.</p>
     <button onclick="testPolling()">Test /polling Function</button>
     <button onclick="testDenonMetadata()">Test Denon Metadata Extraction</button>
     <pre id="result"></pre>
