@@ -83,13 +83,13 @@ wrangler pages secret put HUBITAT_ACCESS_TOKEN
 
 ## ✅ Como Funciona
 
-### Função de Polling (`/functions/polling`)
+### Função de Polling (`/polling`)
 
 - **Prioridade 1**: Usa `HUBITAT_FULL_URL` se existir
 - **Prioridade 2**: Usa `HUBITAT_BASE_URL/devices/all?access_token=HUBITAT_ACCESS_TOKEN`
 - **Resultado**: Retorna JSON completo com todos os atributos dos dispositivos (incluindo volume do Denon)
 
-### Função de Comandos (`/functions/hubitat-proxy`)
+### Função de Comandos (`/hubitat-proxy`)
 
 - Usa `HUBITAT_BASE_URL/devices/{deviceId}/{command}/{value}?access_token=HUBITAT_ACCESS_TOKEN`
 - **Exemplo**: Para definir volume 50 no Denon (ID 322):
@@ -104,7 +104,7 @@ wrangler pages secret put HUBITAT_ACCESS_TOKEN
 Acesse no navegador:
 
 ```
-https://seu-site.pages.dev/functions/polling
+https://seu-site.pages.dev/polling
 ```
 
 Deve retornar JSON com:
@@ -135,7 +135,7 @@ Deve retornar JSON com:
 Acesse no navegador:
 
 ```
-https://seu-site.pages.dev/functions/hubitat-proxy?device=322&command=setVolume&value=50
+https://seu-site.pages.dev/hubitat-proxy?device=322&command=setVolume&value=50
 ```
 
 ---

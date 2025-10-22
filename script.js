@@ -3383,7 +3383,7 @@ window.debugEletrize = {
   testMobileApi: async () => {
     console.log("🧪 Testando APIs para mobile...");
     try {
-      const testUrl = isProduction ? "/functions/polling?devices=366" : "#test";
+      const testUrl = isProduction ? `${POLLING_URL}?devices=366` : "#test";
       // Configurar timeout compatível
       const fetchConfig = {
         method: "GET",
@@ -3414,7 +3414,7 @@ function updateDenonMetadata() {
   
   // Pedir ao Cloudflare function para retornar o JSON completo do Hubitat
   // (a function usa a variável HUBITAT_FULL_URL do ambiente quando configurada)
-  fetch('/functions/polling?full=1')
+  fetch(`${POLLING_URL}?full=1`)
     .then(async response => {
       if (!response.ok) {
         const text = await response.text().catch(() => '<no body>');
@@ -3505,11 +3505,11 @@ function updateDenonMetadata() {
     })
     .catch(error => {
       console.error("❌ Erro ao buscar metadados do Denon:", error);
-      // Tentar logar a resposta bruta para debug adicional via /functions/polling
-      fetch('/functions/polling?full=1')
+      // Tentar logar a resposta bruta para debug adicional via endpoint de polling
+      fetch(`${POLLING_URL}?full=1`)
         .then(res => res.text())
         .then(t => console.log('Raw polling response (debug):', t))
-        .catch(e => console.warn('Não foi possível obter resposta bruta de /functions/polling:', e));
+        .catch(e => console.warn('Não foi possível obter resposta bruta de /polling:', e));
     });
 }
 
