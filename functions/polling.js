@@ -8,21 +8,46 @@
  * Retorna sempre JSON válido
  */
 export async function onRequest(context) {
+  console.log("🚀 [POLLING FUNCTION STARTED] - This should appear in Cloudflare logs");
+
   const { request } = context;
 
   console.log("🚀 [Polling] Function started!");
   console.log("🚀 [Polling] Request URL:", request.url);
   console.log("🚀 [Polling] Request method:", request.method);
+  console.log("🚀 [Polling] User-Agent:", request.headers.get('User-Agent'));
+
+  // TEST: Return a simple response first to verify function is being called
+  const url = new URL(request.url);
+  if (url.searchParams.get("test") === "1") {
+    console.log("🚀 [Polling] Returning test response");
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Polling function is working!",
+        timestamp: new Date().toISOString(),
+        url: request.url
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-cache",
+        },
+      }
+    );
+  }
 
   // URL completa do Hubitat Cloud com access token
   const HUBITAT_URL =
     "https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0";
 
   // Extrair parâmetro 'full' da URL
-  const url = new URL(request.url);
   const wantFull = url.searchParams.get("full") === "1";
 
   console.log("🚀 [Polling] wantFull parameter:", wantFull);
+  console.log("🚀 [Polling] Hubitat URL:", HUBITAT_URL.substring(0, 50) + "...");
 
   try {
     console.log("📡 [Polling] Requisitando:", HUBITAT_URL);
