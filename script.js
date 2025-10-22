@@ -3762,8 +3762,6 @@ function initMusicPlayerUI() {
     : null;
   const nextBtn = document.getElementById("music-next");
   const prevBtn = document.getElementById("music-prev");
-  const zone1Btn = document.getElementById("music-zone-1");
-  const zone2Btn = document.getElementById("music-zone-2");
   const muteBtn = document.getElementById("music-mute");
   const volumeSlider = document.getElementById("music-volume-slider");
   const volumeSection = document.querySelector(".music-volume-section");
@@ -3775,8 +3773,6 @@ function initMusicPlayerUI() {
 
   console.log("🎵 Inicializando player de música...", {
     playToggleBtn,
-    zone1Btn,
-    zone2Btn,
     masterOnBtn,
     masterOffBtn,
   });
@@ -3814,22 +3810,6 @@ function initMusicPlayerUI() {
     playToggleBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Tocar");
     window.musicPlayerUI.currentPlaying = isPlaying;
   }
-
-  function setZone(zoneNum) {
-    console.log("🎵 Alterando zona para:", zoneNum);
-    if (zoneNum === 1) {
-      zone1Btn.classList.add("music-zone-btn--active");
-      zone1Btn.setAttribute("aria-pressed", "true");
-      zone2Btn.classList.remove("music-zone-btn--active");
-      zone2Btn.setAttribute("aria-pressed", "false");
-      console.log("🎵 Zona 1 ativada");
-    } else {
-      zone2Btn.classList.add("music-zone-btn--active");
-      zone2Btn.setAttribute("aria-pressed", "true");
-      zone1Btn.classList.remove("music-zone-btn--active");
-      zone1Btn.setAttribute("aria-pressed", "false");
-      console.log("🎵 Zona 2 ativada");
-    }
   }
 
   function setMuted(muted) {
