@@ -1731,6 +1731,64 @@ safeLog("=== AMBIENTE DETECTADO ===", {
 });
 const HUBITAT_PROXY_URL = "/hubitat-proxy";
 const POLLING_URL = "/polling";
+const TEXT_MOJIBAKE_REGEX = /[\u00C3\u00C2\u00E2\uFFFD]/;
+const UTF8_DECODER =
+  typeof TextDecoder !== "undefined"
+    ? new TextDecoder("utf-8", { fatal: false })
+    : null;
+
+function hasMojibake(str) {
+  return TEXT_MOJIBAKE_REGEX.test(str);
+}
+
+function decodeLatin1ToUtf8(str) {
+  if (!UTF8_DECODER) return null;
+
+  const bytes = new Uint8Array(str.length);
+
+  for (let i = 0; i < str.length; i += 1) {
+    const code = str.charCodeAt(i);
+    if (code > 255) {
+      return null;
+    }
+    bytes[i] = code;
+  }
+
+  try {
+    return UTF8_DECODER.decode(bytes);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function normalizePortugueseText(value) {
+  if (value === null || value === undefined) return value;
+
+  let text = String(value);
+  if (!text.trim()) return text.trim();
+
+  const original = text;
+  text = text.trim();
+
+  if (hasMojibake(text)) {
+    const decoded = decodeLatin1ToUtf8(text);
+    if (decoded && decoded.trim()) {
+      text = decoded.trim();
+    }
+  }
+
+  text = text
+    .replace(/\u00C2\u00A0/g, " ")
+    .replace(/\u00C2(?=[^\w\s])/g, "")
+    .replace(/\u00C2\s/g, " ")
+    .replace(/\uFFFD/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([!?.,;:])/g, "$1")
+    .replace(/([(\[{])\s+/g, "$1")
+    .replace(/\s+([\)\]}])/g, "$1");
+
+  return text || original.trim();
+}
 // (Removido: HUBITAT_DIRECT_URL / HUBITAT_ACCESS_TOKEN do frontend por segurança)
 
 // Função para mostrar erro ao usuário
@@ -3494,7 +3552,10 @@ function updateDenonMetadata() {
           }
         }
         
-        console.log("🎵 Metadados extraídos:", { artist, track, album, albumArt });
+        console.log("?? Metadados extraídos:", { artist, track, album, albumArt });
+        artist = normalizePortugueseText(artist);
+        track = normalizePortugueseText(track);
+        album = normalizePortugueseText(album);
         
         // Atualizar UI
         updateMusicPlayerUI(artist, track, album, albumArt);
@@ -3515,6 +3576,10 @@ function updateDenonMetadata() {
 
 // Função para atualizar a UI do player com os metadados
 function updateMusicPlayerUI(artist, track, album, albumArt) {
+  artist = normalizePortugueseText(artist);
+  track = normalizePortugueseText(track);
+  album = normalizePortugueseText(album);
+
   // Obter elementos do DOM
   const artistElement = document.getElementById('music-artist');
   const trackElement = document.getElementById('music-track');
