@@ -7,6 +7,7 @@
     <h1>Test Direct Hubitat API</h1>
     <button onclick="testDirect()">Test Direct Hubitat URL</button>
     <button onclick="testPolling()">Test /polling Function</button>
+    <button onclick="testDenonMetadata()">Test Denon Metadata Extraction</button>
     <pre id="result"></pre>
 
     <script>
@@ -35,25 +36,70 @@
             }
         }
 
-        async function testPolling() {
+        async function testDenonMetadata() {
             const result = document.getElementById('result');
-            result.textContent = 'Fetching from /polling...';
+            result.textContent = 'Testing Denon metadata extraction...';
             
             try {
                 const response = await fetch('/polling?full=1');
                 const text = await response.text();
                 
-                result.textContent = `Status: ${response.status}\n`;
-                result.textContent += `Content-Type: ${response.headers.get('content-type')}\n\n`;
-                result.textContent += `Response (first 1000 chars):\n${text.substring(0, 1000)}`;
+                result.textContent = `Status: ${response.status}\n\n`;
                 
                 // Try to parse as JSON
                 try {
                     const json = JSON.parse(text);
-                    result.textContent += `\n\n✅ Valid JSON!`;
-                    result.textContent += `\nData: ${JSON.stringify(json, null, 2).substring(0, 500)}`;
+                    result.textContent += `✅ Valid JSON!\n\n`;
+                    
+                    // Find Denon device (ID 326)
+                    const denonDevice = json.find(device => device.id === 326 || device.id === "326");
+                    
+                    if (denonDevice) {
+                        result.textContent += `🎵 Denon device found: ${denonDevice.name} (ID: ${denonDevice.id})\n\n`;
+                        result.textContent += `Atributos disponíveis: ${Object.keys(denonDevice.attributes || {}).join(', ')}\n\n`;
+                        
+                        const attrs = denonDevice.attributes || {};
+                        const trackDataRaw = attrs.trackData || attrs.playbackSource;
+                        
+                        result.textContent += `trackData bruto: ${trackDataRaw}\n\n`;
+                        
+                        // Try to parse trackData
+                        let trackData = null;
+                        if (trackDataRaw) {
+                            try {
+                                trackData = JSON.parse(trackDataRaw);
+                                result.textContent += `✅ trackData parseado:\n${JSON.stringify(trackData, null, 2)}\n\n`;
+                                
+                                // Extract metadata
+                                const artist = trackData.artist || trackData.albumArtist || "Desconhecido";
+                                const song = trackData.song || trackData.title || trackData.track || "Sem título";
+                                const album = trackData.album || trackData.station || "Álbum desconhecido";
+                                const image = trackData.image_url || trackData.albumArt || null;
+                                
+                                result.textContent += `🎵 Metadados extraídos:\n`;
+                                result.textContent += `  Artista: ${artist}\n`;
+                                result.textContent += `  Música: ${song}\n`;
+                                result.textContent += `  Álbum: ${album}\n`;
+                                result.textContent += `  Imagem: ${image}\n`;
+                                
+                            } catch (parseError) {
+                                result.textContent += `❌ Erro ao parsear trackData: ${parseError.message}\n`;
+                            }
+                        } else {
+                            result.textContent += `❌ Nenhum trackData encontrado nos atributos\n`;
+                        }
+                        
+                    } else {
+                        result.textContent += `❌ Denon device (ID 326) não encontrado\n\n`;
+                        result.textContent += `Dispositivos disponíveis:\n`;
+                        json.forEach(device => {
+                            result.textContent += `  - ID ${device.id}: ${device.name}\n`;
+                        });
+                    }
+                    
                 } catch (e) {
-                    result.textContent += `\n\n❌ Not valid JSON: ${e.message}`;
+                    result.textContent += `❌ Not valid JSON: ${e.message}\n\n`;
+                    result.textContent += `Raw response: ${text.substring(0, 500)}`;
                 }
             } catch (error) {
                 result.textContent = `❌ Error: ${error.message}`;
