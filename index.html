@@ -636,45 +636,49 @@
           <button class="music-zone-btn music-zone-btn--active" id="music-zone-1" data-zone="1" aria-pressed="true">Zona 1</button>
           <button class="music-zone-btn" id="music-zone-2" data-zone="2" aria-pressed="false">Zona 2</button>
         </div>
-        <div class="music-album">
-          <img src="images/Images/photo-varanda.jpg" alt="Album art" class="music-album-img" />
-        </div>
+        <div class="music-player-content">
+          <div class="music-primary">
+            <div class="music-album">
+              <img src="images/Images/photo-varanda.jpg" alt="Album art" class="music-album-img" />
+            </div>
 
-        <div class="music-info">
-          <div class="music-track" id="music-track">Nome da Música</div>
-          <div class="music-artist" id="music-artist">Nome do Artista</div>
-        </div>
-
-        <div class="music-controls">
-          <div class="tv-playback-controls">
-            <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
-              <img src="images/icons/icon-previous-track.svg" alt="Prev" style="width:20px;height:20px;">
-            </button>
-            <button class="tv-btn-icon-small" aria-label="Play" id="music-play">
-              <img src="images/icons/icon-play.svg" alt="Play" style="width:20px;height:20px;">
-            </button>
-            <button class="tv-btn-icon-small" aria-label="Pause" id="music-pause">
-              <img src="images/icons/icon-pause.svg" alt="Pause" style="width:20px;height:20px;">
-            </button>
-            <button class="tv-btn-icon-small" aria-label="Next" id="music-next">
-              <img src="images/icons/icon-next-track.svg" alt="Next" style="width:20px;height:20px;">
-            </button>
+            <div class="music-info">
+              <div class="music-track" id="music-track">Nome da Música</div>
+              <div class="music-artist" id="music-artist">Nome do Artista</div>
+            </div>
           </div>
-        </div>
 
-        <div class="music-volume-section">
-          <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false">
-            <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
-            <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
-          </button>
-          <div class="music-volume-slider-container">
-            <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume">
+          <div class="music-secondary">
+            <div class="music-controls">
+              <div class="tv-playback-controls">
+                <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
+                  <img src="images/icons/icon-previous-track.svg" alt="Prev" style="width:20px;height:20px;">
+                </button>
+                <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" id="music-play-toggle" aria-pressed="false">
+                  <img src="images/icons/icon-play.svg" alt="Play" class="music-play-toggle__icon music-play-toggle__icon--play">
+                  <img src="images/icons/icon-pause.svg" alt="Pause" class="music-play-toggle__icon music-play-toggle__icon--pause">
+                </button>
+                <button class="tv-btn-icon-small" aria-label="Next" id="music-next">
+                  <img src="images/icons/icon-next-track.svg" alt="Next" style="width:20px;height:20px;">
+                </button>
+              </div>
+            </div>
+
+            <div class="music-volume-section">
+              <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false">
+                <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
+                <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
+              </button>
+              <div class="music-volume-slider-container">
+                <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume">
+              </div>
+            </div>
+
+            <div class="music-master-controls">
+              <button class="music-master-btn music-master-btn--on music-master-btn--active" id="music-master-on" aria-label="Ligar" aria-pressed="true">ON</button>
+              <button class="music-master-btn music-master-btn--off" id="music-master-off" aria-label="Desligar" aria-pressed="false">OFF</button>
+            </div>
           </div>
-        </div>
-
-        <div class="music-master-controls">
-          <button class="music-master-btn music-master-btn--on music-master-btn--active" id="music-master-on" aria-label="Ligar" aria-pressed="true">ON</button>
-          <button class="music-master-btn music-master-btn--off" id="music-master-off" aria-label="Desligar" aria-pressed="false">OFF</button>
         </div>
       </div>
     </div>

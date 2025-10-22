@@ -1731,7 +1731,24 @@ safeLog("=== AMBIENTE DETECTADO ===", {
 });
 const HUBITAT_PROXY_URL = "/hubitat-proxy";
 const POLLING_URL = "/polling";
+window.musicPlayerUI = window.musicPlayerUI || {};
+
 const TEXT_MOJIBAKE_REGEX = /[\u00C3\u00C2\u00E2\uFFFD]/;
+const TEXT_MOJIBAKE_REPLACEMENTS = [
+  ["\u00e2\u0080\u0099", "’"],
+  ["\u00e2\u0080\u0098", "‘"],
+  ["\u00e2\u0080\u009c", "“"],
+  ["\u00e2\u0080\u009d", "”"],
+  ["\u00e2\u0080\u0093", "–"],
+  ["\u00e2\u0080\u0094", "—"],
+  ["\u00e2\u0080\u00a6", "…"],
+  ["\u00e2\u0080\u00a2", "•"],
+  ["\u00c2\u00ba", "º"],
+  ["\u00c2\u00aa", "ª"],
+  ["\u00c2\u00b0", "°"],
+  ["\u00c2\u00a9", "©"],
+  ["\u00c2\u00ae", "®"],
+];
 const UTF8_DECODER =
   typeof TextDecoder !== "undefined"
     ? new TextDecoder("utf-8", { fatal: false })
@@ -1787,7 +1804,48 @@ function normalizePortugueseText(value) {
     .replace(/([(\[{])\s+/g, "$1")
     .replace(/\s+([\)\]}])/g, "$1");
 
+  TEXT_MOJIBAKE_REPLACEMENTS.forEach(([wrong, right]) => {
+    if (text.includes(wrong)) {
+      text = text.split(wrong).join(right);
+    }
+  });
+
   return text || original.trim();
+}
+
+function interpretPlaybackStatus(value) {
+  if (value === null || value === undefined) return null;
+  const normalized = String(value).toLowerCase();
+
+  if (
+    normalized === "playing" ||
+    normalized === "play" ||
+    normalized === "buffering" ||
+    normalized === "resume" ||
+    normalized === "run" ||
+    normalized === "start" ||
+    normalized === "on"
+  ) {
+    return true;
+  }
+
+  if (
+    normalized === "paused" ||
+    normalized === "pause" ||
+    normalized === "stopped" ||
+    normalized === "stop" ||
+    normalized === "idle" ||
+    normalized === "standby" ||
+    normalized === "off"
+  ) {
+    return false;
+  }
+
+  return null;
+}
+
+if (typeof window.musicPlayerUI.currentPlaying !== "boolean") {
+  window.musicPlayerUI.currentPlaying = false;
 }
 // (Removido: HUBITAT_DIRECT_URL / HUBITAT_ACCESS_TOKEN do frontend por segurança)
 
@@ -3513,6 +3571,9 @@ function updateDenonMetadata() {
         let track = "Sem título";
         let album = "Álbum desconhecido";
         let albumArt = null;
+        let playbackStatus = null;
+        let trackDataRaw = null;
+        let trackDataObj = null;
         
         // Tentar extrair de diferentes formatos possíveis
         if (Array.isArray(denonDevice.attributes)) {
@@ -3521,20 +3582,38 @@ function updateDenonMetadata() {
           const trackAttr = denonDevice.attributes.find(attr => attr.name === "trackDescription" || attr.name === "track");
           const albumAttr = denonDevice.attributes.find(attr => attr.name === "albumName" || attr.name === "album");
           const albumArtAttr = denonDevice.attributes.find(attr => attr.name === "albumArtUrl" || attr.name === "albumArtURI");
+          const statusAttr = denonDevice.attributes.find(attr => {
+            const attrName = String(attr?.name || "").toLowerCase();
+            return (
+              attrName === "status" ||
+              attrName === "playbackstatus" ||
+              attrName === "playerstatus" ||
+              attrName === "transportstate"
+            );
+          });
+          const trackDataAttr = denonDevice.attributes.find(attr => attr.name === "trackData" || attr.name === "trackdata");
           
           artist = artistAttr?.currentValue || artistAttr?.value || artist;
           track = trackAttr?.currentValue || trackAttr?.value || track;
           album = albumAttr?.currentValue || albumAttr?.value || album;
           albumArt = albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
+          playbackStatus = statusAttr?.currentValue || statusAttr?.value || playbackStatus;
+          trackDataRaw = trackDataAttr?.currentValue || trackDataAttr?.value || trackDataRaw;
         } else if (denonDevice.attributes && typeof denonDevice.attributes === 'object') {
           // Formato objeto: {artist: "...", trackDescription: "...", track: "...", album: "...", ...}
           artist = denonDevice.attributes.artist || artist;
           track = denonDevice.attributes.track || track;
           album = denonDevice.attributes.album || album;
+          playbackStatus =
+            denonDevice.attributes.status ||
+            denonDevice.attributes.playbackStatus ||
+            denonDevice.attributes.playerStatus ||
+            denonDevice.attributes.transportState ||
+            playbackStatus;
+          trackDataRaw = denonDevice.attributes.trackData || trackDataRaw;
           
           // Para albumArt, verificar se existe albumArt com tag HTML ou extrair do trackData JSON
           if (denonDevice.attributes.albumArt && typeof denonDevice.attributes.albumArt === 'string') {
-            // Extrair URL da tag <img src='...'> se for HTML
             const imgMatch = denonDevice.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);
             albumArt = imgMatch ? imgMatch[1] : null;
           }
@@ -3545,14 +3624,48 @@ function updateDenonMetadata() {
               const trackData = typeof denonDevice.attributes.trackData === 'string' 
                 ? JSON.parse(denonDevice.attributes.trackData) 
                 : denonDevice.attributes.trackData;
-              albumArt = trackData.image_url || null;
+              trackDataObj = trackData;
+              albumArt = trackData.image_url || albumArt;
             } catch (e) {
               console.warn("⚠️ Erro ao parsear trackData:", e);
             }
           }
         }
         
-        console.log("?? Metadados extraídos:", { artist, track, album, albumArt });
+        if (!trackDataObj && trackDataRaw) {
+          try {
+            trackDataObj = typeof trackDataRaw === 'string' ? JSON.parse(trackDataRaw) : trackDataRaw;
+          } catch (e) {
+            console.warn("⚠️ Erro ao parsear trackData (raw):", e);
+          }
+        }
+
+        if (!albumArt && trackDataObj && typeof trackDataObj.image_url === 'string') {
+          albumArt = trackDataObj.image_url;
+        }
+
+        let derivedPlaybackStatus = interpretPlaybackStatus(playbackStatus);
+        if (derivedPlaybackStatus === null && trackDataObj) {
+          const trackDataStatus =
+            trackDataObj.play_state ||
+            trackDataObj.player_state ||
+            trackDataObj.state ||
+            trackDataObj.status ||
+            trackDataObj.transport_state;
+          derivedPlaybackStatus = interpretPlaybackStatus(trackDataStatus);
+        }
+
+        if (derivedPlaybackStatus !== null) {
+          window.musicPlayerUI.currentPlaying = derivedPlaybackStatus;
+          if (
+            window.musicPlayerUI &&
+            typeof window.musicPlayerUI.setPlaying === "function"
+          ) {
+            window.musicPlayerUI.setPlaying(derivedPlaybackStatus);
+          }
+        }
+        
+        console.log("🎵 Metadados extraídos:", { artist, track, album, albumArt });
         artist = normalizePortugueseText(artist);
         track = normalizePortugueseText(track);
         album = normalizePortugueseText(album);
@@ -3640,8 +3753,13 @@ function stopMusicMetadataPolling() {
 
 /* --- Music player UI handlers (simple local behavior for now) --- */
 function initMusicPlayerUI() {
-  const playBtn = document.getElementById("music-play");
-  const pauseBtn = document.getElementById("music-pause");
+  const playToggleBtn = document.getElementById("music-play-toggle");
+  const playTogglePlayIcon = playToggleBtn
+    ? playToggleBtn.querySelector(".music-play-toggle__icon--play")
+    : null;
+  const playTogglePauseIcon = playToggleBtn
+    ? playToggleBtn.querySelector(".music-play-toggle__icon--pause")
+    : null;
   const nextBtn = document.getElementById("music-next");
   const prevBtn = document.getElementById("music-prev");
   const zone1Btn = document.getElementById("music-zone-1");
@@ -3656,15 +3774,16 @@ function initMusicPlayerUI() {
   const playerInner = document.querySelector(".music-player-inner");
 
   console.log("🎵 Inicializando player de música...", {
-    playBtn,
-    pauseBtn,
+    playToggleBtn,
     zone1Btn,
     zone2Btn,
     masterOnBtn,
     masterOffBtn,
   });
 
-  if (!playBtn || !pauseBtn || !nextBtn || !prevBtn) {
+  window.musicPlayerUI = window.musicPlayerUI || {};
+
+  if (!playToggleBtn || !nextBtn || !prevBtn) {
     console.warn("⚠️ Botões de controle não encontrados");
     return;
   }
@@ -3674,15 +3793,26 @@ function initMusicPlayerUI() {
   let volumeBeforeMute = 50;
   // Guardar estado anterior de mute quando o master for desligado
   let previousMutedState = false;
+  let isPlaying = false;
 
   // Estado master power
   let isPowerOn = true;
 
-  function setPlaying(isPlaying) {
-    playBtn.disabled = isPlaying;
-    pauseBtn.disabled = !isPlaying;
-    playBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
-    pauseBtn.setAttribute("aria-pressed", isPlaying ? "false" : "true");
+  function setPlaying(isPlayingValue) {
+    isPlaying = !!isPlayingValue;
+    playToggleBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+    playToggleBtn.classList.toggle("is-playing", isPlaying);
+
+    if (playTogglePlayIcon) {
+      playTogglePlayIcon.style.display = isPlaying ? "none" : "block";
+    }
+
+    if (playTogglePauseIcon) {
+      playTogglePauseIcon.style.display = isPlaying ? "block" : "none";
+    }
+
+    playToggleBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Tocar");
+    window.musicPlayerUI.currentPlaying = isPlaying;
   }
 
   function setZone(zoneNum) {
@@ -3730,24 +3860,18 @@ function initMusicPlayerUI() {
   const DENON_CMD_DEVICE_ID = "322"; // Denon AVR - comandos de volume, mute, power
   const DENON_MUSIC_DEVICE_ID = "326"; // Denon AVR-S770H HEOS - controles de música
 
-  playBtn.addEventListener("click", () => {
-    console.log("▶️ Play clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
-    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "play")
-      .then(() => {
-        console.log("✅ Comando play enviado com sucesso");
-        setPlaying(true);
-      })
-      .catch(err => console.error("❌ Erro ao enviar comando play:", err));
-  });
+  playToggleBtn.addEventListener("click", () => {
+    const action = isPlaying ? "pause" : "play";
+    console.log("🎵 Toggle play/pause -> enviando comando", action, "para device", DENON_MUSIC_DEVICE_ID);
 
-  pauseBtn.addEventListener("click", () => {
-    console.log("⏸️ Pause clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
-    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "pause")
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, action)
       .then(() => {
-        console.log("✅ Comando pause enviado com sucesso");
-        setPlaying(false);
+        console.log("✅ Comando " + action + " enviado com sucesso");
+        setPlaying(!isPlaying);
       })
-      .catch(err => console.error("❌ Erro ao enviar comando pause:", err));
+      .catch((err) =>
+        console.error("❌ Erro ao enviar comando " + action + ":", err)
+      );
   });
 
   nextBtn.addEventListener("click", () => {
@@ -3780,6 +3904,9 @@ function initMusicPlayerUI() {
   } else {
     console.warn("⚠️ Botões de zona não encontrados");
   }
+
+  window.musicPlayerUI.setPlaying = setPlaying;
+  window.musicPlayerUI.isPlaying = () => isPlaying;
 
   // Controle de volume
   if (muteBtn && volumeSlider) {
@@ -3901,7 +4028,7 @@ function initMusicPlayerUI() {
   }
 
   // initialize
-  setPlaying(false);
+  setPlaying(Boolean(window.musicPlayerUI.currentPlaying));
   setMasterPower(true); // Iniciar com o player ligado
   
   // Buscar metadados iniciais do Denon
