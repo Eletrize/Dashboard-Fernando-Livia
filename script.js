@@ -3810,7 +3810,6 @@ function initMusicPlayerUI() {
     playToggleBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Tocar");
     window.musicPlayerUI.currentPlaying = isPlaying;
   }
-  }
 
   function setMuted(muted) {
     isMuted = muted;
@@ -3868,22 +3867,6 @@ function initMusicPlayerUI() {
       .catch(err => console.error("❌ Erro ao enviar comando previousTrack:", err));
   });
 
-  if (zone1Btn && zone2Btn) {
-    console.log("🎵 Configurando event listeners das zonas");
-    zone1Btn.addEventListener("click", (e) => {
-      console.log("🎵 Zona 1 clicada");
-      e.preventDefault();
-      setZone(1);
-    });
-
-    zone2Btn.addEventListener("click", (e) => {
-      console.log("🎵 Zona 2 clicada");
-      e.preventDefault();
-      setZone(2);
-    });
-  } else {
-    console.warn("⚠️ Botões de zona não encontrados");
-  }
 
   window.musicPlayerUI.setPlaying = setPlaying;
   window.musicPlayerUI.isPlaying = () => isPlaying;
