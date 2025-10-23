@@ -1282,7 +1282,7 @@ div {
 .music-player-card .music-secondary {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
@@ -1290,11 +1290,14 @@ div {
   gap: 16px;
   --music-control-height: 70px;
   --music-control-gap: 12px;
+  --music-control-wrapper-max-width: calc(100% - 20px);
 }
 
 
 .music-player-card .music-secondary > * {
   width: 100%;
+  max-width: var(--music-control-wrapper-max-width);
+  margin: 0 auto;
 }
 
 .music-player-card .music-album {
@@ -1390,8 +1393,9 @@ div {
 
 .music-player-card .music-controls {
   width: 100%;
+  max-width: var(--music-control-wrapper-max-width);
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -1507,17 +1511,6 @@ div {
     gap: clamp(18px, 4vw, 36px);
   }
 
-  .music-player-card .music-volume-section {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: var(--music-control-gap);
-    margin: 0;
-    box-sizing: border-box;
-  }
-
-
   .music-player-card .music-info {
     text-align: left;
     width: min(100%, var(--music-primary-max-width));
@@ -1532,11 +1525,12 @@ div {
 /* === CONTROLE DE VOLUME === */
 .music-volume-section {
   width: 100%;
+  max-width: var(--music-control-wrapper-max-width);
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: var(--music-control-gap);
-  margin: 0;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -1766,11 +1760,12 @@ div {
 /* === CONTROLES MASTER ON/OFF === */
 .music-master-controls {
   width: 100%;
+  max-width: var(--music-control-wrapper-max-width);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--music-control-gap);
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
