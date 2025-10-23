@@ -1286,16 +1286,18 @@ div {
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
-  padding: 5px 10px 10px;
-  gap: 16px;
+  padding: 5px 5px 12px;
+  gap: var(--music-control-gap);
   --music-control-height: 70px;
-  --music-control-gap: 12px;
+  --music-control-width: 100px;
+  --music-control-gap: 10px;
+  --music-control-area-width: 320px;
 }
 
 
 .music-player-card .music-secondary > * {
-  width: 100%;
-  margin: 0;
+  width: min(100%, var(--music-control-area-width));
+  margin: 0 auto;
 }
 
 .music-player-card .music-album {
@@ -1392,16 +1394,19 @@ div {
 .music-player-card .music-controls {
   width: 100%;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
 
 .music-player-card .tv-playback-controls {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  width: 100%;
+  grid-template-columns: repeat(3, var(--music-control-width));
+  width: min(100%, var(--music-control-area-width));
+  margin: 0 auto;
   gap: var(--music-control-gap);
+  justify-content: center;
+  justify-items: center;
 }
 
 
@@ -1412,11 +1417,12 @@ div {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  flex: 1 1 auto;
-  width: 100%;
-  min-width: 0;
+  flex: 0 0 auto;
+  width: var(--music-control-width);
+  min-width: var(--music-control-width);
+  max-width: var(--music-control-width);
   height: var(--music-control-height);
-  min-height: 56px;
+  min-height: var(--music-control-height);
   max-height: var(--music-control-height);
   display: flex;
   align-items: center;
@@ -1504,8 +1510,8 @@ div {
   .music-player-card .music-secondary {
     align-items: flex-start;
     justify-content: space-between;
-    max-width: 50%;
-    gap: clamp(18px, 4vw, 36px);
+    max-width: min(50%, var(--music-control-area-width));
+    gap: var(--music-control-gap);
   }
 
   .music-player-card .music-info {
@@ -1521,12 +1527,12 @@ div {
 
 /* === CONTROLE DE VOLUME === */
 .music-volume-section {
-  width: 100%;
+  width: min(100%, var(--music-control-area-width));
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: var(--music-control-height) minmax(0, 1fr);
   align-items: center;
   gap: var(--music-control-gap);
-  margin: 0;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -1537,8 +1543,9 @@ div {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   width: var(--music-control-height);
+  min-width: var(--music-control-height);
   height: var(--music-control-height);
-  min-height: 56px;
+  min-height: var(--music-control-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1586,8 +1593,9 @@ div {
   --music-slider-thumb-size: clamp(22px, calc(var(--music-control-height, 70px) * 0.5), 34px);
   position: relative;
   flex: 1 1 auto;
+  width: 100%;
   height: var(--music-control-height);
-  min-height: 56px;
+  min-height: var(--music-control-height);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -1757,12 +1765,12 @@ div {
 
 /* === CONTROLES MASTER ON/OFF === */
 .music-master-controls {
-  width: 100%;
+  width: min(100%, var(--music-control-area-width));
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--music-control-gap);
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -1771,7 +1779,7 @@ div {
   flex: 1 1 auto;
   min-width: 0;
   height: var(--music-control-height);
-  min-height: 56px;
+  min-height: var(--music-control-height);
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -1830,8 +1838,10 @@ div {
 
 @media (min-width: 768px) {
   .ambiente1-musica-page .music-secondary {
-    --music-control-height: clamp(70px, 9vw, 88px);
-    --music-control-gap: 16px;
+    --music-control-height: 80px;
+    --music-control-width: 120px;
+    --music-control-gap: 12px;
+    --music-control-area-width: 400px;
   }
 }
 
