@@ -1269,13 +1269,14 @@ div {
 .music-player-card .music-primary {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   justify-content: flex-start;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
   padding: 5px;
   gap: clamp(12px, 3vw, 24px);
+  --music-primary-max-width: clamp(0px, 100%, 320px);
 }
 
 .music-player-card .music-secondary {
@@ -1298,12 +1299,12 @@ div {
 
 .music-player-card .music-album {
   position: relative;
-  width: calc(100% - 10px);
+  width: min(100%, var(--music-primary-max-width));
   aspect-ratio: 1 / 1;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--glass-shadow);
-  margin: 0;
+  margin: 0 auto;
   flex: 1 1 auto;
   min-height: 0;
 }
@@ -1318,7 +1319,7 @@ div {
 
 .music-player-card .music-info {
   text-align: left;
-  width: calc(100% - 10px);
+  width: min(100%, var(--music-primary-max-width));
   margin: 0 auto;
   padding: 0;
   display: flex;
@@ -1327,11 +1328,57 @@ div {
 }
 
 .music-player-card .music-track {
+  width: 100%;
+  max-width: var(--music-primary-max-width);
+  margin: 0 auto;
+}
+
+.music-track-marquee {
+  --music-track-marquee-duration: 14s;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.music-track-marquee__inner {
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  gap: 0;
+  transform: translate3d(0, 0, 0);
+}
+
+.music-track-marquee__text {
+  display: inline-flex;
+  align-items: center;
   font-size: clamp(1.6rem, 6vw, 4rem);
   font-weight: 700;
   color: #fff;
   line-height: 1.1;
-  word-break: break-word;
+  white-space: nowrap;
+  padding-right: clamp(24px, 6vw, 48px);
+}
+
+.music-track-marquee__text--clone {
+  display: none;
+}
+
+.music-track-marquee--active .music-track-marquee__inner {
+  animation: music-track-marquee-scroll var(--music-track-marquee-duration)
+    linear infinite;
+}
+
+.music-track-marquee--active .music-track-marquee__text--clone {
+  display: inline-flex;
+}
+
+@keyframes music-track-marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .music-player-card .music-artist {
@@ -1448,9 +1495,9 @@ div {
   }
 
   .music-player-card .music-primary {
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
-    max-width: 50%;
+    max-width: min(50%, 360px);
   }
 
   .music-player-card .music-secondary {
@@ -1473,7 +1520,7 @@ div {
 
   .music-player-card .music-info {
     text-align: left;
-    width: 100%;
+    width: min(100%, var(--music-primary-max-width));
   }
 
   .music-player-card .music-controls {

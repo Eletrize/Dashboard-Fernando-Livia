@@ -3702,6 +3702,7 @@ function updateMusicPlayerUI(artist, track, album, albumArt) {
   // Atualizar texto se os elementos existirem
   if (artistElement) artistElement.textContent = artist;
   if (trackElement) trackElement.textContent = track;
+  syncMusicTrackMarquee();
   if (albumElement) albumElement.textContent = album;
   
   // Atualizar imagem do álbum
@@ -3752,6 +3753,75 @@ function stopMusicMetadataPolling() {
 }
 
 /* --- Music player UI handlers (simple local behavior for now) --- */
+
+let musicTrackMarqueeListenersAttached = false;
+
+function syncMusicTrackMarquee() {
+  ensureMusicTrackMarqueeListeners();
+
+  const trackElement = document.getElementById("music-track");
+  if (!trackElement) {
+    return;
+  }
+
+  const marqueeContainer = trackElement.closest(".music-track-marquee");
+  if (!marqueeContainer) {
+    return;
+  }
+
+  const marqueeInner = marqueeContainer.querySelector(
+    ".music-track-marquee__inner"
+  );
+  if (!marqueeInner) {
+    return;
+  }
+
+  const cloneElement = marqueeContainer.querySelector(
+    ".music-track-marquee__text--clone"
+  );
+  if (cloneElement) {
+    cloneElement.textContent = trackElement.textContent || "";
+  }
+
+  marqueeContainer.classList.remove("music-track-marquee--active");
+  marqueeContainer.style.removeProperty("--music-track-marquee-duration");
+
+  requestAnimationFrame(() => {
+    const containerWidth = marqueeContainer.clientWidth;
+    const contentWidth = marqueeInner.scrollWidth;
+    const shouldMarquee = contentWidth > containerWidth + 2;
+
+    marqueeContainer.classList.toggle(
+      "music-track-marquee--active",
+      shouldMarquee
+    );
+
+    if (shouldMarquee) {
+      const pixelsPerSecond = 80;
+      const duration = Math.min(
+        24,
+        Math.max(10, contentWidth / pixelsPerSecond)
+      );
+      marqueeContainer.style.setProperty(
+        "--music-track-marquee-duration",
+        `${duration}s`
+      );
+    }
+  });
+}
+
+function ensureMusicTrackMarqueeListeners() {
+  if (musicTrackMarqueeListenersAttached) {
+    return;
+  }
+
+  const handleResize = () => syncMusicTrackMarquee();
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("orientationchange", handleResize);
+
+  musicTrackMarqueeListenersAttached = true;
+}
+
 function initMusicPlayerUI() {
   const playToggleBtn = document.getElementById("music-play-toggle");
   const playTogglePlayIcon = playToggleBtn
@@ -3999,6 +4069,8 @@ function initMusicPlayerUI() {
   
   // Iniciar polling de metadados
   startMusicMetadataPolling();
+
+  syncMusicTrackMarquee();
   
   console.log("🎵 Player de música inicializado");
 }
