@@ -508,7 +508,7 @@ textarea {
   color: #fff;
   font-size: 2.2rem;
   font-family: "Raleway", Arial, sans-serif;
-  font-weight: 500;
+  font-weight: 400;
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
@@ -1086,7 +1086,7 @@ div {
   color: white;
   font-size: 30px;
   font-family: "Raleway", sans-serif;
-  font-weight: 700;
+  font-weight: 400;
   text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
   margin: 0;
 }
@@ -1209,7 +1209,9 @@ div {
 }
 
 /* === ESTILOS ESPECÍFICOS: PÁGINA MÚSICA (Varanda) === */
-.ambiente1-musica-page .ambiente1-musica-wrapper {
+.ambiente1-musica-page .ambiente1-musica-wrapper,
+.ambiente2-musica-page .ambiente2-musica-wrapper,
+.ambiente3-musica-page .ambiente3-musica-wrapper {
   position: absolute;
   top: 103px; /* alinhado com outras páginas, incluindo 10px abaixo da linha branca */
   left: 0;
@@ -1223,6 +1225,12 @@ div {
 
 .ambiente1-musica-page
   .ambiente1-musica-wrapper
+  .control-card.control-card--full-width,
+.ambiente2-musica-page
+  .ambiente2-musica-wrapper
+  .control-card.control-card--full-width,
+.ambiente3-musica-page
+  .ambiente3-musica-wrapper
   .control-card.control-card--full-width {
   margin-top: 10px; /* distância de 10px da linha branca superior */
   width: 100%;
@@ -1837,7 +1845,9 @@ div {
 }
 
 @media (min-width: 768px) {
-  .ambiente1-musica-page .music-secondary {
+  .ambiente1-musica-page .music-secondary,
+  .ambiente2-musica-page .music-secondary,
+  .ambiente3-musica-page .music-secondary {
     --music-control-height: 80px;
     --music-control-width: 120px;
     --music-control-gap: 12px;

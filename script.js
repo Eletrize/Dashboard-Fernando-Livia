@@ -2,6 +2,16 @@
 // DETECÇÃO DE DISPOSITIVOS
 // ========================================
 
+const MUSIC_PAGE_ROUTES = [
+  "ambiente1-musica",
+  "ambiente2-musica",
+  "ambiente3-musica",
+];
+
+function isMusicPageActive(hash = window.location.hash) {
+  return MUSIC_PAGE_ROUTES.some((route) => hash.includes(route));
+}
+
 // Detectar iPad Mini 6 especificamente
 function detectIPadMini6() {
   const userAgent = navigator.userAgent.toLowerCase();
@@ -62,6 +72,7 @@ function detectDevice() {
       `📱 Dispositivo mobile detectado (${isApple ? "Apple" : "Android"})`
     );
   }
+
 }
 
 // Função para detectar se está na página de controle remoto da TV
@@ -640,7 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Listener específico para página de música
   window.addEventListener("hashchange", () => {
-    if (window.location.hash.includes("ambiente1-musica")) {
+    if (isMusicPageActive()) {
       setTimeout(() => {
         initMusicPlayerUI();
         updateDenonMetadata();
@@ -3734,7 +3745,7 @@ function startMusicMetadataPolling() {
   
   // Iniciar novo polling a cada 3 segundos
   musicMetadataInterval = setInterval(() => {
-    if (window.location.hash.includes("ambiente1-musica")) {
+    if (isMusicPageActive()) {
       updateDenonMetadata();
     } else {
       // Se saímos da página, parar o polling

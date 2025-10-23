@@ -626,7 +626,7 @@
     <button class="back-btn" onclick="spaNavigate('ambiente1')">
       <img src="images/icons/back-button.svg" alt="Voltar">
     </button>
-    <h1 class="page-title">Música - Varanda</h1>
+    <h1 class="page-title">Varanda, Música</h1>
   </div>
 
   <div class="ambiente1-musica-wrapper ambiente-grid">
@@ -663,6 +663,156 @@
                 </button>
                 <button class="tv-btn-icon-small" aria-label="Next" id="music-next">
                   <img src="images/icons/icon-next-track.svg" alt="Next">
+                </button>
+              </div>
+            </div>
+
+            <div class="music-volume-section">
+              <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false">
+                <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
+                <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
+              </button>
+              <div class="music-volume-slider-container">
+                <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume">
+              </div>
+            </div>
+
+            <div class="music-master-controls">
+              <button class="music-master-btn music-master-btn--on music-master-btn--active" id="music-master-on" aria-label="Ligar" aria-pressed="true">Ligar</button>
+              <button class="music-master-btn music-master-btn--off" id="music-master-off" aria-label="Desligar" aria-pressed="false">Desligar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+    `,
+
+        "ambiente2-musica": () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container ambiente2-page ambiente2-musica-page">
+
+  <div class="page-header">
+    <button class="back-btn" onclick="spaNavigate('ambiente2')">
+      <img src="images/icons/back-button.svg" alt="Voltar">
+    </button>
+    <h1 class="page-title">Living, Música</h1>
+  </div>
+
+  <div class="ambiente2-musica-wrapper ambiente-grid">
+    <div class="control-card control-card--full-width music-player-card">
+      <div class="music-player-inner">
+        <div class="music-player-content">
+          <div class="music-primary">
+            <div class="music-album">
+              <img src="images/Images/photo-living.jpg" alt="Capa do álbum" class="music-album-img" />
+            </div>
+
+            <div class="music-info">
+              <div class="music-track">
+                <div class="music-track-marquee">
+                  <div class="music-track-marquee__inner">
+                    <span class="music-track-marquee__text" id="music-track">Nome da Música</span>
+                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="music-artist" id="music-artist">Nome do Artista</div>
+            </div>
+          </div>
+
+          <div class="music-secondary">
+            <div class="music-controls">
+              <div class="tv-playback-controls">
+                <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
+                  <img src="images/icons/icon-previous-track.svg" alt="Faixa anterior">
+                </button>
+                <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" id="music-play-toggle" aria-pressed="false">
+                  <img src="images/icons/icon-play.svg" alt="Tocar" class="music-play-toggle__icon music-play-toggle__icon--play">
+                  <img src="images/icons/icon-pause.svg" alt="Pausar" class="music-play-toggle__icon music-play-toggle__icon--pause">
+                </button>
+                <button class="tv-btn-icon-small" aria-label="Next" id="music-next">
+                  <img src="images/icons/icon-next-track.svg" alt="Próxima faixa">
+                </button>
+              </div>
+            </div>
+
+            <div class="music-volume-section">
+              <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false">
+                <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
+                <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
+              </button>
+              <div class="music-volume-slider-container">
+                <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume">
+              </div>
+            </div>
+
+            <div class="music-master-controls">
+              <button class="music-master-btn music-master-btn--on music-master-btn--active" id="music-master-on" aria-label="Ligar" aria-pressed="true">Ligar</button>
+              <button class="music-master-btn music-master-btn--off" id="music-master-off" aria-label="Desligar" aria-pressed="false">Desligar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+    `,
+
+        "ambiente3-musica": () => `
+
+<div class="top-bar-custom"></div>
+
+<div class="page active page-container ambiente3-page ambiente3-musica-page">
+
+  <div class="page-header">
+    <button class="back-btn" onclick="spaNavigate('ambiente3')">
+      <img src="images/icons/back-button.svg" alt="Voltar">
+    </button>
+    <h1 class="page-title">Piscina, Música</h1>
+  </div>
+
+  <div class="ambiente3-musica-wrapper ambiente-grid">
+    <div class="control-card control-card--full-width music-player-card">
+      <div class="music-player-inner">
+        <div class="music-player-content">
+          <div class="music-primary">
+            <div class="music-album">
+              <img src="images/Images/photo-piscina.jpg" alt="Capa do álbum" class="music-album-img" />
+            </div>
+
+            <div class="music-info">
+              <div class="music-track">
+                <div class="music-track-marquee">
+                  <div class="music-track-marquee__inner">
+                    <span class="music-track-marquee__text" id="music-track">Nome da Música</span>
+                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="music-artist" id="music-artist">Nome do Artista</div>
+            </div>
+          </div>
+
+          <div class="music-secondary">
+            <div class="music-controls">
+              <div class="tv-playback-controls">
+                <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
+                  <img src="images/icons/icon-previous-track.svg" alt="Faixa anterior">
+                </button>
+                <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" id="music-play-toggle" aria-pressed="false">
+                  <img src="images/icons/icon-play.svg" alt="Tocar" class="music-play-toggle__icon music-play-toggle__icon--play">
+                  <img src="images/icons/icon-pause.svg" alt="Pausar" class="music-play-toggle__icon music-play-toggle__icon--pause">
+                </button>
+                <button class="tv-btn-icon-small" aria-label="Next" id="music-next">
+                  <img src="images/icons/icon-next-track.svg" alt="Próxima faixa">
                 </button>
               </div>
             </div>
@@ -3327,7 +3477,7 @@
         }
 
         // Inicializa player de música na página de música da varanda
-        if (page === "ambiente1-musica") {
+        if (["ambiente1-musica", "ambiente2-musica", "ambiente3-musica"].includes(page)) {
           setTimeout(() => {
             if (typeof initMusicPlayerUI === "function") {
               initMusicPlayerUI();
