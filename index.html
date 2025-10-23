@@ -3235,12 +3235,77 @@
         window.location.hash = page;
       }
 
+      const ENVIRONMENT_LABELS = {
+        ambiente1: "Varanda",
+        ambiente2: "Living",
+        ambiente3: "Piscina",
+        ambiente4: "Externa",
+        ambiente5: "Servi\u00e7o",
+        ambiente6: "Circula\u00e7\u00e3o",
+        ambiente7: "Su\u00edte I",
+        ambiente8: "Su\u00edte II",
+        ambiente9: "Su\u00edte Master",
+      };
+
+      const PAGE_SUFFIX_LABELS = {
+        "": "Painel",
+        luzes: "Ilumina\u00e7\u00e3o",
+        cortinas: "Cortinas",
+        conforto: "Conforto",
+        musica: "M\u00fasica",
+        tv: "Controle TV",
+        piscina: "Piscina",
+        "piscina-luzes": "Ilumina\u00e7\u00e3o",
+      };
+
+      function formatEnvironmentPageTitle(route) {
+        if (!route || !route.startsWith("ambiente")) return null;
+        const parts = route.split("-");
+        const envKey = parts[0];
+        const suffix = parts.slice(1).join("-");
+        const envLabel = ENVIRONMENT_LABELS[envKey];
+        if (!envLabel) return null;
+        const pageLabel = Object.prototype.hasOwnProperty.call(
+          PAGE_SUFFIX_LABELS,
+          suffix
+        )
+          ? PAGE_SUFFIX_LABELS[suffix]
+          : suffix
+          ? suffix
+              .split("-")
+              .map((segment) =>
+                segment ? segment[0].toUpperCase() + segment.slice(1) : segment
+              )
+              .join(" ")
+          : PAGE_SUFFIX_LABELS[""];
+        return `${envLabel} | ${pageLabel}`;
+      }
+
       function renderSpa() {
         let page = window.location.hash.replace("#", "") || "home";
 
         if (!pages[page]) page = "home";
 
         spaRoot.innerHTML = pages[page]();
+
+        const formattedTitle = formatEnvironmentPageTitle(page);
+        if (formattedTitle) {
+          const activePage = document.querySelector(".page.active");
+          if (activePage) {
+            let titleEl = activePage.querySelector(".page-title");
+            if (!titleEl) {
+              const headerEl = activePage.querySelector(".page-header");
+              if (headerEl) {
+                titleEl = document.createElement("h1");
+                titleEl.className = "page-title";
+                headerEl.appendChild(titleEl);
+              }
+            }
+            if (titleEl) {
+              titleEl.textContent = formattedTitle;
+            }
+          }
+        }
 
         setupAppInfoMenu();
 

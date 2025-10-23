@@ -12,6 +12,12 @@ function isMusicPageActive(hash = window.location.hash) {
   return MUSIC_PAGE_ROUTES.some((route) => hash.includes(route));
 }
 
+function queryActiveMusic(selector) {
+  const activePage = document.querySelector(".page.active");
+  if (!activePage) return null;
+  return activePage.querySelector(selector);
+}
+
 // Detectar iPad Mini 6 especificamente
 function detectIPadMini6() {
   const userAgent = navigator.userAgent.toLowerCase();
@@ -581,7 +587,7 @@ async function updateDenonVolumeFromServer() {
       slider.style.setProperty("--volume-progress", percentage + "%");
 
       // Keep music slider in sync if present
-      const musicSlider = document.getElementById('music-volume-slider');
+      const musicSlider = queryActiveMusic('#music-volume-slider');
       if (musicSlider) {
         musicSlider.value = volumeValue;
         musicSlider.style.setProperty('--volume-percent', percentage + '%');
@@ -628,7 +634,7 @@ function updateDenonVolumeUI(volume) {
 
     console.log(`✅ Volume do Denon atualizado via polling: ${volumeValue}`);
     // Atualizar também o slider do player de música, se presente
-    const musicSlider = document.getElementById('music-volume-slider');
+    const musicSlider = queryActiveMusic('#music-volume-slider');
     if (musicSlider) {
       musicSlider.value = volumeValue;
       musicSlider.style.setProperty('--volume-percent', percentage + '%');
@@ -3705,16 +3711,14 @@ function updateMusicPlayerUI(artist, track, album, albumArt) {
   album = normalizePortugueseText(album);
 
   // Obter elementos do DOM
-  const artistElement = document.getElementById('music-artist');
-  const trackElement = document.getElementById('music-track');
-  const albumElement = document.getElementById('music-album-title');
-  const albumImgElement = document.querySelector('.music-album-img');
+  const artistElement = queryActiveMusic('#music-artist');
+  const trackElement = queryActiveMusic('#music-track');
+  const albumImgElement = queryActiveMusic('.music-album-img');
   
   // Atualizar texto se os elementos existirem
   if (artistElement) artistElement.textContent = artist;
   if (trackElement) trackElement.textContent = track;
   syncMusicTrackMarquee();
-  if (albumElement) albumElement.textContent = album;
   
   // Atualizar imagem do álbum
   if (albumImgElement) {
@@ -3770,7 +3774,7 @@ let musicTrackMarqueeListenersAttached = false;
 function syncMusicTrackMarquee() {
   ensureMusicTrackMarqueeListeners();
 
-  const trackElement = document.getElementById("music-track");
+  const trackElement = queryActiveMusic("#music-track");
   if (!trackElement) {
     return;
   }
@@ -3834,23 +3838,23 @@ function ensureMusicTrackMarqueeListeners() {
 }
 
 function initMusicPlayerUI() {
-  const playToggleBtn = document.getElementById("music-play-toggle");
+  const playToggleBtn = queryActiveMusic("#music-play-toggle");
   const playTogglePlayIcon = playToggleBtn
     ? playToggleBtn.querySelector(".music-play-toggle__icon--play")
     : null;
   const playTogglePauseIcon = playToggleBtn
     ? playToggleBtn.querySelector(".music-play-toggle__icon--pause")
     : null;
-  const nextBtn = document.getElementById("music-next");
-  const prevBtn = document.getElementById("music-prev");
-  const muteBtn = document.getElementById("music-mute");
-  const volumeSlider = document.getElementById("music-volume-slider");
-  const volumeSection = document.querySelector(".music-volume-section");
-  const volumeIconUnmuted = document.querySelector(".volume-icon-unmuted");
-  const volumeIconMuted = document.querySelector(".volume-icon-muted");
-  const masterOnBtn = document.getElementById("music-master-on");
-  const masterOffBtn = document.getElementById("music-master-off");
-  const playerInner = document.querySelector(".music-player-inner");
+  const nextBtn = queryActiveMusic("#music-next");
+  const prevBtn = queryActiveMusic("#music-prev");
+  const muteBtn = queryActiveMusic("#music-mute");
+  const volumeSlider = queryActiveMusic("#music-volume-slider");
+  const volumeSection = queryActiveMusic(".music-volume-section");
+  const volumeIconUnmuted = queryActiveMusic(".volume-icon-unmuted");
+  const volumeIconMuted = queryActiveMusic(".volume-icon-muted");
+  const masterOnBtn = queryActiveMusic("#music-master-on");
+  const masterOffBtn = queryActiveMusic("#music-master-off");
+  const playerInner = queryActiveMusic(".music-player-inner");
 
   console.log("🎵 Inicializando player de música...", {
     playToggleBtn,
@@ -3988,7 +3992,7 @@ function initMusicPlayerUI() {
     });
 
     // If there's a separate music slider, wire it to send commands to Denon (device 322)
-    const musicSlider = document.getElementById('music-volume-slider');
+    const musicSlider = queryActiveMusic('#music-volume-slider');
     if (musicSlider) {
       musicSlider.addEventListener('input', (e) => {
         // update visual bar for music slider
