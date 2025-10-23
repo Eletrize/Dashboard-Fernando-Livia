@@ -1286,8 +1286,11 @@ div {
   flex: 1 1 auto;
   min-height: 0;
   padding: 5px;
-  gap: clamp(16px, 4vw, 32px);
+  gap: 16px;
+  --music-control-height: 70px;
+  --music-control-gap: 12px;
 }
+
 
 .music-player-card .music-secondary > * {
   width: 100%;
@@ -1339,25 +1342,22 @@ div {
 }
 
 .music-player-card .music-controls {
-  width: calc(100% - 10px);
-  display: flex;
-  justify-content: center;
+  width: 100%;
   padding: 0;
-  margin: 0 auto;
+  margin: 0;
   box-sizing: border-box;
 }
+
 
 .music-player-card .tv-playback-controls {
-  display: flex;
-  width: calc(100% - 10px);
-  margin: 0 auto;
-  gap: clamp(12px, 4vw, 32px);
-  padding: 0;
-  box-sizing: border-box;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  gap: var(--music-control-gap);
 }
 
-/* Estilos específicos para os botões de música */
+
+/* Estilos especificos para os botoes de musica */
 .music-player-card .tv-btn-icon-small {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
@@ -1365,8 +1365,11 @@ div {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   flex: 1 1 auto;
-  width: clamp(64px, 28vw, 140px);
-  height: clamp(64px, 28vw, 140px);
+  width: 100%;
+  min-width: 0;
+  height: var(--music-control-height);
+  min-height: 56px;
+  max-height: var(--music-control-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1376,13 +1379,15 @@ div {
   margin: 0;
 }
 
+
 .music-player-card .tv-btn-icon-small img {
-  width: clamp(28px, 10vw, 48px);
-  height: clamp(28px, 10vw, 48px);
+  width: calc(var(--music-control-height, 70px) * 0.45);
+  height: calc(var(--music-control-height, 70px) * 0.45);
   opacity: 1;
   filter: brightness(0) invert(1);
   pointer-events: none;
 }
+
 
 .music-player-card .tv-btn-icon-small:hover {
   background: rgba(255, 255, 255, 0.15);
@@ -1456,10 +1461,15 @@ div {
   }
 
   .music-player-card .music-volume-section {
-    margin-top: 0;
     width: 100%;
-    gap: clamp(16px, 3vw, 28px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--music-control-gap);
+    margin: 0;
+    box-sizing: border-box;
   }
+
 
   .music-player-card .music-info {
     text-align: left;
@@ -1474,11 +1484,12 @@ div {
 
 /* === CONTROLE DE VOLUME === */
 .music-volume-section {
-  width: calc(100% - 10px);
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: clamp(12px, 4vw, 32px);
-  margin: 0 auto;
+  gap: var(--music-control-gap);
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -1487,9 +1498,10 @@ div {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  width: clamp(64px, 22vw, 120px);
-  height: clamp(64px, 22vw, 120px);
+  border-radius: 12px;
+  width: var(--music-control-height);
+  height: var(--music-control-height);
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1501,14 +1513,16 @@ div {
   padding: 0;
 }
 
+
 .music-volume-mute-btn img {
-  width: clamp(28px, 10vw, 48px);
-  height: clamp(28px, 10vw, 48px);
+  width: calc(var(--music-control-height, 70px) * 0.45);
+  height: calc(var(--music-control-height, 70px) * 0.45);
   opacity: 1;
   filter: brightness(0) invert(1);
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
+
 
 .music-volume-mute-btn:hover {
   background: rgba(255, 255, 255, 0.15);
@@ -1531,15 +1545,20 @@ div {
 }
 
 .music-volume-slider-container {
-  --music-slider-track-height: clamp(6px, 1.5vw, 12px);
-  --music-slider-thumb-size: clamp(20px, 6vw, 36px);
+  --music-slider-track-height: clamp(6px, calc(var(--music-control-height, 70px) * 0.18), 12px);
+  --music-slider-thumb-size: clamp(22px, calc(var(--music-control-height, 70px) * 0.5), 34px);
   position: relative;
   flex: 1 1 auto;
-  height: clamp(12px, 2.5vw, 20px);
-  border-radius: 20px;
+  height: var(--music-control-height);
+  min-height: 56px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(12px, 4vw, 18px);
 }
+
 
 /* Slider Input - Resetando todos os estilos padrão */
 .music-volume-slider {
@@ -1699,20 +1718,21 @@ div {
 
 /* === CONTROLES MASTER ON/OFF === */
 .music-master-controls {
-  width: calc(100% - 10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(12px, 4vw, 32px);
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--music-control-gap);
   padding: 0;
-  margin: 0 auto;
+  margin: 0;
   box-sizing: border-box;
 }
 
+
 .music-master-btn {
   flex: 1 1 auto;
-  min-width: clamp(80px, 25vw, 160px);
-  height: clamp(52px, 18vw, 120px);
+  min-width: 0;
+  height: var(--music-control-height);
+  min-height: 56px;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -1720,14 +1740,18 @@ div {
   border-radius: 12px;
   color: #fff;
   font-family: "Raleway", sans-serif;
-  font-size: clamp(1rem, 4vw, 2rem);
+  font-size: clamp(1rem, 2.8vw, 1.6rem);
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.6px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  padding: clamp(12px, 3vw, 20px) clamp(22px, 6vw, 40px);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 .music-master-btn:hover {
   transform: scale(1.02);
@@ -1763,6 +1787,13 @@ div {
 .music-master-btn--off.music-master-btn--active:hover {
   box-shadow: 0 0 25px rgba(244, 67, 54, 0.4),
     inset 0 0 20px rgba(244, 67, 54, 0.15);
+}
+
+@media (min-width: 768px) {
+  .ambiente1-musica-page .music-secondary {
+    --music-control-height: clamp(70px, 9vw, 88px);
+    --music-control-gap: 16px;
+  }
 }
 
 /* Estado apagado quando OFF está ativo */
