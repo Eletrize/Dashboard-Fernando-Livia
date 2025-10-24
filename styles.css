@@ -55,6 +55,23 @@ body {
   user-select: none;
 }
 
+/* ========================================
+   REMOVER TAP HIGHLIGHT NO ANDROID
+   ======================================== */
+/* Remove o destaque azul ao tocar em elementos no Android */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+[role="button"],
+input[type="button"],
+input[type="submit"] {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
 /* Permitir seleção apenas em inputs e textareas */
 input,
 textarea {
