@@ -1510,20 +1510,22 @@ div {
     gap: clamp(32px, 5vw, 64px);
   }
 
-  /* Lado esquerdo: SOMENTE a foto do álbum */
+  /* Lado esquerdo: SOMENTE a foto do álbum - 50% da página */
   .music-player-card .music-primary {
-    flex: 0 0 auto;
-    width: auto;
-    max-width: min(40%, 380px);
+    flex: 0 0 50%;
+    width: 50%;
+    max-width: 50%;
     padding: 0;
     gap: 0;
     align-items: center;
     justify-content: center;
   }
 
+  /* Foto sempre quadrada ocupando o espaço disponível */
   .music-player-card .music-album {
     width: 100%;
     max-width: 100%;
+    aspect-ratio: 1 / 1;
     margin: 0;
   }
 
@@ -1558,6 +1560,21 @@ div {
   .music-player-card .music-controls {
     order: 1;
     width: 100%;
+  }
+
+  /* Alargar os botões de playback em telas grandes */
+  .music-player-card .tv-playback-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    gap: var(--music-control-gap);
+    justify-content: stretch;
+  }
+
+  .music-player-card .tv-btn-icon-small {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
   }
 
   .music-player-card .music-volume-section {
