@@ -652,6 +652,18 @@
           </div>
 
           <div class="music-secondary">
+            <div class="music-info music-info--desktop">
+              <div class="music-track">
+                <div class="music-track-marquee">
+                  <div class="music-track-marquee__inner">
+                    <span class="music-track-marquee__text music-track-sync">Nome da Música</span>
+                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="music-artist music-artist-sync">Nome do Artista</div>
+            </div>
+
             <div class="music-controls">
               <div class="tv-playback-controls">
                 <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
@@ -727,6 +739,18 @@
           </div>
 
           <div class="music-secondary">
+            <div class="music-info music-info--desktop">
+              <div class="music-track">
+                <div class="music-track-marquee">
+                  <div class="music-track-marquee__inner">
+                    <span class="music-track-marquee__text music-track-sync">Nome da Música</span>
+                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="music-artist music-artist-sync">Nome do Artista</div>
+            </div>
+
             <div class="music-controls">
               <div class="tv-playback-controls">
                 <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
@@ -802,6 +826,18 @@
           </div>
 
           <div class="music-secondary">
+            <div class="music-info music-info--desktop">
+              <div class="music-track">
+                <div class="music-track-marquee">
+                  <div class="music-track-marquee__inner">
+                    <span class="music-track-marquee__text music-track-sync">Nome da Música</span>
+                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="music-artist music-artist-sync">Nome do Artista</div>
+            </div>
+
             <div class="music-controls">
               <div class="tv-playback-controls">
                 <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev">
@@ -3544,7 +3580,11 @@
         }
 
         // Inicializa player de música na página de música da varanda
-        if (["ambiente1-musica", "ambiente2-musica", "ambiente3-musica"].includes(page)) {
+        if (
+          ["ambiente1-musica", "ambiente2-musica", "ambiente3-musica"].includes(
+            page
+          )
+        ) {
           setTimeout(() => {
             if (typeof initMusicPlayerUI === "function") {
               initMusicPlayerUI();
