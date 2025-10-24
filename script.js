@@ -78,7 +78,6 @@ function detectDevice() {
       `📱 Dispositivo mobile detectado (${isApple ? "Apple" : "Android"})`
     );
   }
-
 }
 
 // Função para detectar se está na página de controle remoto da TV
@@ -587,10 +586,10 @@ async function updateDenonVolumeFromServer() {
       slider.style.setProperty("--volume-progress", percentage + "%");
 
       // Keep music slider in sync if present
-      const musicSlider = queryActiveMusic('#music-volume-slider');
+      const musicSlider = queryActiveMusic("#music-volume-slider");
       if (musicSlider) {
         musicSlider.value = volumeValue;
-        musicSlider.style.setProperty('--volume-percent', percentage + '%');
+        musicSlider.style.setProperty("--volume-percent", percentage + "%");
       }
       console.log(`🔊 Volume do Denon atualizado: ${volumeValue}`);
     }
@@ -617,9 +616,11 @@ function updateDenonVolumeUI(volume) {
   );
 
   // Respeitar proteção se o usuário acabou de enviar um comando manual
-  const lastCmd = recentCommands.get('322');
+  const lastCmd = recentCommands.get("322");
   if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
-    console.log('🔒 updateDenonVolumeUI: comando manual recente detectado, ignorando atualização de polling');
+    console.log(
+      "🔒 updateDenonVolumeUI: comando manual recente detectado, ignorando atualização de polling"
+    );
     return;
   }
 
@@ -634,11 +635,11 @@ function updateDenonVolumeUI(volume) {
 
     console.log(`✅ Volume do Denon atualizado via polling: ${volumeValue}`);
     // Atualizar também o slider do player de música, se presente
-    const musicSlider = queryActiveMusic('#music-volume-slider');
+    const musicSlider = queryActiveMusic("#music-volume-slider");
     if (musicSlider) {
       musicSlider.value = volumeValue;
-      musicSlider.style.setProperty('--volume-percent', percentage + '%');
-      if (typeof updateVolumeBar === 'function') updateVolumeBar();
+      musicSlider.style.setProperty("--volume-percent", percentage + "%");
+      if (typeof updateVolumeBar === "function") updateVolumeBar();
     }
   } else {
     console.log(`ℹ️ Volume já está em ${volumeValue}, não atualizando`);
@@ -654,7 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
       initVolumeSlider();
     }, 100);
   });
-  
+
   // Listener específico para página de música
   window.addEventListener("hashchange", () => {
     if (isMusicPageActive()) {
@@ -2234,7 +2235,7 @@ async function updateDeviceStatesFromServer() {
 
         devicesMap[d.id] = { state, success: true };
 
-  // Se for o Denon AVR (ID 322), também capturar o volume (comandos) - metadados virão do dispositivo 326
+        // Se for o Denon AVR (ID 322), também capturar o volume (comandos) - metadados virão do dispositivo 326
         if (d.id === "322") {
           console.log("🔊 DEBUG Denon encontrado:", {
             id: d.id,
@@ -2248,7 +2249,7 @@ async function updateDeviceStatesFromServer() {
           } else {
             console.warn("⚠️ Denon encontrado mas sem atributo volume:", d);
           }
-          
+
           // Nota: Metadados de música (artista, álbum, capa) são buscados
           // via updateDenonMetadata() que usa o endpoint full do Hubitat,
           // pois o polling normal não contém essas informações
@@ -2668,53 +2669,52 @@ function updateStatesAfterMasterCommand(deviceIds, command) {
 class SmartCacheManager {
   constructor() {
     this.isOnline = navigator.onLine;
-    this.cacheStatus = 'unknown';
+    this.cacheStatus = "unknown";
     this.lastCleanup = Date.now();
     this.init();
   }
 
   async init() {
     // Verificar se Service Worker está registrado
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       try {
         const registration = await navigator.serviceWorker.ready;
-        this.cacheStatus = 'active';
-        console.log('🧠 SmartCache Manager inicializado');
+        this.cacheStatus = "active";
+        console.log("🧠 SmartCache Manager inicializado");
 
         // Escutar mudanças de conectividade
-        window.addEventListener('online', () => {
+        window.addEventListener("online", () => {
           this.isOnline = true;
-          console.log('🌐 Conexão restaurada');
+          console.log("🌐 Conexão restaurada");
           this.onReconnect();
         });
 
-        window.addEventListener('offline', () => {
+        window.addEventListener("offline", () => {
           this.isOnline = false;
-          console.log('📴 Conexão perdida');
+          console.log("📴 Conexão perdida");
         });
-
       } catch (error) {
-        console.warn('⚠️ Service Worker não disponível:', error);
-        this.cacheStatus = 'unavailable';
+        console.warn("⚠️ Service Worker não disponível:", error);
+        this.cacheStatus = "unavailable";
       }
     } else {
-      console.warn('⚠️ Service Worker não suportado');
-      this.cacheStatus = 'unsupported';
+      console.warn("⚠️ Service Worker não suportado");
+      this.cacheStatus = "unsupported";
     }
   }
 
   // Limpeza manual do cache (para debug ou quando necessário)
   async clearCache() {
     try {
-      if ('caches' in window) {
+      if ("caches" in window) {
         const keys = await caches.keys();
-        await Promise.all(keys.map(key => caches.delete(key)));
-        console.log('🧹 Cache manualmente limpo');
+        await Promise.all(keys.map((key) => caches.delete(key)));
+        console.log("🧹 Cache manualmente limpo");
 
         // Notificar Service Worker
         if (navigator.serviceWorker.controller) {
           navigator.serviceWorker.controller.postMessage({
-            type: 'CLEANUP_CACHE'
+            type: "CLEANUP_CACHE",
           });
         }
 
@@ -2722,7 +2722,7 @@ class SmartCacheManager {
         return true;
       }
     } catch (error) {
-      console.error('❌ Erro ao limpar cache:', error);
+      console.error("❌ Erro ao limpar cache:", error);
     }
     return false;
   }
@@ -2730,7 +2730,7 @@ class SmartCacheManager {
   // Obter estatísticas do cache
   async getCacheStats() {
     try {
-      if ('caches' in window) {
+      if ("caches" in window) {
         const keys = await caches.keys();
         let totalSize = 0;
         let totalEntries = 0;
@@ -2761,64 +2761,64 @@ class SmartCacheManager {
           sizeFormatted: this.formatBytes(totalSize),
           lastCleanup: new Date(this.lastCleanup).toLocaleString(),
           status: this.cacheStatus,
-          online: this.isOnline
+          online: this.isOnline,
         };
       }
     } catch (error) {
-      console.error('❌ Erro ao obter estatísticas:', error);
+      console.error("❌ Erro ao obter estatísticas:", error);
     }
 
     return {
       caches: 0,
       entries: 0,
       estimatedSize: 0,
-      sizeFormatted: '0 B',
-      lastCleanup: 'Nunca',
+      sizeFormatted: "0 B",
+      lastCleanup: "Nunca",
       status: this.cacheStatus,
-      online: this.isOnline
+      online: this.isOnline,
     };
   }
 
   // Quando reconecta, atualizar dados críticos
   async onReconnect() {
-    console.log('🔄 Reconectado - atualizando dados críticos...');
+    console.log("🔄 Reconectado - atualizando dados críticos...");
 
     try {
       // Forçar atualização dos estados dos dispositivos
-      if (typeof updateDeviceStatesFromServer === 'function') {
+      if (typeof updateDeviceStatesFromServer === "function") {
         await updateDeviceStatesFromServer();
       }
 
       // Limpar cache antigo se necessário
       const stats = await this.getCacheStats();
-      if (stats.estimatedSize > 50 * 1024 * 1024) { // 50MB
-        console.log('📦 Cache grande detectado, sugerindo limpeza');
+      if (stats.estimatedSize > 50 * 1024 * 1024) {
+        // 50MB
+        console.log("📦 Cache grande detectado, sugerindo limpeza");
         // Não limpar automaticamente, apenas logar
       }
-
     } catch (error) {
-      console.warn('⚠️ Erro na reconexão:', error);
+      console.warn("⚠️ Erro na reconexão:", error);
     }
   }
 
   formatBytes(bytes) {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) return "0 B";
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
   // Método público para debug
   async debugInfo() {
     const stats = await this.getCacheStats();
     console.table({
-      'Status do Cache': stats.status,
-      'Online': stats.online ? '✅' : '❌',
-      'Caches': stats.caches,
-      'Entradas': stats.entries,
-      'Tamanho Estimado': stats.sizeFormatted,
-      'Última Limpeza': stats.lastCleanup
+      "Status do Cache": stats.status,
+      Online: stats.online ? "✅" : "❌",
+      Caches: stats.caches,
+      Entradas: stats.entries,
+      "Tamanho Estimado": stats.sizeFormatted,
+      "Última Limpeza": stats.lastCleanup,
     });
     return stats;
   }
@@ -2840,7 +2840,7 @@ const loadingTracker = {
   photosLoaded: new Set(),
   devicesLoaded: new Set(),
   startTime: null,
-  
+
   reset() {
     this.icons.clear();
     this.photos.clear();
@@ -2851,67 +2851,73 @@ const loadingTracker = {
     this.startTime = Date.now();
     console.log("🔄 Loading tracker resetado");
   },
-  
+
   registerIcon(src) {
     if (src && !this.icons.has(src)) {
       this.icons.add(src);
       console.log(`📌 Ícone registrado: ${src}`);
     }
   },
-  
+
   registerPhoto(src) {
     if (src && !this.photos.has(src)) {
       this.photos.add(src);
       console.log(`📌 Foto registrada: ${src}`);
     }
   },
-  
+
   registerDevice(deviceId) {
     if (deviceId && !this.devices.has(deviceId)) {
       this.devices.add(deviceId);
       console.log(`📌 Dispositivo registrado: ${deviceId}`);
     }
   },
-  
+
   markIconLoaded(src) {
     if (src && !this.iconsLoaded.has(src)) {
       this.iconsLoaded.add(src);
-      console.log(`✅ Ícone carregado: ${src} (${this.iconsLoaded.size}/${this.icons.size})`);
+      console.log(
+        `✅ Ícone carregado: ${src} (${this.iconsLoaded.size}/${this.icons.size})`
+      );
       this.updateProgress();
     }
   },
-  
+
   markPhotoLoaded(src) {
     if (src && !this.photosLoaded.has(src)) {
       this.photosLoaded.add(src);
-      console.log(`✅ Foto carregada: ${src} (${this.photosLoaded.size}/${this.photos.size})`);
+      console.log(
+        `✅ Foto carregada: ${src} (${this.photosLoaded.size}/${this.photos.size})`
+      );
       this.updateProgress();
     }
   },
-  
+
   markDeviceLoaded(deviceId) {
     if (deviceId && !this.devicesLoaded.has(deviceId)) {
       this.devicesLoaded.add(deviceId);
-      console.log(`✅ Dispositivo carregado: ${deviceId} (${this.devicesLoaded.size}/${this.devices.size})`);
+      console.log(
+        `✅ Dispositivo carregado: ${deviceId} (${this.devicesLoaded.size}/${this.devices.size})`
+      );
       this.updateProgress();
     }
   },
-  
+
   getProgress() {
     const totalIcons = this.icons.size;
     const totalPhotos = this.photos.size;
     const totalDevices = this.devices.size;
     const total = totalIcons + totalPhotos + totalDevices;
-    
+
     if (total === 0) return { percentage: 0, text: "Iniciando..." };
-    
+
     const loadedIcons = this.iconsLoaded.size;
     const loadedPhotos = this.photosLoaded.size;
     const loadedDevices = this.devicesLoaded.size;
     const loaded = loadedIcons + loadedPhotos + loadedDevices;
-    
+
     const percentage = Math.min((loaded / total) * 100, 100);
-    
+
     let text = "Carregando";
     if (loadedIcons < totalIcons) {
       text = `Carregando ícones (${loadedIcons}/${totalIcons})`;
@@ -2922,15 +2928,15 @@ const loadingTracker = {
     } else {
       text = "Finalizando...";
     }
-    
+
     return { percentage, text };
   },
-  
+
   updateProgress() {
     const { percentage, text } = this.getProgress();
     updateProgress(percentage, text);
   },
-  
+
   isComplete() {
     return (
       this.icons.size > 0 &&
@@ -2939,7 +2945,7 @@ const loadingTracker = {
       this.devicesLoaded.size === this.devices.size
     );
   },
-  
+
   getStats() {
     const elapsed = this.startTime ? Date.now() - this.startTime : 0;
     return {
@@ -2947,9 +2953,9 @@ const loadingTracker = {
       photos: `${this.photosLoaded.size}/${this.photos.size}`,
       devices: `${this.devicesLoaded.size}/${this.devices.size}`,
       elapsed: `${(elapsed / 1000).toFixed(2)}s`,
-      complete: this.isComplete()
+      complete: this.isComplete(),
     };
-  }
+  },
 };
 
 function showLoader() {
@@ -2975,7 +2981,7 @@ function hideLoader() {
     if (loader) {
       const stats = loadingTracker.getStats();
       console.log("📊 Estatísticas finais do loading:", stats);
-      
+
       const delay = 500; // Tempo padrão para desktop e mobile
       setTimeout(() => {
         loader.classList.add("hidden");
@@ -3010,42 +3016,44 @@ function updateProgress(percentage, text) {
     }
 
     // Log para debug mobile
-    console.log(`📊 Progresso: ${percentage.toFixed(1)}% - ${text || "Carregando..."}`);
+    console.log(
+      `📊 Progresso: ${percentage.toFixed(1)}% - ${text || "Carregando..."}`
+    );
   } catch (error) {
     console.warn("⚠️ Erro ao atualizar progresso:", error);
   }
 }
 
 // Função helper para preload de imagens com tracking
-function preloadImage(src, type = 'icon') {
+function preloadImage(src, type = "icon") {
   return new Promise((resolve, reject) => {
     if (!src) {
       resolve();
       return;
     }
-    
+
     const img = new Image();
-    
+
     img.onload = () => {
-      if (type === 'icon') {
+      if (type === "icon") {
         loadingTracker.markIconLoaded(src);
-      } else if (type === 'photo') {
+      } else if (type === "photo") {
         loadingTracker.markPhotoLoaded(src);
       }
       resolve(img);
     };
-    
+
     img.onerror = () => {
       console.warn(`⚠️ Erro ao carregar ${type}: ${src}`);
       // Mesmo com erro, marcar como carregado para não travar
-      if (type === 'icon') {
+      if (type === "icon") {
         loadingTracker.markIconLoaded(src);
-      } else if (type === 'photo') {
+      } else if (type === "photo") {
         loadingTracker.markPhotoLoaded(src);
       }
       resolve(); // Resolver mesmo com erro
     };
-    
+
     img.src = src;
   });
 }
@@ -3053,7 +3061,7 @@ function preloadImage(src, type = 'icon') {
 // Função para preload de todos os ícones e fotos críticos
 async function preloadCriticalAssets() {
   console.log("🎨 Iniciando preload de assets críticos...");
-  
+
   // Lista de todos os ícones usados no app
   const criticalIcons = [
     "images/icons/icon-rotatephone.svg",
@@ -3068,7 +3076,7 @@ async function preloadCriticalAssets() {
     "images/icons/icon-small-smartglass-on.svg",
     "images/icons/icon-small-smartglass-off.svg",
   ];
-  
+
   // Lista de todas as fotos usadas
   const criticalPhotos = [
     "images/Images/photo-varanda.jpg",
@@ -3082,30 +3090,32 @@ async function preloadCriticalAssets() {
     "images/Images/photo-suitemaster.jpg",
     "images/pwa/app-icon-512-transparent.png",
   ];
-  
+
   // Registrar todos os assets
-  criticalIcons.forEach(icon => loadingTracker.registerIcon(icon));
-  criticalPhotos.forEach(photo => loadingTracker.registerPhoto(photo));
-  
-  console.log(`📌 Registrados ${criticalIcons.length} ícones e ${criticalPhotos.length} fotos`);
-  
+  criticalIcons.forEach((icon) => loadingTracker.registerIcon(icon));
+  criticalPhotos.forEach((photo) => loadingTracker.registerPhoto(photo));
+
+  console.log(
+    `📌 Registrados ${criticalIcons.length} ícones e ${criticalPhotos.length} fotos`
+  );
+
   // Carregar em paralelo com limite de concorrência
   const loadInBatches = async (items, type, batchSize = 5) => {
     for (let i = 0; i < items.length; i += batchSize) {
       const batch = items.slice(i, i + batchSize);
-      await Promise.all(batch.map(item => preloadImage(item, type)));
+      await Promise.all(batch.map((item) => preloadImage(item, type)));
     }
   };
-  
+
   try {
     // Carregar ícones primeiro (são menores)
-    await loadInBatches(criticalIcons, 'icon', 10);
+    await loadInBatches(criticalIcons, "icon", 10);
     console.log("✅ Todos os ícones carregados");
-    
+
     // Depois carregar fotos (são maiores)
-    await loadInBatches(criticalPhotos, 'photo', 3);
+    await loadInBatches(criticalPhotos, "photo", 3);
     console.log("✅ Todas as fotos carregadas");
-    
+
     return true;
   } catch (error) {
     console.error("❌ Erro no preload de assets:", error);
@@ -3130,7 +3140,7 @@ async function loadAllDeviceStatesGlobally() {
   });
 
   // Registrar todos os dispositivos no tracker
-  ALL_LIGHT_IDS.forEach(deviceId => loadingTracker.registerDevice(deviceId));
+  ALL_LIGHT_IDS.forEach((deviceId) => loadingTracker.registerDevice(deviceId));
 
   // Mobile e desktop usam EXATAMENTE o mesmo carregamento
   console.log("🌍 Carregamento universal (desktop e mobile idênticos)");
@@ -3921,49 +3931,62 @@ window.debugEletrize = {
 
 /* --- Music player metadata update functions --- */
 
-
 // Função para atualizar metadados do Denon
 function updateDenonMetadata() {
   console.log("🎵 Buscando metadados do Denon AVR via Hubitat Cloud...");
-  
+
   // Pedir ao Cloudflare function para retornar o JSON completo do Hubitat
   // (a function usa a variável HUBITAT_FULL_URL do ambiente quando configurada)
   fetch(`${POLLING_URL}?full=1`)
-    .then(async response => {
+    .then(async (response) => {
       if (!response.ok) {
-        const text = await response.text().catch(() => '<no body>');
+        const text = await response.text().catch(() => "<no body>");
         throw new Error(`HTTP error! status: ${response.status} - ${text}`);
       }
       // Tentar analisar JSON, mas capturar e mostrar texto cru se falhar
       try {
         return await response.json();
       } catch (err) {
-        const rawText = await response.text().catch(() => '<non-readable body>');
+        const rawText = await response
+          .text()
+          .catch(() => "<non-readable body>");
         throw new Error(`Invalid JSON response from polling: ${rawText}`);
       }
     })
-    .then(data => {
+    .then((data) => {
       console.log("🎵 Resposta completa do Hubitat:", data);
-      
-  // Procurar o Denon AVR pelos metadados (ID 326) nos dados
+
+      // Procurar o Denon AVR pelos metadados (ID 326) nos dados
       // O formato pode ser um array direto ou um objeto com propriedade devices
-      const devices = Array.isArray(data) ? data : (data.devices || []);
-  // O ID do dispositivo que fornece metadados do Denon é 326
-  const DENON_METADATA_DEVICE_ID = "326";
-  let denonDevice = devices.find(device => String(device.id) === DENON_METADATA_DEVICE_ID || device.id === parseInt(DENON_METADATA_DEVICE_ID, 10));
-  // Fallback: procurar por dispositivos cujo nome/label contenha 'denon', 'receiver' ou 'av'
-  if (!denonDevice) {
-    denonDevice = devices.find((device) => {
-      const name = String(device.name || device.label || "").toLowerCase();
-      return name.includes("denon") || name.includes("receiver") || name.includes("av");
-    });
-    if (denonDevice) console.log("🔎 Denon metadata device encontrado por name/label:", denonDevice);
-  }
-      
+      const devices = Array.isArray(data) ? data : data.devices || [];
+      // O ID do dispositivo que fornece metadados do Denon é 326
+      const DENON_METADATA_DEVICE_ID = "326";
+      let denonDevice = devices.find(
+        (device) =>
+          String(device.id) === DENON_METADATA_DEVICE_ID ||
+          device.id === parseInt(DENON_METADATA_DEVICE_ID, 10)
+      );
+      // Fallback: procurar por dispositivos cujo nome/label contenha 'denon', 'receiver' ou 'av'
+      if (!denonDevice) {
+        denonDevice = devices.find((device) => {
+          const name = String(device.name || device.label || "").toLowerCase();
+          return (
+            name.includes("denon") ||
+            name.includes("receiver") ||
+            name.includes("av")
+          );
+        });
+        if (denonDevice)
+          console.log(
+            "🔎 Denon metadata device encontrado por name/label:",
+            denonDevice
+          );
+      }
+
       if (denonDevice) {
         console.log("🎵 Denon encontrado:", denonDevice);
         console.log("🎵 Atributos do Denon:", denonDevice.attributes);
-        
+
         // Extrair metadados - o formato pode variar
         let artist = "Desconhecido";
         let track = "Sem título";
@@ -3972,15 +3995,23 @@ function updateDenonMetadata() {
         let playbackStatus = null;
         let trackDataRaw = null;
         let trackDataObj = null;
-        
+
         // Tentar extrair de diferentes formatos possíveis
         if (Array.isArray(denonDevice.attributes)) {
           // Formato array: [{name: "artist", currentValue: "..."}, ...]
-          const artistAttr = denonDevice.attributes.find(attr => attr.name === "artist" || attr.name === "trackArtist");
-          const trackAttr = denonDevice.attributes.find(attr => attr.name === "trackDescription" || attr.name === "track");
-          const albumAttr = denonDevice.attributes.find(attr => attr.name === "albumName" || attr.name === "album");
-          const albumArtAttr = denonDevice.attributes.find(attr => attr.name === "albumArtUrl" || attr.name === "albumArtURI");
-          const statusAttr = denonDevice.attributes.find(attr => {
+          const artistAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "artist" || attr.name === "trackArtist"
+          );
+          const trackAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "trackDescription" || attr.name === "track"
+          );
+          const albumAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "albumName" || attr.name === "album"
+          );
+          const albumArtAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "albumArtUrl" || attr.name === "albumArtURI"
+          );
+          const statusAttr = denonDevice.attributes.find((attr) => {
             const attrName = String(attr?.name || "").toLowerCase();
             return (
               attrName === "status" ||
@@ -3989,15 +4020,23 @@ function updateDenonMetadata() {
               attrName === "transportstate"
             );
           });
-          const trackDataAttr = denonDevice.attributes.find(attr => attr.name === "trackData" || attr.name === "trackdata");
-          
+          const trackDataAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "trackData" || attr.name === "trackdata"
+          );
+
           artist = artistAttr?.currentValue || artistAttr?.value || artist;
           track = trackAttr?.currentValue || trackAttr?.value || track;
           album = albumAttr?.currentValue || albumAttr?.value || album;
-          albumArt = albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
-          playbackStatus = statusAttr?.currentValue || statusAttr?.value || playbackStatus;
-          trackDataRaw = trackDataAttr?.currentValue || trackDataAttr?.value || trackDataRaw;
-        } else if (denonDevice.attributes && typeof denonDevice.attributes === 'object') {
+          albumArt =
+            albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
+          playbackStatus =
+            statusAttr?.currentValue || statusAttr?.value || playbackStatus;
+          trackDataRaw =
+            trackDataAttr?.currentValue || trackDataAttr?.value || trackDataRaw;
+        } else if (
+          denonDevice.attributes &&
+          typeof denonDevice.attributes === "object"
+        ) {
           // Formato objeto: {artist: "...", trackDescription: "...", track: "...", album: "...", ...}
           artist = denonDevice.attributes.artist || artist;
           track = denonDevice.attributes.track || track;
@@ -4009,19 +4048,24 @@ function updateDenonMetadata() {
             denonDevice.attributes.transportState ||
             playbackStatus;
           trackDataRaw = denonDevice.attributes.trackData || trackDataRaw;
-          
+
           // Para albumArt, verificar se existe albumArt com tag HTML ou extrair do trackData JSON
-          if (denonDevice.attributes.albumArt && typeof denonDevice.attributes.albumArt === 'string') {
-            const imgMatch = denonDevice.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);
+          if (
+            denonDevice.attributes.albumArt &&
+            typeof denonDevice.attributes.albumArt === "string"
+          ) {
+            const imgMatch =
+              denonDevice.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);
             albumArt = imgMatch ? imgMatch[1] : null;
           }
-          
+
           // Se não encontrou albumArt, tentar extrair do trackData JSON
           if (!albumArt && denonDevice.attributes.trackData) {
             try {
-              const trackData = typeof denonDevice.attributes.trackData === 'string' 
-                ? JSON.parse(denonDevice.attributes.trackData) 
-                : denonDevice.attributes.trackData;
+              const trackData =
+                typeof denonDevice.attributes.trackData === "string"
+                  ? JSON.parse(denonDevice.attributes.trackData)
+                  : denonDevice.attributes.trackData;
               trackDataObj = trackData;
               albumArt = trackData.image_url || albumArt;
             } catch (e) {
@@ -4029,16 +4073,23 @@ function updateDenonMetadata() {
             }
           }
         }
-        
+
         if (!trackDataObj && trackDataRaw) {
           try {
-            trackDataObj = typeof trackDataRaw === 'string' ? JSON.parse(trackDataRaw) : trackDataRaw;
+            trackDataObj =
+              typeof trackDataRaw === "string"
+                ? JSON.parse(trackDataRaw)
+                : trackDataRaw;
           } catch (e) {
             console.warn("⚠️ Erro ao parsear trackData (raw):", e);
           }
         }
 
-        if (!albumArt && trackDataObj && typeof trackDataObj.image_url === 'string') {
+        if (
+          !albumArt &&
+          trackDataObj &&
+          typeof trackDataObj.image_url === "string"
+        ) {
           albumArt = trackDataObj.image_url;
         }
 
@@ -4062,26 +4113,38 @@ function updateDenonMetadata() {
             window.musicPlayerUI.setPlaying(derivedPlaybackStatus);
           }
         }
-        
-        console.log("🎵 Metadados extraídos:", { artist, track, album, albumArt });
+
+        console.log("🎵 Metadados extraídos:", {
+          artist,
+          track,
+          album,
+          albumArt,
+        });
         artist = normalizePortugueseText(artist);
         track = normalizePortugueseText(track);
         album = normalizePortugueseText(album);
-        
+
         // Atualizar UI
         updateMusicPlayerUI(artist, track, album, albumArt);
       } else {
-  console.log("⚠️ Denon AVR (ID 326) (metadados) não encontrado nos dados");
-        console.log("Dispositivos disponíveis:", devices.map(d => ({ id: d.id, name: d.name || d.label })));
+        console.log(
+          "⚠️ Denon AVR (ID 326) (metadados) não encontrado nos dados"
+        );
+        console.log(
+          "Dispositivos disponíveis:",
+          devices.map((d) => ({ id: d.id, name: d.name || d.label }))
+        );
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("❌ Erro ao buscar metadados do Denon:", error);
       // Tentar logar a resposta bruta para debug adicional via endpoint de polling
       fetch(`${POLLING_URL}?full=1`)
-        .then(res => res.text())
-        .then(t => console.log('Raw polling response (debug):', t))
-        .catch(e => console.warn('Não foi possível obter resposta bruta de /polling:', e));
+        .then((res) => res.text())
+        .then((t) => console.log("Raw polling response (debug):", t))
+        .catch((e) =>
+          console.warn("Não foi possível obter resposta bruta de /polling:", e)
+        );
     });
 }
 
@@ -4092,20 +4155,20 @@ function updateMusicPlayerUI(artist, track, album, albumArt) {
   album = normalizePortugueseText(album);
 
   // Obter elementos do DOM
-  const artistElement = queryActiveMusic('#music-artist');
-  const trackElement = queryActiveMusic('#music-track');
-  const albumImgElement = queryActiveMusic('.music-album-img');
-  
+  const artistElement = queryActiveMusic("#music-artist");
+  const trackElement = queryActiveMusic("#music-track");
+  const albumImgElement = queryActiveMusic(".music-album-img");
+
   // Atualizar texto se os elementos existirem
   if (artistElement) artistElement.textContent = artist;
   if (trackElement) trackElement.textContent = track;
   syncMusicTrackMarquee();
-  
+
   // Atualizar imagem do álbum
   if (albumImgElement) {
     if (albumArt && albumArt !== "null" && albumArt !== "") {
       albumImgElement.src = albumArt;
-      albumImgElement.onerror = function() {
+      albumImgElement.onerror = function () {
         // Se a imagem falhar, use placeholder
         this.src = "images/Images/photo-varanda.jpg";
       };
@@ -4114,7 +4177,7 @@ function updateMusicPlayerUI(artist, track, album, albumArt) {
       albumImgElement.src = "images/Images/photo-varanda.jpg";
     }
   }
-  
+
   console.log(`🎵 UI atualizada: "${track}" por ${artist} (${album})`);
 }
 
@@ -4125,9 +4188,9 @@ let musicMetadataInterval = null;
 function startMusicMetadataPolling() {
   // Parar polling anterior se existir
   stopMusicMetadataPolling();
-  
+
   console.log("🎵 Iniciando polling de metadados a cada 3 segundos");
-  
+
   // Iniciar novo polling a cada 3 segundos
   musicMetadataInterval = setInterval(() => {
     if (isMusicPageActive()) {
@@ -4307,7 +4370,12 @@ function initMusicPlayerUI() {
 
   playToggleBtn.addEventListener("click", () => {
     const action = isPlaying ? "pause" : "play";
-    console.log("🎵 Toggle play/pause -> enviando comando", action, "para device", DENON_MUSIC_DEVICE_ID);
+    console.log(
+      "🎵 Toggle play/pause -> enviando comando",
+      action,
+      "para device",
+      DENON_MUSIC_DEVICE_ID
+    );
 
     sendHubitatCommand(DENON_MUSIC_DEVICE_ID, action)
       .then(() => {
@@ -4320,19 +4388,28 @@ function initMusicPlayerUI() {
   });
 
   nextBtn.addEventListener("click", () => {
-    console.log("⏭️ Next clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
+    console.log(
+      "⏭️ Next clicked - enviando comando para device",
+      DENON_MUSIC_DEVICE_ID
+    );
     sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "nextTrack")
       .then(() => console.log("✅ Comando nextTrack enviado com sucesso"))
-      .catch(err => console.error("❌ Erro ao enviar comando nextTrack:", err));
+      .catch((err) =>
+        console.error("❌ Erro ao enviar comando nextTrack:", err)
+      );
   });
 
   prevBtn.addEventListener("click", () => {
-    console.log("⏮️ Previous clicked - enviando comando para device", DENON_MUSIC_DEVICE_ID);
+    console.log(
+      "⏮️ Previous clicked - enviando comando para device",
+      DENON_MUSIC_DEVICE_ID
+    );
     sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "previousTrack")
       .then(() => console.log("✅ Comando previousTrack enviado com sucesso"))
-      .catch(err => console.error("❌ Erro ao enviar comando previousTrack:", err));
+      .catch((err) =>
+        console.error("❌ Erro ao enviar comando previousTrack:", err)
+      );
   });
-
 
   window.musicPlayerUI.setPlaying = setPlaying;
   window.musicPlayerUI.isPlaying = () => isPlaying;
@@ -4342,14 +4419,18 @@ function initMusicPlayerUI() {
     muteBtn.addEventListener("click", () => {
       const newMutedState = !isMuted;
       const command = newMutedState ? "mute" : "unmute";
-      console.log(`🔇 Mute button clicked - enviando comando "${command}" para device ${DENON_CMD_DEVICE_ID}`);
-      
+      console.log(
+        `🔇 Mute button clicked - enviando comando "${command}" para device ${DENON_CMD_DEVICE_ID}`
+      );
+
       sendHubitatCommand(DENON_CMD_DEVICE_ID, command)
         .then(() => {
           console.log(`✅ Comando ${command} enviado com sucesso`);
           setMuted(newMutedState);
         })
-        .catch(err => console.error(`❌ Erro ao enviar comando ${command}:`, err));
+        .catch((err) =>
+          console.error(`❌ Erro ao enviar comando ${command}:`, err)
+        );
     });
 
     // Função para atualizar a barra de volume
@@ -4373,23 +4454,32 @@ function initMusicPlayerUI() {
     });
 
     // If there's a separate music slider, wire it to send commands to Denon (device 322)
-    const musicSlider = queryActiveMusic('#music-volume-slider');
+    const musicSlider = queryActiveMusic("#music-volume-slider");
     if (musicSlider) {
-      musicSlider.addEventListener('input', (e) => {
+      musicSlider.addEventListener("input", (e) => {
         // update visual bar for music slider
         const v = parseInt(e.target.value);
-        musicSlider.style.setProperty('--volume-percent', (v/100)*100 + '%');
+        musicSlider.style.setProperty(
+          "--volume-percent",
+          (v / 100) * 100 + "%"
+        );
       });
 
-      musicSlider.addEventListener('change', (e) => {
+      musicSlider.addEventListener("change", (e) => {
         const value = e.target.value;
-        console.log(`🔊 Music slider changed -> sending setVolume ${value} to Denon (${DENON_CMD_DEVICE_ID})`);
+        console.log(
+          `🔊 Music slider changed -> sending setVolume ${value} to Denon (${DENON_CMD_DEVICE_ID})`
+        );
         // Mark recent command to prevent polling overwrite
         recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
         // Send command
-        sendHubitatCommand(DENON_CMD_DEVICE_ID, 'setVolume', value)
-          .then(() => console.log('✅ setVolume sent to Denon via music slider'))
-          .catch(err => console.error('❌ Error sending setVolume from music slider:', err));
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, "setVolume", value)
+          .then(() =>
+            console.log("✅ setVolume sent to Denon via music slider")
+          )
+          .catch((err) =>
+            console.error("❌ Error sending setVolume from music slider:", err)
+          );
       });
     }
 
@@ -4433,25 +4523,29 @@ function initMusicPlayerUI() {
   if (masterOnBtn && masterOffBtn && playerInner) {
     masterOnBtn.addEventListener("click", () => {
       if (!isPowerOn) {
-        console.log(`⚡ Power ON clicked - enviando comando "on" para device ${DENON_CMD_DEVICE_ID}`);
+        console.log(
+          `⚡ Power ON clicked - enviando comando "on" para device ${DENON_CMD_DEVICE_ID}`
+        );
         sendHubitatCommand(DENON_CMD_DEVICE_ID, "on")
           .then(() => {
             console.log("✅ Comando on enviado com sucesso");
             setMasterPower(true);
           })
-          .catch(err => console.error("❌ Erro ao enviar comando on:", err));
+          .catch((err) => console.error("❌ Erro ao enviar comando on:", err));
       }
     });
 
     masterOffBtn.addEventListener("click", () => {
       if (isPowerOn) {
-        console.log(`⚫ Power OFF clicked - enviando comando "off" para device ${DENON_CMD_DEVICE_ID}`);
+        console.log(
+          `⚫ Power OFF clicked - enviando comando "off" para device ${DENON_CMD_DEVICE_ID}`
+        );
         sendHubitatCommand(DENON_CMD_DEVICE_ID, "off")
           .then(() => {
             console.log("✅ Comando off enviado com sucesso");
             setMasterPower(false);
           })
-          .catch(err => console.error("❌ Erro ao enviar comando off:", err));
+          .catch((err) => console.error("❌ Erro ao enviar comando off:", err));
       }
     });
   }
@@ -4459,15 +4553,15 @@ function initMusicPlayerUI() {
   // initialize
   setPlaying(Boolean(window.musicPlayerUI.currentPlaying));
   setMasterPower(true); // Iniciar com o player ligado
-  
+
   // Buscar metadados iniciais do Denon
   updateDenonMetadata();
-  
+
   // Iniciar polling de metadados
   startMusicMetadataPolling();
 
   syncMusicTrackMarquee();
-  
+
   console.log("🎵 Player de música inicializado");
 }
 
@@ -4696,7 +4790,7 @@ function initializeApp() {
         preloadCriticalAssets()
           .then(function (assetsLoaded) {
             console.log("🎨 Assets críticos carregados:", assetsLoaded);
-            
+
             // Depois: carregamento global de todos os estados
             return loadAllDeviceStatesGlobally();
           })
@@ -4707,7 +4801,7 @@ function initializeApp() {
             const checkLoadingComplete = () => {
               const stats = loadingTracker.getStats();
               console.log("📊 Verificando status do loading:", stats);
-              
+
               if (loadingTracker.isComplete()) {
                 console.log("✅ Todos os recursos carregados!");
                 updateProgress(100, "Carregamento completo!");
@@ -4724,11 +4818,13 @@ function initializeApp() {
                 let attempts = 0;
                 const checkInterval = setInterval(() => {
                   attempts++;
-                  
+
                   if (checkLoadingComplete() || attempts >= maxAttempts) {
                     clearInterval(checkInterval);
                     if (attempts >= maxAttempts) {
-                      console.warn("⚠️ Timeout ao aguardar recursos - continuando...");
+                      console.warn(
+                        "⚠️ Timeout ao aguardar recursos - continuando..."
+                      );
                     }
                     resolve();
                   }
@@ -4736,25 +4832,29 @@ function initializeApp() {
               });
             };
 
-// Aguardar recursos e então finalizar
+            // Aguardar recursos e então finalizar
             waitForComplete().then(async () => {
               // Diagnóstico do cache inteligente
               try {
                 const cacheStats = await smartCacheManager.getCacheStats();
-                console.log('📊 Diagnóstico de Cache Inteligente:');
-                console.log('  📦 Status:', cacheStats.status);
-                console.log('  🌐 Online:', cacheStats.online ? '✅' : '❌');
-                console.log('  📁 Caches:', cacheStats.caches);
-                console.log('  📄 Entradas:', cacheStats.entries);
-                console.log('  💾 Tamanho:', cacheStats.sizeFormatted);
+                console.log("📊 Diagnóstico de Cache Inteligente:");
+                console.log("  📦 Status:", cacheStats.status);
+                console.log("  🌐 Online:", cacheStats.online ? "✅" : "❌");
+                console.log("  📁 Caches:", cacheStats.caches);
+                console.log("  📄 Entradas:", cacheStats.entries);
+                console.log("  💾 Tamanho:", cacheStats.sizeFormatted);
 
                 if (cacheStats.entries > 0) {
-                  console.log('✅ Cache inteligente funcionando - carregamento será mais rápido na próxima visita!');
+                  console.log(
+                    "✅ Cache inteligente funcionando - carregamento será mais rápido na próxima visita!"
+                  );
                 } else {
-                  console.log('🔄 Cache sendo preenchido - primeira visita ou cache vazio');
+                  console.log(
+                    "🔄 Cache sendo preenchido - primeira visita ou cache vazio"
+                  );
                 }
               } catch (error) {
-                console.warn('⚠️ Erro no diagnóstico de cache:', error);
+                console.warn("⚠️ Erro no diagnóstico de cache:", error);
               }
 
               // Delay final padrão para desktop e mobile
@@ -4791,11 +4891,14 @@ function initializeApp() {
                   );
                   setTimeout(startPolling, pollingDelay);
                 } else {
-                  console.log("❌ POLLING NÃO INICIADO - não está em produção:", {
-                    isProduction: isProduction,
-                    hostname: location.hostname,
-                    isMobile: isMobile,
-                  });
+                  console.log(
+                    "❌ POLLING NÃO INICIADO - não está em produção:",
+                    {
+                      isProduction: isProduction,
+                      hostname: location.hostname,
+                      isMobile: isMobile,
+                    }
+                  );
                 }
 
                 console.log("Aplicação totalmente inicializada!");
@@ -4876,37 +4979,49 @@ window.testHubitatConnection = testHubitatConnection;
 window.showErrorMessage = showErrorMessage;
 
 // Funções globais de debug para cache inteligente
-window.debugCache = async function() {
+window.debugCache = async function () {
   try {
     const stats = await smartCacheManager.getCacheStats();
-    console.log('🔍 DEBUG CACHE INTELIGENTE');
-    console.log('==========================');
-    console.log('Status:', stats.status);
-    console.log('Online:', stats.online);
-    console.log('Caches:', stats.caches);
-    console.log('Entradas:', stats.entries);
-    console.log('Tamanho:', stats.sizeFormatted);
-    console.log('==========================');
+    console.log("🔍 DEBUG CACHE INTELIGENTE");
+    console.log("==========================");
+    console.log("Status:", stats.status);
+    console.log("Online:", stats.online);
+    console.log("Caches:", stats.caches);
+    console.log("Entradas:", stats.entries);
+    console.log("Tamanho:", stats.sizeFormatted);
+    console.log("==========================");
 
     // Mostrar estratégias de cache
-    console.log('📋 ESTRATÉGIAS DE CACHE:');
-    console.log('  🔴 Crítico (cache-first):', CACHE_CONFIG.critical.length, 'itens');
-    console.log('  🟡 Dinâmico (network-first):', CACHE_CONFIG.dynamic.length, 'itens');
-    console.log('  🟢 Volátil (network-only):', CACHE_CONFIG.volatile.length, 'itens');
+    console.log("📋 ESTRATÉGIAS DE CACHE:");
+    console.log(
+      "  🔴 Crítico (cache-first):",
+      CACHE_CONFIG.critical.length,
+      "itens"
+    );
+    console.log(
+      "  🟡 Dinâmico (network-first):",
+      CACHE_CONFIG.dynamic.length,
+      "itens"
+    );
+    console.log(
+      "  🟢 Volátil (network-only):",
+      CACHE_CONFIG.volatile.length,
+      "itens"
+    );
 
     return stats;
   } catch (error) {
-    console.error('❌ Erro no debug do cache:', error);
+    console.error("❌ Erro no debug do cache:", error);
   }
 };
 
-window.clearAppCache = async function() {
+window.clearAppCache = async function () {
   try {
     await smartCacheManager.clearCache();
-    console.log('🗑️ Cache inteligente limpo com sucesso!');
+    console.log("🗑️ Cache inteligente limpo com sucesso!");
     return true;
   } catch (error) {
-    console.error('❌ Erro ao limpar cache:', error);
+    console.error("❌ Erro ao limpar cache:", error);
     return false;
   }
 };

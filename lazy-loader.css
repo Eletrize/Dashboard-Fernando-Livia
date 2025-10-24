@@ -1,0 +1,251 @@
+/**
+ * LAZY LOADING STYLES
+ * Estilos para skeleton loaders, componentes lazy e animações
+ */
+
+/* ========================
+   SKELETON LOADERS
+   ======================== */
+
+.skeleton-loader {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================
+   IMAGE LAZY LOADING
+   ======================== */
+
+/* Imagens carregando */
+img.lazy-loading {
+  opacity: 0.5;
+  filter: blur(5px);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Imagens carregadas com sucesso */
+img.lazy-loaded {
+  opacity: 1 !important;
+  filter: blur(0) !important;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Imagens com erro */
+img.lazy-error {
+  opacity: 0.6;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ========================
+   COMPONENT LAZY LOADING
+   ======================== */
+
+[data-lazy-component] {
+  min-height: 200px;
+  position: relative;
+}
+
+/* Loading do componente */
+.component-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.component-loader .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #00d4ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Componente carregado */
+.component-loaded {
+  animation: componentFadeIn 0.5s ease-in-out;
+}
+
+@keyframes componentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Erro do componente */
+.component-error {
+  padding: 20px;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  color: #ff6b6b;
+  text-align: center;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+/* ========================
+   OPTIMIZATION STATE
+   ======================== */
+
+/* Estado de loading */
+.lazy-loading-active {
+  position: relative;
+}
+
+.lazy-loading-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ========================
+   RESPONSIVE ADJUSTMENTS
+   ======================== */
+
+@media (max-width: 768px) {
+  .skeleton-loader {
+    height: 150px;
+  }
+
+  .component-loader {
+    min-height: 150px;
+  }
+
+  .component-loader .spinner {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ========================
+   DARK MODE (já suportado)
+   ======================== */
+
+@media (prefers-color-scheme: dark) {
+  .skeleton-loader {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+
+  .component-error {
+    background-color: rgba(255, 0, 0, 0.05);
+    border-color: rgba(255, 0, 0, 0.2);
+  }
+}
+
+/* ========================
+   ACCESSIBILITY
+   ======================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-loader,
+  img.lazy-loading,
+  img.lazy-loaded,
+  .component-loaded,
+  .component-loader .spinner,
+  .component-error {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ========================
+   PERFORMANCE - GPU ACCELERATION
+   ======================== */
+
+.skeleton-loader,
+img.lazy-loaded,
+.component-loaded {
+  will-change: opacity, transform;
+  /* will-change remove após animação em JS */
+}
+
+/* Remover will-change após a animação */
+img.lazy-loaded {
+  animation: fadeIn 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+img.lazy-loaded::after {
+  content: '';
+  display: block;
+  will-change: unset;
+}

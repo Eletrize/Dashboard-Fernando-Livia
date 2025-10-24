@@ -13,6 +13,9 @@
     <meta name="theme-color" content="#1C1C1C" />
     <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png" />
 
+    <!-- Lazy Loading Styles -->
+    <link rel="stylesheet" href="lazy-loader.css" />
+    
     <script>
       // Cache buster dinâmico para CSS
 
@@ -3753,5 +3756,9 @@
         setTimeout(updatePageSelectorPosition, 300);
       });
     </script>
+
+    <!-- Lazy Loading System -->
+    <script src="lazy-loader.js" async></script>
+    <script src="image-lazy-converter.js" async></script>
   </body>
 </html>
