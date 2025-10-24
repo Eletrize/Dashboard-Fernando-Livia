@@ -362,7 +362,7 @@
       const spaRoot = document.getElementById("spa-root");
 
       // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
-      // Removidas para dashboard genérica - deixar vazio para cards sem foto
+      // Mapeamento atualizado com as fotos corretas por ambiente
 
       const ROOM_PHOTOS = {
         ambiente1: "images/Images/photo-varanda.jpg",
@@ -371,17 +371,17 @@
 
         ambiente3: "images/Images/photo-piscina.jpg",
 
-        ambiente4: "",
+        ambiente4: "images/Images/photo-externo.jpg",
 
-        ambiente5: "",
+        ambiente5: "images/Images/photo-servico.jpg",
 
-        ambiente6: "",
+        ambiente6: "images/Images/photo-circulacao.jpg",
 
-        ambiente7: "",
+        ambiente7: "images/Images/photo-suitei.jpg",
 
-        ambiente8: "",
+        ambiente8: "images/Images/photo-suiteii.jpg",
 
-        ambiente9: "",
+        ambiente9: "images/Images/photo-suitemaster.jpg",
       };
 
       const CURTAIN_SECTIONS = [
@@ -3443,7 +3443,9 @@
         // Define o fundo da página interna com a mesma foto do card
 
         (function setPageBackground(route) {
-          const url = ROOM_PHOTOS[route];
+          // Extrai o ambiente base (ex: "ambiente1" de "ambiente1-luzes")
+          const baseAmbiente = route.match(/^(ambiente\d+)/)?.[1] || route;
+          const url = ROOM_PHOTOS[baseAmbiente];
 
           if (!url) return;
 
