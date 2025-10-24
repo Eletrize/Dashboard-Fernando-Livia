@@ -2661,12 +2661,137 @@ function updateStatesAfterMasterCommand(deviceIds, command) {
 // === SISTEMA DE CARREGAMENTO GLOBAL ===
 
 // Controle da tela de loading
+// ========================================
+// SISTEMA DE LOADING COM TRACKING COMPLETO
+// ========================================
+
+const loadingTracker = {
+  icons: new Set(),
+  photos: new Set(),
+  devices: new Set(),
+  iconsLoaded: new Set(),
+  photosLoaded: new Set(),
+  devicesLoaded: new Set(),
+  startTime: null,
+  
+  reset() {
+    this.icons.clear();
+    this.photos.clear();
+    this.devices.clear();
+    this.iconsLoaded.clear();
+    this.photosLoaded.clear();
+    this.devicesLoaded.clear();
+    this.startTime = Date.now();
+    console.log("🔄 Loading tracker resetado");
+  },
+  
+  registerIcon(src) {
+    if (src && !this.icons.has(src)) {
+      this.icons.add(src);
+      console.log(`📌 Ícone registrado: ${src}`);
+    }
+  },
+  
+  registerPhoto(src) {
+    if (src && !this.photos.has(src)) {
+      this.photos.add(src);
+      console.log(`📌 Foto registrada: ${src}`);
+    }
+  },
+  
+  registerDevice(deviceId) {
+    if (deviceId && !this.devices.has(deviceId)) {
+      this.devices.add(deviceId);
+      console.log(`📌 Dispositivo registrado: ${deviceId}`);
+    }
+  },
+  
+  markIconLoaded(src) {
+    if (src && !this.iconsLoaded.has(src)) {
+      this.iconsLoaded.add(src);
+      console.log(`✅ Ícone carregado: ${src} (${this.iconsLoaded.size}/${this.icons.size})`);
+      this.updateProgress();
+    }
+  },
+  
+  markPhotoLoaded(src) {
+    if (src && !this.photosLoaded.has(src)) {
+      this.photosLoaded.add(src);
+      console.log(`✅ Foto carregada: ${src} (${this.photosLoaded.size}/${this.photos.size})`);
+      this.updateProgress();
+    }
+  },
+  
+  markDeviceLoaded(deviceId) {
+    if (deviceId && !this.devicesLoaded.has(deviceId)) {
+      this.devicesLoaded.add(deviceId);
+      console.log(`✅ Dispositivo carregado: ${deviceId} (${this.devicesLoaded.size}/${this.devices.size})`);
+      this.updateProgress();
+    }
+  },
+  
+  getProgress() {
+    const totalIcons = this.icons.size;
+    const totalPhotos = this.photos.size;
+    const totalDevices = this.devices.size;
+    const total = totalIcons + totalPhotos + totalDevices;
+    
+    if (total === 0) return { percentage: 0, text: "Iniciando..." };
+    
+    const loadedIcons = this.iconsLoaded.size;
+    const loadedPhotos = this.photosLoaded.size;
+    const loadedDevices = this.devicesLoaded.size;
+    const loaded = loadedIcons + loadedPhotos + loadedDevices;
+    
+    const percentage = Math.min((loaded / total) * 100, 100);
+    
+    let text = "Carregando";
+    if (loadedIcons < totalIcons) {
+      text = `Carregando ícones (${loadedIcons}/${totalIcons})`;
+    } else if (loadedPhotos < totalPhotos) {
+      text = `Carregando fotos (${loadedPhotos}/${totalPhotos})`;
+    } else if (loadedDevices < totalDevices) {
+      text = `Atualizando dispositivos (${loadedDevices}/${totalDevices})`;
+    } else {
+      text = "Finalizando...";
+    }
+    
+    return { percentage, text };
+  },
+  
+  updateProgress() {
+    const { percentage, text } = this.getProgress();
+    updateProgress(percentage, text);
+  },
+  
+  isComplete() {
+    return (
+      this.icons.size > 0 &&
+      this.iconsLoaded.size === this.icons.size &&
+      this.photosLoaded.size === this.photos.size &&
+      this.devicesLoaded.size === this.devices.size
+    );
+  },
+  
+  getStats() {
+    const elapsed = this.startTime ? Date.now() - this.startTime : 0;
+    return {
+      icons: `${this.iconsLoaded.size}/${this.icons.size}`,
+      photos: `${this.photosLoaded.size}/${this.photos.size}`,
+      devices: `${this.devicesLoaded.size}/${this.devices.size}`,
+      elapsed: `${(elapsed / 1000).toFixed(2)}s`,
+      complete: this.isComplete()
+    };
+  }
+};
+
 function showLoader() {
   try {
     const loader = document.getElementById("global-loader");
     if (loader) {
       loader.classList.remove("hidden");
       loader.style.display = "flex"; // Forçar display
+      loadingTracker.reset();
       updateProgress(0, "Iniciando carregamento...");
       console.log("📱 Loader exibido");
     } else {
@@ -2681,6 +2806,9 @@ function hideLoader() {
   try {
     const loader = document.getElementById("global-loader");
     if (loader) {
+      const stats = loadingTracker.getStats();
+      console.log("📊 Estatísticas finais do loading:", stats);
+      
       const delay = 500; // Tempo padrão para desktop e mobile
       setTimeout(() => {
         loader.classList.add("hidden");
@@ -2715,9 +2843,106 @@ function updateProgress(percentage, text) {
     }
 
     // Log para debug mobile
-    console.log(`📊 Progresso: ${percentage}% - ${text || "Carregando..."}`);
+    console.log(`📊 Progresso: ${percentage.toFixed(1)}% - ${text || "Carregando..."}`);
   } catch (error) {
     console.warn("⚠️ Erro ao atualizar progresso:", error);
+  }
+}
+
+// Função helper para preload de imagens com tracking
+function preloadImage(src, type = 'icon') {
+  return new Promise((resolve, reject) => {
+    if (!src) {
+      resolve();
+      return;
+    }
+    
+    const img = new Image();
+    
+    img.onload = () => {
+      if (type === 'icon') {
+        loadingTracker.markIconLoaded(src);
+      } else if (type === 'photo') {
+        loadingTracker.markPhotoLoaded(src);
+      }
+      resolve(img);
+    };
+    
+    img.onerror = () => {
+      console.warn(`⚠️ Erro ao carregar ${type}: ${src}`);
+      // Mesmo com erro, marcar como carregado para não travar
+      if (type === 'icon') {
+        loadingTracker.markIconLoaded(src);
+      } else if (type === 'photo') {
+        loadingTracker.markPhotoLoaded(src);
+      }
+      resolve(); // Resolver mesmo com erro
+    };
+    
+    img.src = src;
+  });
+}
+
+// Função para preload de todos os ícones e fotos críticos
+async function preloadCriticalAssets() {
+  console.log("🎨 Iniciando preload de assets críticos...");
+  
+  // Lista de todos os ícones usados no app
+  const criticalIcons = [
+    "images/icons/icon-rotatephone.svg",
+    "images/icons/icon-small-light-on.svg",
+    "images/icons/icon-small-light-off.svg",
+    "images/icons/icon-small-tv-on.svg",
+    "images/icons/icon-small-tv-off.svg",
+    "images/icons/icon-small-shader-on.svg",
+    "images/icons/icon-small-shader-off.svg",
+    "images/icons/icon-small-telamovel-on.svg",
+    "images/icons/icon-small-telamovel-off.svg",
+    "images/icons/icon-small-smartglass-on.svg",
+    "images/icons/icon-small-smartglass-off.svg",
+  ];
+  
+  // Lista de todas as fotos usadas
+  const criticalPhotos = [
+    "images/Images/photo-varanda.jpg",
+    "images/Images/photo-living.jpg",
+    "images/Images/photo-piscina.jpg",
+    "images/Images/photo-externo.jpg",
+    "images/Images/photo-servico.jpg",
+    "images/Images/photo-circulacao.jpg",
+    "images/Images/photo-suitei.jpg",
+    "images/Images/photo-suiteii.jpg",
+    "images/Images/photo-suitemaster.jpg",
+    "images/pwa/app-icon-512-transparent.png",
+  ];
+  
+  // Registrar todos os assets
+  criticalIcons.forEach(icon => loadingTracker.registerIcon(icon));
+  criticalPhotos.forEach(photo => loadingTracker.registerPhoto(photo));
+  
+  console.log(`📌 Registrados ${criticalIcons.length} ícones e ${criticalPhotos.length} fotos`);
+  
+  // Carregar em paralelo com limite de concorrência
+  const loadInBatches = async (items, type, batchSize = 5) => {
+    for (let i = 0; i < items.length; i += batchSize) {
+      const batch = items.slice(i, i + batchSize);
+      await Promise.all(batch.map(item => preloadImage(item, type)));
+    }
+  };
+  
+  try {
+    // Carregar ícones primeiro (são menores)
+    await loadInBatches(criticalIcons, 'icon', 10);
+    console.log("✅ Todos os ícones carregados");
+    
+    // Depois carregar fotos (são maiores)
+    await loadInBatches(criticalPhotos, 'photo', 3);
+    console.log("✅ Todas as fotos carregadas");
+    
+    return true;
+  } catch (error) {
+    console.error("❌ Erro no preload de assets:", error);
+    return false;
   }
 }
 
@@ -2737,6 +2962,9 @@ async function loadAllDeviceStatesGlobally() {
     userAgent: navigator.userAgent.substring(0, 100),
   });
 
+  // Registrar todos os dispositivos no tracker
+  ALL_LIGHT_IDS.forEach(deviceId => loadingTracker.registerDevice(deviceId));
+
   // Mobile e desktop usam EXATAMENTE o mesmo carregamento
   console.log("🌍 Carregamento universal (desktop e mobile idênticos)");
 
@@ -2744,7 +2972,6 @@ async function loadAllDeviceStatesGlobally() {
     console.log("💻 MODO DESENVOLVIMENTO ATIVO - carregando do localStorage");
     console.log("💻 ISSO PODE SER O PROBLEMA NO MOBILE!");
     console.log("📋 Dispositivos a carregar:", ALL_LIGHT_IDS.length);
-    updateProgress(20, "Modo DEV - Estados salvos...");
 
     // Simular carregamento para melhor UX (mobile-friendly)
     try {
@@ -2760,22 +2987,17 @@ async function loadAllDeviceStatesGlobally() {
       try {
         storedState = getStoredState(deviceId) || "off";
         updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+        loadingTracker.markDeviceLoaded(deviceId);
         loadedCount++;
       } catch (e) {
         console.warn(`❌ Erro ao processar ${deviceId}:`, e);
+        loadingTracker.markDeviceLoaded(deviceId); // Marcar como carregado mesmo com erro
       }
-
-      const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
-      updateProgress(
-        progress,
-        `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}...`
-      );
     });
 
     console.log(
       `✅ Carregamento completo: ${loadedCount}/${ALL_LIGHT_IDS.length} dispositivos`
     );
-    updateProgress(100, "Carregamento concluído!");
     return true;
   }
 
@@ -2947,26 +3169,21 @@ async function loadAllDeviceStatesGlobally() {
             if (deviceData.success) {
               setStoredState(deviceId, deviceData.state);
               updateDeviceUI(deviceId, deviceData.state, true);
+              loadingTracker.markDeviceLoaded(deviceId);
               console.log(
                 `✅ Device ${deviceId}: ${deviceData.state} (direto)`
               );
             } else {
               const storedState = getStoredState(deviceId) || "off";
               updateDeviceUI(deviceId, storedState, true);
+              loadingTracker.markDeviceLoaded(deviceId);
               console.log(
                 `⚠️ Device ${deviceId}: usando estado salvo "${storedState}"`
               );
             }
 
             processedCount++;
-            const progress = 60 + (processedCount / deviceEntries.length) * 35;
-            updateProgress(
-              progress,
-              `Processando ${processedCount}/${deviceEntries.length}...`
-            );
           });
-
-          updateProgress(100, "Carregamento via API direta concluído!");
 
           // Forçar atualização dos botões master
           setTimeout(() => {
@@ -2984,6 +3201,7 @@ async function loadAllDeviceStatesGlobally() {
           ALL_LIGHT_IDS.forEach((deviceId) => {
             const storedState = getStoredState(deviceId) || "off";
             updateDeviceUI(deviceId, storedState, true);
+            loadingTracker.markDeviceLoaded(deviceId);
           });
 
           throw new Error(
@@ -3080,20 +3298,17 @@ async function loadAllDeviceStatesGlobally() {
       if (deviceData.success) {
         setStoredState(deviceId, deviceData.state);
         updateDeviceUI(deviceId, deviceData.state, true); // forceUpdate = true
+        loadingTracker.markDeviceLoaded(deviceId);
         console.log(`✅ Device ${deviceId}: ${deviceData.state}`);
       } else {
         console.warn(`⚠️ Falha no device ${deviceId}:`, deviceData.error);
         // Usar estado salvo como fallback
         const storedState = getStoredState(deviceId) || "off";
         updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+        loadingTracker.markDeviceLoaded(deviceId);
       }
 
       processedCount++;
-      const progress = 70 + (processedCount / deviceEntries.length) * 25;
-      updateProgress(
-        progress,
-        `Aplicando estado ${processedCount}/${deviceEntries.length}...`
-      );
     });
 
     updateProgress(95, "Finalizando sincronização...");
@@ -3104,7 +3319,6 @@ async function loadAllDeviceStatesGlobally() {
       console.log("🔄 Botões master atualizados após carregamento global");
     }, 100);
 
-    updateProgress(100, "Estados carregados com sucesso!");
     console.log("✅ Carregamento global concluído com sucesso");
     return true;
   } catch (error) {
@@ -4311,58 +4525,100 @@ function initializeApp() {
       console.log("Iniciando carregamento principal...");
 
       try {
-        // Carregamento global de todos os estados (usando Promise)
-        loadAllDeviceStatesGlobally()
+        // Primeiro: preload de assets críticos (ícones e fotos)
+        preloadCriticalAssets()
+          .then(function (assetsLoaded) {
+            console.log("🎨 Assets críticos carregados:", assetsLoaded);
+            
+            // Depois: carregamento global de todos os estados
+            return loadAllDeviceStatesGlobally();
+          })
           .then(function (success) {
             console.log("Carregamento global concluído, success:", success);
 
-            // Delay final padrão para desktop e mobile
-            var finalDelay = 800;
-            setTimeout(function () {
-              // Esconder loader
-              hideLoader();
+            // Verificar se todos os recursos foram carregados
+            const checkLoadingComplete = () => {
+              const stats = loadingTracker.getStats();
+              console.log("📊 Verificando status do loading:", stats);
+              
+              if (loadingTracker.isComplete()) {
+                console.log("✅ Todos os recursos carregados!");
+                updateProgress(100, "Carregamento completo!");
+                return true;
+              } else {
+                console.log("⏳ Aguardando recursos restantes...");
+                return false;
+              }
+            };
 
-              // Configurar observador DOM
-              setupDomObserver();
+            // Aguardar até que tudo esteja carregado ou timeout
+            const waitForComplete = (maxAttempts = 20, interval = 100) => {
+              return new Promise((resolve) => {
+                let attempts = 0;
+                const checkInterval = setInterval(() => {
+                  attempts++;
+                  
+                  if (checkLoadingComplete() || attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    if (attempts >= maxAttempts) {
+                      console.warn("⚠️ Timeout ao aguardar recursos - continuando...");
+                    }
+                    resolve();
+                  }
+                }, interval);
+              });
+            };
 
-              // Inicializar página de cômodo e sincronizar controles já existentes
-              var syncDelay = 100;
-              setTimeout(() => {
-                console.log(
-                  "🏠 Inicializando controles de cômodos na inicialização..."
-                );
-                initRoomPage(); // Inicializar página de cômodo
-                syncAllVisibleControls(); // Sincronizar todos os controles
-              }, syncDelay);
+            // Aguardar recursos e então finalizar
+            waitForComplete().then(() => {
+              // Delay final padrão para desktop e mobile
+              var finalDelay = 300;
+              setTimeout(function () {
+                // Esconder loader
+                hideLoader();
 
-              // Iniciar polling se estiver em produção
-              if (isProduction) {
-                var pollingDelay = 3000;
-                console.log(
-                  "✅ INICIANDO POLLING em " +
-                    pollingDelay / 1000 +
-                    " segundos (universal)",
-                  {
+                // Configurar observador DOM
+                setupDomObserver();
+
+                // Inicializar página de cômodo e sincronizar controles já existentes
+                var syncDelay = 100;
+                setTimeout(() => {
+                  console.log(
+                    "🏠 Inicializando controles de cômodos na inicialização..."
+                  );
+                  initRoomPage(); // Inicializar página de cômodo
+                  syncAllVisibleControls(); // Sincronizar todos os controles
+                }, syncDelay);
+
+                // Iniciar polling se estiver em produção
+                if (isProduction) {
+                  var pollingDelay = 3000;
+                  console.log(
+                    "✅ INICIANDO POLLING em " +
+                      pollingDelay / 1000 +
+                      " segundos (universal)",
+                    {
+                      isProduction: isProduction,
+                      hostname: location.hostname,
+                      isMobile: isMobile,
+                    }
+                  );
+                  setTimeout(startPolling, pollingDelay);
+                } else {
+                  console.log("❌ POLLING NÃO INICIADO - não está em produção:", {
                     isProduction: isProduction,
                     hostname: location.hostname,
                     isMobile: isMobile,
-                  }
-                );
-                setTimeout(startPolling, pollingDelay);
-              } else {
-                console.log("❌ POLLING NÃO INICIADO - não está em produção:", {
-                  isProduction: isProduction,
-                  hostname: location.hostname,
-                  isMobile: isMobile,
-                });
-              }
+                  });
+                }
 
-              console.log("Aplicação totalmente inicializada!");
-              showMobileDebug("App totalmente inicializada!", "success");
+                console.log("Aplicação totalmente inicializada!");
+                showMobileDebug("App totalmente inicializada!", "success");
 
-              // Marcar que a inicialização foi concluída
-              window.appFullyInitialized = true;
-            }, finalDelay);
+                // Marcar que a inicialização foi concluída
+                window.appFullyInitialized = true;
+              }, finalDelay);
+            });
           })
           .catch(function (error) {
             console.error("Erro no carregamento global:", error);
