@@ -2662,8 +2662,175 @@ function updateStatesAfterMasterCommand(deviceIds, command) {
 
 // Controle da tela de loading
 // ========================================
-// SISTEMA DE LOADING COM TRACKING COMPLETO
+// SISTEMA DE CACHE INTELIGENTE
 // ========================================
+
+class SmartCacheManager {
+  constructor() {
+    this.isOnline = navigator.onLine;
+    this.cacheStatus = 'unknown';
+    this.lastCleanup = Date.now();
+    this.init();
+  }
+
+  async init() {
+    // Verificar se Service Worker está registrado
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        this.cacheStatus = 'active';
+        console.log('🧠 SmartCache Manager inicializado');
+
+        // Escutar mudanças de conectividade
+        window.addEventListener('online', () => {
+          this.isOnline = true;
+          console.log('🌐 Conexão restaurada');
+          this.onReconnect();
+        });
+
+        window.addEventListener('offline', () => {
+          this.isOnline = false;
+          console.log('📴 Conexão perdida');
+        });
+
+      } catch (error) {
+        console.warn('⚠️ Service Worker não disponível:', error);
+        this.cacheStatus = 'unavailable';
+      }
+    } else {
+      console.warn('⚠️ Service Worker não suportado');
+      this.cacheStatus = 'unsupported';
+    }
+  }
+
+  // Limpeza manual do cache (para debug ou quando necessário)
+  async clearCache() {
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
+        console.log('🧹 Cache manualmente limpo');
+
+        // Notificar Service Worker
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'CLEANUP_CACHE'
+          });
+        }
+
+        this.lastCleanup = Date.now();
+        return true;
+      }
+    } catch (error) {
+      console.error('❌ Erro ao limpar cache:', error);
+    }
+    return false;
+  }
+
+  // Obter estatísticas do cache
+  async getCacheStats() {
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        let totalSize = 0;
+        let totalEntries = 0;
+
+        for (const key of keys) {
+          const cache = await caches.open(key);
+          const requests = await cache.keys();
+          totalEntries += requests.length;
+
+          // Estimar tamanho (aproximado)
+          for (const request of requests) {
+            try {
+              const response = await cache.match(request);
+              if (response) {
+                const blob = await response.blob();
+                totalSize += blob.size;
+              }
+            } catch (e) {
+              // Ignorar erros individuais
+            }
+          }
+        }
+
+        return {
+          caches: keys.length,
+          entries: totalEntries,
+          estimatedSize: totalSize,
+          sizeFormatted: this.formatBytes(totalSize),
+          lastCleanup: new Date(this.lastCleanup).toLocaleString(),
+          status: this.cacheStatus,
+          online: this.isOnline
+        };
+      }
+    } catch (error) {
+      console.error('❌ Erro ao obter estatísticas:', error);
+    }
+
+    return {
+      caches: 0,
+      entries: 0,
+      estimatedSize: 0,
+      sizeFormatted: '0 B',
+      lastCleanup: 'Nunca',
+      status: this.cacheStatus,
+      online: this.isOnline
+    };
+  }
+
+  // Quando reconecta, atualizar dados críticos
+  async onReconnect() {
+    console.log('🔄 Reconectado - atualizando dados críticos...');
+
+    try {
+      // Forçar atualização dos estados dos dispositivos
+      if (typeof updateDeviceStatesFromServer === 'function') {
+        await updateDeviceStatesFromServer();
+      }
+
+      // Limpar cache antigo se necessário
+      const stats = await this.getCacheStats();
+      if (stats.estimatedSize > 50 * 1024 * 1024) { // 50MB
+        console.log('📦 Cache grande detectado, sugerindo limpeza');
+        // Não limpar automaticamente, apenas logar
+      }
+
+    } catch (error) {
+      console.warn('⚠️ Erro na reconexão:', error);
+    }
+  }
+
+  formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // Método público para debug
+  async debugInfo() {
+    const stats = await this.getCacheStats();
+    console.table({
+      'Status do Cache': stats.status,
+      'Online': stats.online ? '✅' : '❌',
+      'Caches': stats.caches,
+      'Entradas': stats.entries,
+      'Tamanho Estimado': stats.sizeFormatted,
+      'Última Limpeza': stats.lastCleanup
+    });
+    return stats;
+  }
+}
+
+// Instância global
+const smartCacheManager = new SmartCacheManager();
+
+// Funções globais para debug/admin
+window.clearAppCache = () => smartCacheManager.clearCache();
+window.getCacheStats = () => smartCacheManager.getCacheStats();
+window.debugCache = () => smartCacheManager.debugInfo();
 
 const loadingTracker = {
   icons: new Set(),
@@ -4569,8 +4736,27 @@ function initializeApp() {
               });
             };
 
-            // Aguardar recursos e então finalizar
-            waitForComplete().then(() => {
+// Aguardar recursos e então finalizar
+            waitForComplete().then(async () => {
+              // Diagnóstico do cache inteligente
+              try {
+                const cacheStats = await smartCacheManager.getCacheStats();
+                console.log('📊 Diagnóstico de Cache Inteligente:');
+                console.log('  📦 Status:', cacheStats.status);
+                console.log('  🌐 Online:', cacheStats.online ? '✅' : '❌');
+                console.log('  📁 Caches:', cacheStats.caches);
+                console.log('  📄 Entradas:', cacheStats.entries);
+                console.log('  💾 Tamanho:', cacheStats.sizeFormatted);
+
+                if (cacheStats.entries > 0) {
+                  console.log('✅ Cache inteligente funcionando - carregamento será mais rápido na próxima visita!');
+                } else {
+                  console.log('🔄 Cache sendo preenchido - primeira visita ou cache vazio');
+                }
+              } catch (error) {
+                console.warn('⚠️ Erro no diagnóstico de cache:', error);
+              }
+
               // Delay final padrão para desktop e mobile
               var finalDelay = 300;
               setTimeout(function () {
@@ -4688,3 +4874,39 @@ window.addEventListener("beforeunload", stopPolling);
 // Funções de debug disponíveis globalmente
 window.testHubitatConnection = testHubitatConnection;
 window.showErrorMessage = showErrorMessage;
+
+// Funções globais de debug para cache inteligente
+window.debugCache = async function() {
+  try {
+    const stats = await smartCacheManager.getCacheStats();
+    console.log('🔍 DEBUG CACHE INTELIGENTE');
+    console.log('==========================');
+    console.log('Status:', stats.status);
+    console.log('Online:', stats.online);
+    console.log('Caches:', stats.caches);
+    console.log('Entradas:', stats.entries);
+    console.log('Tamanho:', stats.sizeFormatted);
+    console.log('==========================');
+
+    // Mostrar estratégias de cache
+    console.log('📋 ESTRATÉGIAS DE CACHE:');
+    console.log('  🔴 Crítico (cache-first):', CACHE_CONFIG.critical.length, 'itens');
+    console.log('  🟡 Dinâmico (network-first):', CACHE_CONFIG.dynamic.length, 'itens');
+    console.log('  🟢 Volátil (network-only):', CACHE_CONFIG.volatile.length, 'itens');
+
+    return stats;
+  } catch (error) {
+    console.error('❌ Erro no debug do cache:', error);
+  }
+};
+
+window.clearAppCache = async function() {
+  try {
+    await smartCacheManager.clearCache();
+    console.log('🗑️ Cache inteligente limpo com sucesso!');
+    return true;
+  } catch (error) {
+    console.error('❌ Erro ao limpar cache:', error);
+    return false;
+  }
+};
