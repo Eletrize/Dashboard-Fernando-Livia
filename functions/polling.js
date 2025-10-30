@@ -39,9 +39,9 @@ export async function onRequest(context) {
     );
   }
 
-  // URL completa do Hubitat Cloud com access token
+  // URL completa do Hubitat Cloud com access token (hardcoded)
   const HUBITAT_URL =
-    "https://cloud.hubitat.com/api/88fdad30-2497-4de1-b131-12fc4903ae67/apps/214/devices/all?access_token=0aa81379-277a-42cb-95be-a4fb67e353f0";
+    "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/15/devices/all?access_token=1d9b367b-e4cd-4042-b726-718b759a82ef";
 
   // Extrair parâmetro 'full' da URL
   const wantFull = url.searchParams.get("full") === "1";

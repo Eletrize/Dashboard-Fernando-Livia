@@ -3920,9 +3920,29 @@ function initMusicPlayerUI() {
     }
   }
 
-  // Device IDs
-  const DENON_CMD_DEVICE_ID = "322"; // Denon AVR - comandos de volume, mute, power
-  const DENON_MUSIC_DEVICE_ID = "326"; // Denon AVR-S770H HEOS - controles de música
+  // Device IDs (default) — podem ser sobrescritos por data-* no HTML da página ativa
+  let DENON_CMD_DEVICE_ID = "322"; // Denon AVR - comandos (volume/mute/power)
+  let DENON_MUSIC_DEVICE_ID = "326"; // Denon HEOS - metadados/transport (play/pause/next/prev)
+
+  // Tentar detectar overrides a partir dos atributos data-*
+  try {
+    const metadataContainer = queryActiveMusic('.music-player-card');
+    const ctrlFromEl =
+      queryActiveMusic('#music-mute') ||
+      queryActiveMusic('#music-volume-slider') ||
+      queryActiveMusic('#music-master-on') ||
+      queryActiveMusic('#music-master-off');
+
+    if (metadataContainer && metadataContainer.dataset && metadataContainer.dataset.metadataDeviceId) {
+      DENON_MUSIC_DEVICE_ID = String(metadataContainer.dataset.metadataDeviceId);
+    }
+
+    if (ctrlFromEl && ctrlFromEl.dataset && ctrlFromEl.dataset.deviceId) {
+      DENON_CMD_DEVICE_ID = String(ctrlFromEl.dataset.deviceId);
+    }
+  } catch (e) {
+    console.warn('Não foi possível ler overrides de IDs de Denon via data-*:', e);
+  }
 
   playToggleBtn.addEventListener("click", () => {
     const action = isPlaying ? "pause" : "play";
