@@ -185,32 +185,29 @@
       <div
         class="app-info-dialog"
         role="dialog"
-        aria-labelledby="app-info-title"
+        aria-label="Menu rápido"
         aria-modal="true"
       >
-        <button
-          class="app-info-close"
-          type="button"
-          aria-label="Fechar menu"
-        >
-          &times;
-        </button>
-
         <div class="app-info-body">
-          <h2 class="app-info-title" id="app-info-title">Menu rapido</h2>
+          <img
+            class="app-info-logo"
+            src="images/icons/Eletrize.svg"
+            alt="Eletrize Automação"
+          />
 
           <div class="app-info-options">
             <button
               id="app-fullscreen-toggle"
               type="button"
               class="app-info-option"
+              aria-label="Tela cheia"
             >
               <img
                 src="images/icons/Fullscreen.svg"
-                alt="Tela cheia"
+                alt=""
                 class="app-info-option__icon"
+                aria-hidden="true"
               />
-              <span class="app-info-option__label">Ativar tela cheia</span>
             </button>
 
             <a
@@ -219,13 +216,14 @@
               href="https://www.instagram.com/eletrizeautomacao?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw=="
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Instagram Eletrize"
             >
               <img
                 src="images/icons/Instagram.svg"
-                alt="Instagram Eletrize"
+                alt=""
                 class="app-info-option__icon"
+                aria-hidden="true"
               />
-              <span class="app-info-option__label">Instagram</span>
             </a>
 
             <a
@@ -234,13 +232,14 @@
               href="http://api.whatsapp.com/send?1=pt_BR&amp;phone=5516997152993"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Contato via WhatsApp"
             >
               <img
                 src="images/icons/whatsapp.svg"
-                alt="Contato via WhatsApp"
+                alt=""
                 class="app-info-option__icon"
+                aria-hidden="true"
               />
-              <span class="app-info-option__label">Atendimento</span>
             </a>
           </div>
 

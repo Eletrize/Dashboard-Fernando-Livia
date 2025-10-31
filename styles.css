@@ -3730,6 +3730,14 @@ body.app-info-open {
   gap: 18px;
 }
 
+.app-info-logo {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 8px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.3));
+}
+
 .app-info-options {
   display: flex;
   flex-direction: column;

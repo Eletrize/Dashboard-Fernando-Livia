@@ -3711,13 +3711,26 @@ function updateMusicPlayerUI(artist, track, album, albumArt) {
   album = normalizePortugueseText(album);
 
   // Obter elementos do DOM
-  const artistElement = queryActiveMusic('#music-artist');
-  const trackElement = queryActiveMusic('#music-track');
-  const albumImgElement = queryActiveMusic('.music-album-img');
-  
+  const artistElement = queryActiveMusic("#music-artist");
+  const trackElement = queryActiveMusic("#music-track");
+  const albumImgElement = queryActiveMusic(".music-album-img");
+  const activePage = document.querySelector(".page.active");
+
   // Atualizar texto se os elementos existirem
   if (artistElement) artistElement.textContent = artist;
+  if (activePage) {
+    activePage
+      .querySelectorAll(".music-artist-sync")
+      .forEach((el) => (el.textContent = artist));
+  }
+
   if (trackElement) trackElement.textContent = track;
+  if (activePage) {
+    activePage
+      .querySelectorAll(".music-track-sync")
+      .forEach((el) => (el.textContent = track));
+  }
+
   syncMusicTrackMarquee();
   
   // Atualizar imagem do álbum
@@ -3774,54 +3787,60 @@ let musicTrackMarqueeListenersAttached = false;
 function syncMusicTrackMarquee() {
   ensureMusicTrackMarqueeListeners();
 
-  const trackElement = queryActiveMusic("#music-track");
-  if (!trackElement) {
+  const activePage = document.querySelector(".page.active");
+  if (!activePage) {
     return;
   }
 
-  const marqueeContainer = trackElement.closest(".music-track-marquee");
-  if (!marqueeContainer) {
-    return;
-  }
-
-  const marqueeInner = marqueeContainer.querySelector(
-    ".music-track-marquee__inner"
+  const trackElements = activePage.querySelectorAll(
+    ".music-track-marquee__text:not(.music-track-marquee__text--clone)"
   );
-  if (!marqueeInner) {
-    return;
-  }
 
-  const cloneElement = marqueeContainer.querySelector(
-    ".music-track-marquee__text--clone"
-  );
-  if (cloneElement) {
-    cloneElement.textContent = trackElement.textContent || "";
-  }
-
-  marqueeContainer.classList.remove("music-track-marquee--active");
-  marqueeContainer.style.removeProperty("--music-track-marquee-duration");
-
-  requestAnimationFrame(() => {
-    const containerWidth = marqueeContainer.clientWidth;
-    const contentWidth = marqueeInner.scrollWidth;
-    const shouldMarquee = contentWidth > containerWidth + 2;
-
-    marqueeContainer.classList.toggle(
-      "music-track-marquee--active",
-      shouldMarquee
-    );
-
-    if (shouldMarquee) {
-      const pixelsPerSecond = 80;
-      const duration = Math.min(
-        24,
-        Math.max(10, contentWidth / pixelsPerSecond)
-      );
-      marqueeContainer.style.setProperty(
-        "--music-track-marquee-duration",
-        `${duration}s`
-      );
+  trackElements.forEach((trackElement) => {
+    const marqueeContainer = trackElement.closest(".music-track-marquee");
+    if (!marqueeContainer) {
+      return;
     }
+
+    const marqueeInner = marqueeContainer.querySelector(
+      ".music-track-marquee__inner"
+    );
+    if (!marqueeInner) {
+      return;
+    }
+
+    const cloneElement = marqueeContainer.querySelector(
+      ".music-track-marquee__text--clone"
+    );
+    if (cloneElement) {
+      cloneElement.textContent = trackElement.textContent || "";
+    }
+
+    marqueeContainer.classList.remove("music-track-marquee--active");
+    marqueeContainer.style.removeProperty("--music-track-marquee-duration");
+
+    requestAnimationFrame(() => {
+      const containerWidth = marqueeContainer.clientWidth;
+      const contentWidth = marqueeInner.scrollWidth;
+      const shouldMarquee = contentWidth > containerWidth + 2;
+
+      marqueeContainer.classList.toggle(
+        "music-track-marquee--active",
+        shouldMarquee
+      );
+
+      if (shouldMarquee) {
+        const pixelsPerSecond = 80;
+        const duration = Math.min(
+          24,
+          Math.max(10, contentWidth / pixelsPerSecond)
+        );
+        marqueeContainer.style.setProperty(
+          "--music-track-marquee-duration",
+          `${duration}s`
+        );
+      }
+    });
   });
 }
 
