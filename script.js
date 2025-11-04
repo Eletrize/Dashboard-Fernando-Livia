@@ -218,7 +218,7 @@ const ALL_LIGHT_IDS = [
   "256", // Ambiente 5 - Luz 2 (Funcionarios-LuzVermelha)
   "257", // Ambiente 6 - Luz 1 (Funcionarios-Banheiro)
   "258", // Ambiente 6 - Luz 2 (Funcionarios-Paineis)
-  "322", // Denon AVR - Receiver (para atualização de volume)
+  "15", // Denon AVR - Receiver (para atualização de volume)
 ];
 
 // ID do dispositivo de Ar Condicionado (MolSmart - GW3 - AC)
@@ -487,7 +487,7 @@ function tvCommand(el, command) {
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
-  const DENON_DEVICE_ID = "322"; // ID do Denon AVR no Hubitat
+  const DENON_DEVICE_ID = "15"; // ID do Denon AVR no Hubitat
 
   if (!slider || !display) {
     console.log("⚠️ Slider ou display não encontrado");
@@ -544,7 +544,7 @@ function initVolumeSlider() {
 
 // Função para atualizar o volume do Denon a partir do servidor
 async function updateDenonVolumeFromServer() {
-  const DENON_DEVICE_ID = "322";
+  const DENON_DEVICE_ID = "15";
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
 
@@ -617,7 +617,7 @@ function updateDenonVolumeUI(volume) {
   );
 
   // Respeitar proteção se o usuário acabou de enviar um comando manual
-  const lastCmd = recentCommands.get('322');
+  const lastCmd = recentCommands.get('15');
   if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
     console.log('🔒 updateDenonVolumeUI: comando manual recente detectado, ignorando atualização de polling');
     return;
@@ -2234,8 +2234,8 @@ async function updateDeviceStatesFromServer() {
 
         devicesMap[d.id] = { state, success: true };
 
-  // Se for o Denon AVR (ID 322), também capturar o volume (comandos) - metadados virão do dispositivo 326
-        if (d.id === "322") {
+        // Se for o Denon AVR (ID 15), também capturar o volume (comandos) - metadados virão do dispositivo 29
+        if (d.id === "15") {
           console.log("🔊 DEBUG Denon encontrado:", {
             id: d.id,
             attributes: d.attributes,
@@ -2273,7 +2273,7 @@ async function updateDeviceStatesFromServer() {
         updateDeviceUI(deviceId, deviceData.state);
 
         // Se for o Denon AVR e tiver volume, atualizar o slider
-        if (deviceId === "322") {
+        if (deviceId === "15") {
           console.log("🔊 DEBUG - Processando Denon no polling:", {
             deviceId,
             volume: deviceData.volume,
@@ -3564,11 +3564,11 @@ function updateDenonMetadata() {
     .then(data => {
       console.log("🎵 Resposta completa do Hubitat:", data);
       
-  // Procurar o Denon AVR pelos metadados (ID 326) nos dados
+  // Procurar o Denon AVR pelos metadados (ID 29) nos dados
       // O formato pode ser um array direto ou um objeto com propriedade devices
       const devices = Array.isArray(data) ? data : (data.devices || []);
-  // O ID do dispositivo que fornece metadados do Denon é 326
-  const DENON_METADATA_DEVICE_ID = "326";
+  // O ID do dispositivo que fornece metadados do Denon é 29
+  const DENON_METADATA_DEVICE_ID = "29";
   let denonDevice = devices.find(device => String(device.id) === DENON_METADATA_DEVICE_ID || device.id === parseInt(DENON_METADATA_DEVICE_ID, 10));
   // Fallback: procurar por dispositivos cujo nome/label contenha 'denon', 'receiver' ou 'av'
   if (!denonDevice) {
@@ -3690,7 +3690,7 @@ function updateDenonMetadata() {
         // Atualizar UI
         updateMusicPlayerUI(artist, track, album, albumArt);
       } else {
-  console.log("⚠️ Denon AVR (ID 326) (metadados) não encontrado nos dados");
+  console.log("⚠️ Denon AVR (ID 29) (metadados) não encontrado nos dados");
         console.log("Dispositivos disponíveis:", devices.map(d => ({ id: d.id, name: d.name || d.label })));
       }
     })
@@ -3940,8 +3940,8 @@ function initMusicPlayerUI() {
   }
 
   // Device IDs (default) — podem ser sobrescritos por data-* no HTML da página ativa
-  let DENON_CMD_DEVICE_ID = "322"; // Denon AVR - comandos (volume/mute/power)
-  let DENON_MUSIC_DEVICE_ID = "326"; // Denon HEOS - metadados/transport (play/pause/next/prev)
+  let DENON_CMD_DEVICE_ID = "15"; // Denon AVR - comandos (volume/mute/power)
+  let DENON_MUSIC_DEVICE_ID = "29"; // Denon HEOS - metadados/transport (play/pause/next/prev)
 
   // Tentar detectar overrides a partir dos atributos data-*
   try {
@@ -4030,7 +4030,7 @@ function initMusicPlayerUI() {
       console.log("🔊 Volume finalizado em:", value);
     });
 
-    // If there's a separate music slider, wire it to send commands to Denon (device 322)
+    // If there's a separate music slider, wire it to send commands to Denon (device 15)
     const musicSlider = queryActiveMusic('#music-volume-slider');
     if (musicSlider) {
       musicSlider.addEventListener('input', (e) => {
