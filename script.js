@@ -1891,6 +1891,14 @@ const HUBITAT_PROXY_URL = "/hubitat-proxy";
 const POLLING_URL = "/polling";
 window.musicPlayerUI = window.musicPlayerUI || {};
 
+// Hubitat Cloud (Maker API) configuration
+const HUBITAT_CLOUD_ENABLED = true;
+const HUBITAT_CLOUD_APP_BASE_URL =
+  "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/15";
+const HUBITAT_CLOUD_ACCESS_TOKEN =
+  "1d9b367b-e4cd-4042-b726-718b759a82ef";
+const HUBITAT_CLOUD_DEVICES_BASE_URL = `${HUBITAT_CLOUD_APP_BASE_URL}/devices`;
+
 const TEXT_MOJIBAKE_REGEX = /[\u00C3\u00C2\u00E2\uFFFD]/;
 const TEXT_MOJIBAKE_REPLACEMENTS = [
   ["\u00e2\u0080\u0099", "Ã¢â‚¬â„¢"],
@@ -2116,6 +2124,25 @@ function urlDeviceInfo(deviceId) {
 }
 
 function urlSendCommand(deviceId, command, value) {
+  if (HUBITAT_CLOUD_ENABLED) {
+    let url = `${HUBITAT_CLOUD_DEVICES_BASE_URL}/${encodeURIComponent(
+      deviceId
+    )}`;
+
+    if (command) {
+      url += `/${encodeURIComponent(command)}`;
+
+      if (value !== undefined && value !== null && value !== "") {
+        url += `/${encodeURIComponent(value)}`;
+      }
+    }
+
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}access_token=${encodeURIComponent(
+      HUBITAT_CLOUD_ACCESS_TOKEN
+    )}`;
+  }
+
   return `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(
     command
   )}${value !== undefined ? `&value=${encodeURIComponent(value)}` : ""}`;
