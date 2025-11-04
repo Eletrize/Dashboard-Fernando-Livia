@@ -1898,6 +1898,15 @@ const HUBITAT_CLOUD_APP_BASE_URL =
 const HUBITAT_CLOUD_ACCESS_TOKEN =
   "1d9b367b-e4cd-4042-b726-718b759a82ef";
 const HUBITAT_CLOUD_DEVICES_BASE_URL = `${HUBITAT_CLOUD_APP_BASE_URL}/devices`;
+const HUBITAT_CLOUD_DEVICE_IDS = new Set(["109"]);
+
+function useHubitatCloud(deviceId) {
+  return (
+    HUBITAT_CLOUD_ENABLED &&
+    deviceId !== undefined &&
+    HUBITAT_CLOUD_DEVICE_IDS.has(String(deviceId))
+  );
+}
 
 const TEXT_MOJIBAKE_REGEX = /[\u00C3\u00C2\u00E2\uFFFD]/;
 const TEXT_MOJIBAKE_REPLACEMENTS = [
@@ -2124,7 +2133,7 @@ function urlDeviceInfo(deviceId) {
 }
 
 function urlSendCommand(deviceId, command, value) {
-  if (HUBITAT_CLOUD_ENABLED) {
+  if (useHubitatCloud(deviceId)) {
     let url = `${HUBITAT_CLOUD_DEVICES_BASE_URL}/${encodeURIComponent(
       deviceId
     )}`;
@@ -2199,23 +2208,34 @@ async function sendHubitatCommand(deviceId, command, value) {
 
 // --- Cortinas (abrir/parar/fechar) ---
 function sendCurtainCommand(deviceId, action, commandName) {
+  if (useHubitatCloud(deviceId)) {
+    const commandMap = {
+      open: "open",
+      stop: "stop",
+      close: "close",
+    };
+    const commandToSend = commandMap[action];
+    if (!commandToSend) throw new Error("Ação de cortina inválida");
+    return sendHubitatCommand(deviceId, commandToSend);
+  }
+
   const cmd = commandName || "push";
 
-  // CorreÃƒÂ§ÃƒÂ£o especÃƒÂ­fica para cortina interna (ID 39) - comandos invertidos
+  // Correção específica para cortina interna (ID 39) - comandos invertidos
   let map;
-  if (deviceId === "39") {
+  if (String(deviceId) === "39") {
     // Cortina com comandos invertidos (exemplo: device ID 40)
     map = { open: 3, stop: 2, close: 1 };
     console.log(
-      `Ã°Å¸â€â€ž Cortina com comandos invertidos (ID ${deviceId}): comando ${action} mapeado para valor ${map[action]}`
+      `🪟 Cortina com comandos invertidos (ID ${deviceId}): comando ${action} mapeado para valor ${map[action]}`
     );
   } else {
-    // PadrÃƒÂ£o para todas as outras cortinas
+    // Padrão para todas as outras cortinas
     map = { open: 1, stop: 2, close: 3 };
   }
 
   const value = map[action];
-  if (value === undefined) throw new Error("AÃƒÂ§ÃƒÂ£o de cortina invÃƒÂ¡lida");
+  if (value === undefined) throw new Error("Ação de cortina inválida");
   return sendHubitatCommand(deviceId, cmd, value);
 }
 
