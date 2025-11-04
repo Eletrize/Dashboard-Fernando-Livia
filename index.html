@@ -406,10 +406,7 @@
         {
           key: "ambiente1",
           name: "Varanda",
-          curtains: [
-            { deviceId: "17", title: "Esquerda" },
-            { deviceId: "18", title: "Direita" },
-          ],
+          curtains: [{ deviceId: "109", title: "Todas" }],
         },
         {
           key: "ambiente2",
@@ -2464,39 +2461,19 @@
     </div>
 
     <div class="ambiente1-cortinas-wrapper">
-        <!-- Cortina Esquerda -->
-        <article class="curtain-tile curtain-tile--full-width" data-device-id="17" data-environment="Varanda">
+        <article class="curtain-tile curtain-tile--full-width curtain-tile--transparent" data-device-id="109" data-environment="Varanda">
             <header class="curtain-tile__header curtain-tile__header--minimal">
-                <h3 class="curtain-tile__title">Esquerda</h3>
+                <h3 class="curtain-tile__title">Todas</h3>
                 <div class="curtain-tile__line"></div>
             </header>
             <div class="curtain-tile__actions">
-                <button class="curtain-tile__btn" data-device-id="17" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Esquerda">
+                <button class="curtain-tile__btn" data-device-id="109" onclick="curtainAction(this, 'open')" aria-label="Abrir cortinas">
                     <img src="images/icons/arrow-up.svg" alt="Abrir">
                 </button>
-                <button class="curtain-tile__btn" data-device-id="17" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Esquerda">
+                <button class="curtain-tile__btn" data-device-id="109" onclick="curtainAction(this, 'stop')" aria-label="Parar cortinas">
                     <img src="images/icons/icon-stop.svg" alt="Parar">
                 </button>
-                <button class="curtain-tile__btn" data-device-id="17" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Esquerda">
-                    <img src="images/icons/arrow-down.svg" alt="Fechar">
-                </button>
-            </div>
-        </article>
-
-        <!-- Cortina Direita -->
-        <article class="curtain-tile curtain-tile--full-width" data-device-id="18" data-environment="Varanda">
-            <header class="curtain-tile__header curtain-tile__header--minimal">
-                <h3 class="curtain-tile__title">Direita</h3>
-                <div class="curtain-tile__line"></div>
-            </header>
-            <div class="curtain-tile__actions">
-                <button class="curtain-tile__btn" data-device-id="18" onclick="curtainAction(this, 'open')" aria-label="Abrir Cortina Direita">
-                    <img src="images/icons/arrow-up.svg" alt="Abrir">
-                </button>
-                <button class="curtain-tile__btn" data-device-id="18" onclick="curtainAction(this, 'stop')" aria-label="Parar Cortina Direita">
-                    <img src="images/icons/icon-stop.svg" alt="Parar">
-                </button>
-                <button class="curtain-tile__btn" data-device-id="18" onclick="curtainAction(this, 'close')" aria-label="Fechar Cortina Direita">
+                <button class="curtain-tile__btn" data-device-id="109" onclick="curtainAction(this, 'close')" aria-label="Fechar cortinas">
                     <img src="images/icons/arrow-down.svg" alt="Fechar">
                 </button>
             </div>
@@ -3556,7 +3533,7 @@
             };
 
             const roomCurtains = {
-              ambiente1: ["17"],
+              ambiente1: ["109"],
 
               ambiente2: ["42", "43"],
 
