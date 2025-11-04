@@ -1600,9 +1600,9 @@ div {
   .music-player-card .music-info--desktop {
     display: flex !important;
     order: -1;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
+    width: min(100%, var(--music-control-area-width));
+    max-width: var(--music-control-area-width);
+    margin: 0 auto;
     padding: 0;
     text-align: left;
   }
@@ -1610,32 +1610,38 @@ div {
   /* Controles organizados verticalmente */
   .music-player-card .music-controls {
     order: 1;
-    width: 100%;
+    width: min(100%, var(--music-control-area-width));
+    margin: 0 auto;
   }
 
-  /* Alargar os botões de playback em telas grandes */
+  /* Controles com largura fixa em telas grandes */
   .music-player-card .tv-playback-controls {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
+    grid-template-columns: repeat(
+      3,
+      minmax(0, var(--music-control-width))
+    );
+    width: min(100%, var(--music-control-area-width));
     gap: var(--music-control-gap);
-    justify-content: stretch;
+    justify-content: center;
   }
 
   .music-player-card .tv-btn-icon-small {
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
+    width: var(--music-control-width);
+    min-width: var(--music-control-width);
+    max-width: var(--music-control-width);
   }
 
   .music-player-card .music-volume-section {
     order: 2;
-    width: 100%;
+    width: min(100%, var(--music-control-area-width));
+    margin: 0 auto;
   }
 
   .music-player-card .music-master-controls {
     order: 3;
-    width: 100%;
+    width: min(100%, var(--music-control-area-width));
+    margin: 0 auto;
   }
 
   /* Reduzir fonte do nome da música em telas grandes */
