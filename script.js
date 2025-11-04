@@ -547,14 +547,10 @@ async function updateDenonVolumeFromServer() {
   const DENON_DEVICE_ID = "15";
   const tvSlider = document.getElementById("tv-volume-slider");
   const tvDisplay = document.getElementById("tv-volume-display");
-  const musicSlider = typeof queryActiveMusic === "function"
-    ? queryActiveMusic("#music-volume-slider")
-    : document.querySelector("#music-volume-slider");
-
-  if (!tvSlider && !musicSlider) {
-    // Nothing visible to update, skip fetch to avoid unnecessary network usage
-    return;
-  }
+  const musicSlider =
+    typeof queryActiveMusic === "function"
+      ? queryActiveMusic("#music-volume-slider")
+      : document.querySelector("#music-volume-slider");
 
   try {
     const pollingUrl = isProduction
@@ -571,17 +567,40 @@ async function updateDenonVolumeFromServer() {
 
     const data = await response.json();
 
-    // Processar resposta para pegar o volume
+    // Processar resposta para pegar o volume e o estado de energia
     let volume = null;
+    let powerState = null;
 
     if (data.devices && data.devices[DENON_DEVICE_ID]) {
-      volume = data.devices[DENON_DEVICE_ID].volume;
+      const devicePayload = data.devices[DENON_DEVICE_ID];
+      volume =
+        devicePayload.volume ??
+        devicePayload.level ??
+        (devicePayload.attributes && devicePayload.attributes.volume);
+      powerState = getDenonPowerStateFromDevice(devicePayload);
     } else if (Array.isArray(data.data)) {
       const denonData = data.data.find(
         (d) => String(d.id) === DENON_DEVICE_ID
       );
-      if (denonData && denonData.attributes) {
-        volume = denonData.attributes.volume;
+      if (denonData) {
+        if (denonData.attributes) {
+          if (Array.isArray(denonData.attributes)) {
+            const volumeAttr = denonData.attributes.find(
+              (attr) => attr?.name === "volume"
+            );
+            volume =
+              volumeAttr?.currentValue ??
+              volumeAttr?.value ??
+              denonData.volume ??
+              volume;
+          } else if (typeof denonData.attributes === "object") {
+            volume =
+              denonData.attributes.volume ?? denonData.volume ?? volume;
+          }
+        } else if (denonData.volume !== undefined) {
+          volume = denonData.volume;
+        }
+        powerState = getDenonPowerStateFromDevice(denonData);
       }
     }
 
@@ -603,10 +622,17 @@ async function updateDenonVolumeFromServer() {
         const maxMusic = parseInt(musicSlider.max || "100", 10);
         const percentageMusic = (volumeValue / maxMusic) * 100;
         musicSlider.value = volumeValue;
-        musicSlider.style.setProperty("--volume-percent", percentageMusic + "%");
+        musicSlider.style.setProperty(
+          "--volume-percent",
+          percentageMusic + "%"
+        );
       }
 
-      console.log(`Ã°Å¸â€Å  Volume do Denon atualizado: ${volumeValue}`);
+      console.log("[Denon] Volume atualizado:", volumeValue);
+    }
+
+    if (powerState) {
+      applyDenonPowerState(powerState);
     }
   } catch (error) {
     console.error("Ã¢ÂÅ’ Erro ao buscar volume do Denon:", error);
@@ -677,7 +703,88 @@ function updateDenonVolumeUI(volume) {
   } else {
     console.log(`🔁 Volume já está em ${volumeValue}, não atualizando`);
   }
-} // Inicializar estado ao carregar
+}
+function normalizeDenonPowerState(value) {
+  if (value === undefined || value === null) return null;
+  const normalized = String(value).trim().toLowerCase();
+  if (["on", "1", "true", "online"].includes(normalized)) return "on";
+  if (["off", "0", "false", "offline", "standby"].includes(normalized)) return "off";
+  return null;
+}
+
+function getDenonPowerStateFromDevice(device) {
+  if (!device || typeof device !== "object") return null;
+
+  const directCandidates = [
+    device.switch,
+    device.state,
+    device.power,
+    device.status
+  ];
+
+  for (const candidate of directCandidates) {
+    const normalized = normalizeDenonPowerState(candidate);
+    if (normalized) return normalized;
+  }
+
+  const attrs = device.attributes;
+
+  if (Array.isArray(attrs)) {
+    for (const attr of attrs) {
+      if (!attr) continue;
+      const attrName = String(attr.name || attr.attribute || "").toLowerCase();
+      if (!attrName) continue;
+      if (["switch", "power", "status", "state"].includes(attrName)) {
+        const normalized = normalizeDenonPowerState(attr.currentValue ?? attr.value);
+        if (normalized) return normalized;
+      }
+    }
+  } else if (attrs && typeof attrs === "object") {
+    const keys = ["switch", "power", "status", "state"];
+    for (const key of keys) {
+      if (key in attrs) {
+        const normalized = normalizeDenonPowerState(attrs[key]);
+        if (normalized) return normalized;
+      }
+    }
+  }
+
+  return null;
+}
+
+function applyDenonPowerState(rawState) {
+  const normalized = normalizeDenonPowerState(rawState);
+  if (!normalized) return;
+
+  if (typeof recentCommands !== "undefined") {
+    const lastCmd = recentCommands.get("15");
+    if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
+      console.log("[Denon] Ignorando sincronizacao de power por comando recente");
+      return;
+    }
+  }
+
+  const desiredOn = normalized === "on";
+
+  window.musicPlayerUI = window.musicPlayerUI || {};
+  window.musicPlayerUI.currentPowerState = normalized;
+
+  if (
+    window.musicPlayerUI &&
+    typeof window.musicPlayerUI.isPowerOn === "function" &&
+    window.musicPlayerUI.isPowerOn() === desiredOn
+  ) {
+    return;
+  }
+
+  if (
+    window.musicPlayerUI &&
+    typeof window.musicPlayerUI.setPower === "function"
+  ) {
+    window.musicPlayerUI.setPower(desiredOn);
+  }
+}
+// Inicializar estado ao carregar
 document.addEventListener("DOMContentLoaded", () => {
   updateTVPowerState("off");
   initVolumeSlider();
@@ -2408,6 +2515,10 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
   });
 
   // Atualizar botÃƒÂµes master da home apÃƒÂ³s qualquer mudanÃƒÂ§a de dispositivo
+  if (String(deviceId) === "15") {
+    applyDenonPowerState(state);
+  }
+
   updateAllMasterButtons();
 }
 
@@ -3614,7 +3725,11 @@ function updateDenonMetadata() {
   }
       
       if (denonDevice) {
-        console.log("Ã°Å¸Å½Âµ Denon encontrado:", denonDevice);
+        console.log("Denon encontrado:", denonDevice);
+        const metadataPowerState = getDenonPowerStateFromDevice(denonDevice);
+        if (metadataPowerState) {
+          applyDenonPowerState(metadataPowerState);
+        }
         console.log("Ã°Å¸Å½Âµ Atributos do Denon:", denonDevice.attributes);
         
         // Extrair metadados - o formato pode variar
@@ -3916,6 +4031,9 @@ function initMusicPlayerUI() {
   });
 
   window.musicPlayerUI = window.musicPlayerUI || {};
+  const initialPowerState = typeof window.musicPlayerUI.currentPowerState === "string"
+    ? window.musicPlayerUI.currentPowerState
+    : "on";
 
   if (!playToggleBtn || !nextBtn || !prevBtn) {
     console.warn("Ã¢Å¡Â Ã¯Â¸Â BotÃƒÂµes de controle nÃƒÂ£o encontrados");
@@ -3930,7 +4048,7 @@ function initMusicPlayerUI() {
   let isPlaying = false;
 
   // Estado master power
-  let isPowerOn = true;
+  let isPowerOn = initialPowerState === "on";
 
   function setPlaying(isPlayingValue) {
     isPlaying = !!isPlayingValue;
@@ -4099,6 +4217,7 @@ function initMusicPlayerUI() {
   // Controle master On/Off
   function setMasterPower(powerOn) {
     isPowerOn = powerOn;
+    window.musicPlayerUI.currentPowerState = powerOn ? "on" : "off";
 
     if (powerOn) {
       masterOnBtn.classList.add("music-master-btn--active");
@@ -4125,7 +4244,8 @@ function initMusicPlayerUI() {
   if (masterOnBtn && masterOffBtn && playerInner) {
     masterOnBtn.addEventListener("click", () => {
       if (!isPowerOn) {
-        console.log(`Ã¢Å¡Â¡ Power ON clicked - enviando comando "on" para device ${DENON_CMD_DEVICE_ID}`);
+        console.log(`Power ON clicked - enviando comando "on" para device ${DENON_CMD_DEVICE_ID}`);
+        recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
         sendHubitatCommand(DENON_CMD_DEVICE_ID, "on")
           .then(() => {
             console.log("Ã¢Å“â€¦ Comando on enviado com sucesso");
@@ -4137,7 +4257,8 @@ function initMusicPlayerUI() {
 
     masterOffBtn.addEventListener("click", () => {
       if (isPowerOn) {
-        console.log(`Ã¢Å¡Â« Power OFF clicked - enviando comando "off" para device ${DENON_CMD_DEVICE_ID}`);
+        console.log(`Power OFF clicked - enviando comando "off" para device ${DENON_CMD_DEVICE_ID}`);
+        recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
         sendHubitatCommand(DENON_CMD_DEVICE_ID, "off")
           .then(() => {
             console.log("Ã¢Å“â€¦ Comando off enviado com sucesso");
@@ -4148,9 +4269,13 @@ function initMusicPlayerUI() {
     });
   }
 
+  window.musicPlayerUI.setPower = (powerOnValue) =>
+    setMasterPower(normalizeDenonPowerState(powerOnValue) === "on");
+  window.musicPlayerUI.isPowerOn = () => isPowerOn;
+
   // initialize
   setPlaying(Boolean(window.musicPlayerUI.currentPlaying));
-  setMasterPower(true); // Iniciar com o player ligado
+  setMasterPower(initialPowerState === "on");
   
   // Buscar metadados iniciais do Denon
   updateDenonMetadata();
