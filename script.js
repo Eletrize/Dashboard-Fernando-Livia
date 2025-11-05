@@ -1,4 +1,4 @@
-// ========================================
+﻿// ========================================
 // DEBUG UTILITIES
 // ========================================
 
@@ -498,9 +498,9 @@ function tvCommand(el, command) {
   if (!command || !deviceId) return;
 
   // Controlar estado de poder
-  if (command === "on") {
+  if (command === "25") {
     updateTVPowerState("on");
-  } else if (command === "off") {
+  } else if (command === "24") {
     updateTVPowerState("off");
   }
 
@@ -513,10 +513,10 @@ function tvCommand(el, command) {
   // Marcar comando recente
   recentCommands.set(deviceId, Date.now());
 
-  console.log(`Enviando comando TV ${command} para dispositivo ${deviceId}`);
+  console.log(`Enviando pushButton ${command} para dispositivo ${deviceId}`);
 
   // Enviar para Hubitat
-  sendHubitatCommand(deviceId, command)
+  sendHubitatCommand(deviceId, "pushButton", command)
     .then(() => {
       console.log(
         `Ã¢Å“â€¦ Comando TV ${command} enviado com sucesso para dispositivo ${deviceId}`
