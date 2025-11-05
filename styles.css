@@ -2525,7 +2525,7 @@ div {
 .ac-aleta-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 16px;
 }
 
 .ac-aleta-grid {
@@ -2551,7 +2551,7 @@ div {
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
-  min-height: 95px;
+  min-height: 70px;
 }
 
 .ac-aleta-btn img {
@@ -2617,7 +2617,7 @@ div {
 .ac-commands-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 16px;
   margin-top: 0;
   flex-shrink: 0;
 }
@@ -2645,7 +2645,7 @@ div {
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
-  min-height: 95px;
+  min-height: 70px;
 }
 
 .ac-command-btn img {
