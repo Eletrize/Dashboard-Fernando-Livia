@@ -76,7 +76,7 @@ async function sendHubitatCommand(deviceId, command, value) {
   // - /hubitat-proxy?device=238&command=on
   // - /hubitat-proxy?device=238&command=off
   // - /hubitat-proxy?device=15&command=setVolume&value=50
-  // - /hubitat-proxy?device=111&command=pushButton&value=25
+  // - /hubitat-proxy?device=111&command=cursorUp
   
   // Faz o fetch da URL
   const response = await fetch(proxyUrl);
@@ -114,8 +114,8 @@ cmdUrl += `?access_token=${HUBITAT_ACCESS_TOKEN}`;
 // Para luz OFF:
 //   https://cloud.hubitat.com/api/.../devices/238/off?access_token=...
 //
-// Para TV com pushButton:
-//   https://cloud.hubitat.com/api/.../devices/111/pushButton/25?access_token=...
+// Para TV (cursorUp):
+//   https://cloud.hubitat.com/api/.../devices/111/cursorUp?access_token=...
 ```
 
 ---
@@ -132,7 +132,7 @@ deviceId → comando
 ### Para Outros Dispositivos:
 ```
 deviceId → comando → [valor opcional]
-111 → "pushButton" → "25"
+111 → "cursorUp"
 15 → "setVolume" → "50"
 ```
 
@@ -199,5 +199,5 @@ sendHubitatCommand(deviceId, command, [value])
 
 **Exemplos:**
 - Luzes: `sendHubitatCommand("238", "on")` → Acende luz 238
-- TV: `sendHubitatCommand("111", "pushButton", "25")` → Pressiona botão 25 na TV
+- TV: `sendHubitatCommand("111", "cursorUp")` → Move cursor para cima
 - Denon: `sendHubitatCommand("15", "setVolume", "50")` → Seta volume para 50 no Denon

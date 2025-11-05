@@ -513,18 +513,18 @@ function tvCommand(el, command) {
   // Marcar comando recente
   recentCommands.set(deviceId, Date.now());
 
-  console.log(` Enviando comando ${command} para dispositivo ${deviceId}`);
+  console.log(`📺 Enviando comando ${command} para dispositivo ${deviceId}`);
 
   // Enviar para Hubitat
   sendHubitatCommand(deviceId, command)
     .then(() => {
       console.log(
-        `Ã¢Å“â€¦ Comando TV ${command} enviado com sucesso para dispositivo ${deviceId}`
+        `✅ Comando TV ${command} enviado com sucesso para dispositivo ${deviceId}`
       );
     })
     .catch((error) => {
       console.error(
-        `Ã¢ÂÅ’ Erro ao enviar comando TV para dispositivo ${deviceId}:`,
+        `❌ Erro ao enviar comando TV para dispositivo ${deviceId}:`,
         error
       );
     });

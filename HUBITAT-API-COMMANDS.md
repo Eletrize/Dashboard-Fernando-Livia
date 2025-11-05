@@ -169,40 +169,40 @@ GET /modes/[Mode ID]?access_token=1d9b367b-e4cd-4042-b726-718b759a82ef
 ## 📺 Comandos do Controle de TV (Device 111)
 
 ### Formato Correto para Device 111
-O device 111 usa o comando `pushButton` com número do botão como parâmetro:
+O device 111 expõe comandos individuais para cada ação do controle.
 
 **Template:**
 ```
-/devices/111/pushButton/[Número do Botão]?access_token=...
+/devices/111/[Comando]?access_token=...
 ```
 
 ### Mapeamento de Botões TV:
 
-| Botão | Número | URL Completa |
-|-------|--------|--------------|
-| ON | 25 | `/devices/111/pushButton/25?access_token=...` |
-| OFF | 24 | `/devices/111/pushButton/24?access_token=...` |
-| UP | 7 | `/devices/111/pushButton/7?access_token=...` |
-| DOWN | 4 | `/devices/111/pushButton/4?access_token=...` |
-| LEFT | 5 | `/devices/111/pushButton/5?access_token=...` |
-| RIGHT | 6 | `/devices/111/pushButton/6?access_token=...` |
-| OK | 3 | `/devices/111/pushButton/3?access_token=...` |
-| BACK | 29 | `/devices/111/pushButton/29?access_token=...` |
-| MENU | 8 | `/devices/111/pushButton/8?access_token=...` |
-| HOME | 9 | `/devices/111/pushButton/9?access_token=...` |
-| MUTE | 13 | `/devices/111/pushButton/13?access_token=...` |
-| CH+ | 1 | `/devices/111/pushButton/1?access_token=...` |
-| CH- | 0 | `/devices/111/pushButton/0?access_token=...` |
-| Número 1 | 15 | `/devices/111/pushButton/15?access_token=...` |
-| Número 2 | 16 | `/devices/111/pushButton/16?access_token=...` |
-| Número 3 | 17 | `/devices/111/pushButton/17?access_token=...` |
-| Número 4 | 18 | `/devices/111/pushButton/18?access_token=...` |
-| Número 5 | 19 | `/devices/111/pushButton/19?access_token=...` |
-| Número 6 | 20 | `/devices/111/pushButton/20?access_token=...` |
-| Número 7 | 21 | `/devices/111/pushButton/21?access_token=...` |
-| Número 8 | 22 | `/devices/111/pushButton/22?access_token=...` |
-| Número 9 | 23 | `/devices/111/pushButton/23?access_token=...` |
-| Número 0 | 14 | `/devices/111/pushButton/14?access_token=...` |
+| Botão | Comando | URL Completa |
+|-------|---------|--------------|
+| ON | `on` | `/devices/111/on?access_token=...` |
+| OFF | `off` | `/devices/111/off?access_token=...` |
+| UP | `cursorUp` | `/devices/111/cursorUp?access_token=...` |
+| DOWN | `cursorDown` | `/devices/111/cursorDown?access_token=...` |
+| LEFT | `cursorLeft` | `/devices/111/cursorLeft?access_token=...` |
+| RIGHT | `cursorRight` | `/devices/111/cursorRight?access_token=...` |
+| OK | `cursorCenter` | `/devices/111/cursorCenter?access_token=...` |
+| BACK | `returnButton` | `/devices/111/returnButton?access_token=...` |
+| MENU (HDMI 2) | `hdmi2` | `/devices/111/hdmi2?access_token=...` |
+| HOME | `home` | `/devices/111/home?access_token=...` |
+| MUTE | `mute` | `/devices/111/mute?access_token=...` |
+| CH+ | `channelDown` | `/devices/111/channelDown?access_token=...` |
+| CH- | `channelUp` | `/devices/111/channelUp?access_token=...` |
+| Número 0 | `num0` | `/devices/111/num0?access_token=...` |
+| Número 1 | `num1` | `/devices/111/num1?access_token=...` |
+| Número 2 | `num2` | `/devices/111/num2?access_token=...` |
+| Número 3 | `num3` | `/devices/111/num3?access_token=...` |
+| Número 4 | `num4` | `/devices/111/num4?access_token=...` |
+| Número 5 | `num5` | `/devices/111/num5?access_token=...` |
+| Número 6 | `num6` | `/devices/111/num6?access_token=...` |
+| Número 7 | `num7` | `/devices/111/num7?access_token=...` |
+| Número 8 | `num8` | `/devices/111/num8?access_token=...` |
+| Número 9 | `num9` | `/devices/111/num9?access_token=...` |
 
 ---
 
