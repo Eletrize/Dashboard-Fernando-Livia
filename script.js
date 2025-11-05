@@ -1263,7 +1263,12 @@ function initAirConditionerControl() {
       strokeWidth = 0;
     }
 
-    const ctm = typeof progressArc.getCTM === "function" ? progressArc.getCTM() : null;
+    const ctm =
+      typeof progressArc.getScreenCTM === "function"
+        ? progressArc.getScreenCTM()
+        : typeof progressArc.getCTM === "function"
+        ? progressArc.getCTM()
+        : null;
 
     return {
       rect,
@@ -1318,6 +1323,17 @@ function initAirConditionerControl() {
     }
 
     if (!svgPoint || !geometry.ctm) {
+      // Fallback para trigonometria clÃƒÂ¡ssica
+      const radians = (angle * Math.PI) / 180;
+      const radius = geometry.radius;
+      const x = geometry.centerX + radius * Math.cos(radians);
+      const y = geometry.centerY - radius * Math.sin(radians);
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      knob.style.left = `${x - wrapperRect.left}px`;
+      knob.style.top = `${y - wrapperRect.top}px`;
+      knob.style.transform = "translate(-50%, -50%)";
+      knob.classList.remove("is-hidden");
       return;
     }
 
@@ -1344,6 +1360,7 @@ function initAirConditionerControl() {
     knob.style.left = `${relativeX}px`;
     knob.style.top = `${relativeY}px`;
     knob.style.transform = "translate(-50%, -50%)";
+    knob.classList.remove("is-hidden");
   }
 
   function updateProgress(angle) {
