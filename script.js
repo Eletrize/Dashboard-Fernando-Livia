@@ -4415,6 +4415,12 @@ function ensureMusicTrackMarqueeListeners() {
 }
 
 function initMusicPlayerUI() {
+  // Guard clause: verificar se estamos em uma página de música
+  if (!isMusicPageActive()) {
+    console.log(" Não está em página de música, ignorando initMusicPlayerUI");
+    return;
+  }
+
   const playToggleBtn = queryActiveMusic("#music-play-toggle");
   const playTogglePlayIcon = playToggleBtn
     ? playToggleBtn.querySelector(".music-play-toggle__icon--play")
