@@ -1253,7 +1253,7 @@ div {
     var(--glass-inner-bottom);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 28px;
   font-family: "Raleway", sans-serif;
 }
@@ -2086,7 +2086,7 @@ div {
 .ac-temp-arc-bg {
   stroke: rgba(255, 255, 255, 0.08);
   stroke-linecap: round;
-  stroke-width: 4;
+  stroke-width: 8;
   opacity: 0.6;
 }
 
@@ -2099,7 +2099,7 @@ div {
   transition: stroke-dashoffset 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
               stroke 0.3s ease;
   filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.6));
-  stroke-width: 4;
+  stroke-width: 8;
 }
 
 /* Display de temperatura central */
@@ -2526,6 +2526,7 @@ div {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-bottom: clamp(20px, 5vw, 36px);
 }
 
 .ac-aleta-grid {
