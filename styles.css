@@ -1254,7 +1254,7 @@ div {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
+  gap: 28px;
   font-family: "Raleway", sans-serif;
 }
 
