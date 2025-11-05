@@ -8,7 +8,9 @@ const PRECACHE_ASSETS = [
   '/scenes.js?v=1.0.2',
   '/fonts-raleway.css',
   '/images/pwa/app-icon-192.png',
-  '/images/pwa/app-icon-512-transparent.png'
+  '/images/pwa/app-icon-512-transparent.png',
+  '/images/icons/icon-mouse.svg',
+  '/images/icons/icon-limpar.svg'
 ];
 const DEBUG_SW = false;
 
