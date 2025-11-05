@@ -8,28 +8,13 @@
     />
     <title>Dashboard Eletrize</title>
     <link rel="stylesheet" href="fonts-raleway.css" />
+    <link rel="preload" href="styles.css?v=1.0.1" as="style" />
+    <link rel="stylesheet" href="styles.css?v=1.0.1" />
     <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#1C1C1C" />
     <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png" />
 
-    <script>
-      // Cache buster dinâmico para CSS
-
-      document.write(
-        '<link rel="stylesheet" href="styles.css?cb=' +
-          new Date().getTime() +
-          Math.random().toString(36).substr(2, 9) +
-          '">'
-      );
-    </script>
-
-    <meta
-      http-equiv="Cache-Control"
-      content="no-cache, no-store, must-revalidate"
-    />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
     <style>
       /* Botão invisível no card para capturar clique na Home */
 
@@ -199,73 +184,77 @@
         </div>
       </div>
     </nav>
-
     <script>
-      // Carregamento dinâmico com cache busting agressivo para mobile
-
       (function () {
-        var baseVersion = "1737455925";
+        var originalConsole =
+          window.__DASHBOARD_ORIGINAL_CONSOLE__ ||
+          {
+            log: console.log ? console.log.bind(console) : function () {},
+            info: console.info ? console.info.bind(console) : function () {},
+            debug: console.debug ? console.debug.bind(console) : function () {},
+          };
 
-        var isMobile =
-          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            navigator.userAgent
-          );
-
-        var cacheBuster = baseVersion;
-
-        if (isMobile) {
-          // Cache busting extra agressivo para mobile
-
-          cacheBuster =
-            baseVersion +
-            "_" +
-            new Date().getTime() +
-            "_" +
-            Math.random().toString(36).substr(2, 5);
-
-          console.log("📱 Mobile: cache busting agressivo -", cacheBuster);
+        function parseDebugFromQuery() {
+          try {
+            var params = new URLSearchParams(window.location.search);
+            return params.get("debug") === "1";
+          } catch (error) {
+            return false;
+          }
         }
 
-        // Carregar script.js com cache buster ultra-agressivo
+        function readDebugFromStorage() {
+          try {
+            return window.localStorage.getItem("dashboard_debug") === "1";
+          } catch (error) {
+            return false;
+          }
+        }
 
-        var scriptMain = document.createElement("script");
+        function setConsoleState(enabled) {
+          if (enabled) {
+            if (!window.__DASHBOARD_ORIGINAL_CONSOLE__) {
+              window.__DASHBOARD_ORIGINAL_CONSOLE__ = originalConsole;
+            }
 
-        var ultraBuster =
-          cacheBuster +
-          "_" +
-          Date.now() +
-          "_" +
-          Math.floor(Math.random() * 999999);
+            Object.keys(originalConsole).forEach(function (method) {
+              if (originalConsole[method]) {
+                console[method] = originalConsole[method];
+              }
+            });
+            return;
+          }
 
-        scriptMain.src = "script.js?cb=" + ultraBuster + "&t=" + Date.now();
+          var noop = function () {};
+          ["log", "info", "debug"].forEach(function (method) {
+            if (typeof console[method] === "function") {
+              console[method] = noop;
+            }
+          });
+        }
 
-        console.log("📜 Carregando script.js com cache buster:", ultraBuster);
+        window.setDashboardDebug = function (enabled, persist) {
+          if (persist) {
+            try {
+              window.localStorage.setItem(
+                "dashboard_debug",
+                enabled ? "1" : "0"
+              );
+            } catch (error) {}
+          }
 
-        document.head.appendChild(scriptMain);
+          window.__DASHBOARD_DEBUG__ = Boolean(enabled);
+          setConsoleState(window.__DASHBOARD_DEBUG__);
+        };
 
-        // Carregar scenes.js com cache buster ultra-agressivo
+        window.__DASHBOARD_DEBUG__ =
+          parseDebugFromQuery() || readDebugFromStorage();
 
-        var scriptScenes = document.createElement("script");
-
-        var scenesUltraBuster =
-          cacheBuster +
-          "_" +
-          Date.now() +
-          "_" +
-          Math.floor(Math.random() * 999999);
-
-        scriptScenes.src =
-          "scenes.js?cb=" + scenesUltraBuster + "&t=" + Date.now();
-
-        console.log(
-          "🎬 Carregando scenes.js com cache buster:",
-          scenesUltraBuster
-        );
-
-        document.head.appendChild(scriptScenes);
+        setConsoleState(window.__DASHBOARD_DEBUG__);
       })();
     </script>
-
+    <script src="script.js?v=1.0.1" defer></script>
+    <script src="scenes.js?v=1.0.1" defer></script>
     <script>
       // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
 

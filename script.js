@@ -1,3 +1,50 @@
+// ========================================
+// DEBUG UTILITIES
+// ========================================
+
+function isDebugEnabled() {
+  if (typeof window === "undefined") return false;
+  return Boolean(window.__DASHBOARD_DEBUG__);
+}
+
+function debugLog(messageOrFactory, ...args) {
+  if (!isDebugEnabled()) return;
+
+  if (typeof messageOrFactory === "function") {
+    try {
+      const result = messageOrFactory();
+
+      if (Array.isArray(result)) {
+        console.log(...result);
+      } else {
+        console.log(result);
+      }
+    } catch (error) {
+      console.error("Debug log failure:", error);
+    }
+
+    return;
+  }
+
+  console.log(messageOrFactory, ...args);
+}
+
+if (typeof window !== "undefined") {
+  window.debugLog = debugLog;
+  window.isDebugEnabled = isDebugEnabled;
+}
+
+const CONTROL_SELECTOR = '.room-control[data-device-id], .control-card[data-device-id]';
+const MASTER_BUTTON_SELECTOR = '.room-master-btn[data-device-ids]';
+const deviceControlCache = new Map();
+const masterButtonCache = new Set();
+const deviceStateMemory = new Map();
+let controlCachePrimed = false;
+let domObserverInstance = null;
+let fallbackSyncTimer = null;
+let pendingControlSyncHandle = null;
+let pendingControlSyncForce = false;
+
 ﻿// ========================================
 // DETECÃƒâ€¡ÃƒÆ’O DE DISPOSITIVOS
 // ========================================
@@ -842,22 +889,199 @@ function deviceStateKey(deviceId) {
 }
 
 function getStoredState(deviceId) {
+  if (deviceStateMemory.has(deviceId)) {
+    return deviceStateMemory.get(deviceId);
+  }
+
   try {
     const key = deviceStateKey(deviceId);
     const value = localStorage.getItem(key);
+
+    if (value !== null && value !== undefined) {
+      deviceStateMemory.set(deviceId, value);
+    }
+
     return value;
-  } catch (e) {
+  } catch (error) {
+    debugLog(() => ['getStoredState fallback', deviceId, error]);
     return null;
   }
 }
 
 function setStoredState(deviceId, state) {
+  deviceStateMemory.set(deviceId, state);
+
   try {
     const key = deviceStateKey(deviceId);
     localStorage.setItem(key, state);
-  } catch (e) {
-    console.warn(`Ã¢ÂÅ’ Erro ao salvar estado ${deviceId}:`, e);
+  } catch (error) {
+    console.warn(`Erro ao salvar estado ${deviceId}:`, error);
   }
+}
+
+function registerControlElement(el) {
+  if (!el || !el.dataset) return false;
+  const deviceId = el.dataset.deviceId;
+  if (!deviceId) return false;
+
+  let registry = deviceControlCache.get(deviceId);
+  if (!registry) {
+    registry = new Set();
+    deviceControlCache.set(deviceId, registry);
+  }
+
+  if (registry.has(el)) return false;
+  registry.add(el);
+  return true;
+}
+
+function unregisterControlElement(el) {
+  if (!el || !el.dataset) return false;
+  const deviceId = el.dataset.deviceId;
+  if (!deviceId) return false;
+
+  const registry = deviceControlCache.get(deviceId);
+  if (!registry) return false;
+  const removed = registry.delete(el);
+  if (registry.size === 0) {
+    deviceControlCache.delete(deviceId);
+  }
+  return removed;
+}
+
+function registerMasterButton(btn) {
+  if (!btn) return false;
+  if (masterButtonCache.has(btn)) return false;
+  masterButtonCache.add(btn);
+  return true;
+}
+
+function unregisterMasterButton(btn) {
+  if (!btn) return false;
+  return masterButtonCache.delete(btn);
+}
+
+function collectControlsFromNode(node) {
+  if (!node || node.nodeType !== Node.ELEMENT_NODE) return false;
+  let changed = false;
+
+  if (node.matches && node.matches(CONTROL_SELECTOR)) {
+    changed = registerControlElement(node) || changed;
+  }
+
+  if (node.matches && node.matches(MASTER_BUTTON_SELECTOR)) {
+    changed = registerMasterButton(node) || changed;
+  }
+
+  if (typeof node.querySelectorAll === 'function') {
+    node.querySelectorAll(CONTROL_SELECTOR).forEach(function (el) {
+      changed = registerControlElement(el) || changed;
+    });
+
+    node.querySelectorAll(MASTER_BUTTON_SELECTOR).forEach(function (btn) {
+      changed = registerMasterButton(btn) || changed;
+    });
+  }
+
+  return changed;
+}
+
+function removeControlsFromNode(node) {
+  if (!node || node.nodeType !== Node.ELEMENT_NODE) return false;
+  let changed = false;
+
+  if (node.matches && node.matches(CONTROL_SELECTOR)) {
+    changed = unregisterControlElement(node) || changed;
+  }
+
+  if (node.matches && node.matches(MASTER_BUTTON_SELECTOR)) {
+    changed = unregisterMasterButton(node) || changed;
+  }
+
+  if (typeof node.querySelectorAll === 'function') {
+    node.querySelectorAll(CONTROL_SELECTOR).forEach(function (el) {
+      changed = unregisterControlElement(el) || changed;
+    });
+
+    node.querySelectorAll(MASTER_BUTTON_SELECTOR).forEach(function (btn) {
+      changed = unregisterMasterButton(btn) || changed;
+    });
+  }
+
+  return changed;
+}
+
+function primeControlCaches(options) {
+  const config = options || {};
+  const root = config.root && typeof config.root.querySelectorAll === 'function' ? config.root : document;
+  const force = Boolean(config.force);
+
+  if (controlCachePrimed && !force) {
+    return;
+  }
+
+  root.querySelectorAll(CONTROL_SELECTOR).forEach(function (el) {
+    registerControlElement(el);
+  });
+
+  root.querySelectorAll(MASTER_BUTTON_SELECTOR).forEach(function (btn) {
+    registerMasterButton(btn);
+  });
+
+  controlCachePrimed = true;
+}
+
+function pruneStaleEntries() {
+  deviceControlCache.forEach(function (registry, deviceId) {
+    registry.forEach(function (el) {
+      if (!el.isConnected) {
+        registry.delete(el);
+      }
+    });
+
+    if (registry.size === 0) {
+      deviceControlCache.delete(deviceId);
+    }
+  });
+
+  masterButtonCache.forEach(function (btn) {
+    if (!btn.isConnected) {
+      masterButtonCache.delete(btn);
+    }
+  });
+}
+
+function scheduleControlSync(forceMasterUpdate) {
+  if (forceMasterUpdate) {
+    pendingControlSyncForce = true;
+  }
+
+  if (pendingControlSyncHandle !== null) {
+    return;
+  }
+
+  var runSync = function () {
+    pendingControlSyncHandle = null;
+    var force = pendingControlSyncForce;
+    pendingControlSyncForce = false;
+    syncAllVisibleControls(force);
+  };
+
+  if (typeof window !== 'undefined') {
+    if (typeof window.requestIdleCallback === 'function') {
+      pendingControlSyncHandle = window.requestIdleCallback(runSync, { timeout: 120 });
+      return;
+    }
+
+    if (typeof window.requestAnimationFrame === 'function') {
+      pendingControlSyncHandle = window.requestAnimationFrame(function () {
+        runSync();
+      });
+      return;
+    }
+  }
+
+  pendingControlSyncHandle = setTimeout(runSync, 32);
 }
 
 async function fetchDeviceState(deviceId) {
@@ -883,45 +1107,38 @@ async function refreshRoomControlFromHubitat(el) {
 }
 
 function initRoomPage() {
-  console.log("Ã°Å¸ÂÂ  Inicializando pÃƒÂ¡gina de cÃƒÂ´modo...");
-  const controls = document.querySelectorAll(
-    '.room-control[data-device-id]:not([data-no-sync="true"]), .control-card[data-device-id]:not([data-no-sync="true"])'
-  );
-  console.log(
-    `Ã°Å¸ÂÂ  Encontrados ${controls.length} controles de cÃƒÂ´modo para inicializar`
-  );
+  debugLog(() => ['initRoomPage: start']);
 
-  controls.forEach((el, index) => {
-    const deviceId = el.dataset.deviceId;
-    // SEMPRE usar estado salvo do carregamento global
-    const savedState = getStoredState(deviceId);
-    const fallbackState = el.dataset.state || "off";
-    const finalState = savedState !== null ? savedState : fallbackState;
+  const root = document.getElementById('spa-root') || document;
+  primeControlCaches({ root: root, force: true });
+  pruneStaleEntries();
+  syncAllVisibleControls(true);
 
-    console.log(
-      `Ã°Å¸â€â€ž Controle ${index + 1}/${controls.length} - ID:${deviceId}, classes:"${
-        el.className
-      }"`
-    );
-    console.log(
-      `   Ã¢â€ â€™ salvo="${savedState}", fallback="${fallbackState}", final="${finalState}"`
-    );
-    setRoomControlUI(el, finalState);
-  });
-
-  // ForÃƒÂ§ar atualizaÃƒÂ§ÃƒÂ£o de botÃƒÂµes master tambÃƒÂ©m
-  setTimeout(updateAllMasterButtons, 50);
-
-  // Rename label on Sinuca page: IluminaÃƒÂ§ÃƒÂ£o -> Bar (UI-only)
+  // Rename label on Sinuca page: Iluminacao -> Bar (UI-only)
   try {
-    const route = (window.location.hash || "").replace("#", "");
-    if (route === "ambiente5") {
-      document.querySelectorAll(".room-control-label").forEach((l) => {
-        const t = (l.textContent || "").trim().toLowerCase();
-        if (t.startsWith("ilumin")) l.textContent = "Bar";
+    const route = (window.location.hash || '').replace('#', '');
+    if (route === 'ambiente5') {
+      document.querySelectorAll('.room-control-label').forEach(function (label) {
+        const text = (label.textContent || '').trim().toLowerCase();
+        if (text.startsWith('ilumin')) {
+          label.textContent = 'Bar';
+        }
       });
     }
-  } catch (_) {}
+  } catch (error) {
+    debugLog(() => ['initRoomPage rename fallback', error]);
+  }
+
+  // Garantir atualizacao de botoes master apos o layout estabilizar
+  const masterUpdate = function () {
+    updateAllMasterButtons(true);
+  };
+
+  if (typeof window.requestIdleCallback === 'function') {
+    window.requestIdleCallback(masterUpdate, { timeout: 200 });
+  } else {
+    setTimeout(masterUpdate, 50);
+  }
 }
 
 // === CONTROLADOR DE AR CONDICIONADO ===
@@ -2354,10 +2571,13 @@ try {
 
 // --- Polling automÃƒÂ¡tico de estados ---
 
-let pollingInterval = null;
-const POLLING_INTERVAL_MS = 5000; // 5 segundos - otimizado para responsividade sem sobrecarregar
-
-// Sistema para evitar conflitos entre comandos manuais e polling
+const POLLING_INTERVAL_BASE_MS = 5000;
+const POLLING_INTERVAL_STEP_MS = 2000;
+const POLLING_INTERVAL_MAX_MS = 20000;
+let currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+let pollingTimerHandle = null;
+let pollingActive = false;
+let pollingFailureCount = 0;\nlet pollingPausedForVisibility = false;\n\n// Sistema para evitar conflitos entre comandos manuais e polling
 const recentCommands = new Map(); // deviceId -> timestamp do ÃƒÂºltimo comando
 const COMMAND_PROTECTION_MS = 8000; // 8 segundos de proteÃƒÂ§ÃƒÂ£o apÃƒÂ³s comando manual
 
@@ -2390,165 +2610,207 @@ function cleanupExpiredCommands() {
   }
 }
 
-function startPolling() {
-  if (pollingInterval) return; // JÃƒÂ¡ estÃƒÂ¡ rodando
+function scheduleNextPollingRun(delay) {
+  if (!pollingActive) return;
 
-  // Buscar estados iniciais imediatamente
+  const safeDelay = Math.max(delay, 500);
+
+  if (pollingTimerHandle !== null) {
+    clearTimeout(pollingTimerHandle);
+  }
+
+  pollingTimerHandle = setTimeout(function () {
+    pollingTimerHandle = null;
+    updateDeviceStatesFromServer();
+  }, safeDelay);
+
+  debugLog(() => ['scheduleNextPollingRun', safeDelay]);
+}
+
+function startPolling() {
+  if (pollingActive) return;
+
+  if (!isProduction) {
+    debugLog(() => ['Polling desativado em ambiente de desenvolvimento']);
+    return;
+  }
+
+  pollingActive = true;
+  pollingFailureCount = 0;
+  currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+
   updateDeviceStatesFromServer();
 
-  // Depois iniciar polling regular
-  pollingInterval = setInterval(
-    updateDeviceStatesFromServer,
-    POLLING_INTERVAL_MS
-  );
   console.log(
-    "Polling iniciado - atualizando a cada",
-    POLLING_INTERVAL_MS / 1000,
-    "segundos"
+    'Polling iniciado - intervalo base',
+    POLLING_INTERVAL_BASE_MS / 1000,
+    'segundos'
   );
 }
-
-// FunÃƒÂ§ÃƒÂµes de proteÃƒÂ§ÃƒÂ£o removidas para simplificar o sistema
 
 function stopPolling() {
-  if (pollingInterval) {
-    clearInterval(pollingInterval);
-    pollingInterval = null;
-    console.log("Polling parado");
+  if (!pollingActive) return;
+
+  pollingActive = false;
+  pollingFailureCount = 0;
+  currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+
+  if (pollingTimerHandle !== null) {
+    clearTimeout(pollingTimerHandle);
+    pollingTimerHandle = null;
   }
+
+  console.log('Polling parado');
 }
 
-async function updateDeviceStatesFromServer() {
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      if (pollingActive) {
+        pollingPausedForVisibility = true;
+        stopPolling();
+      }
+    } else if (pollingPausedForVisibility) {
+      pollingPausedForVisibility = false;
+      startPolling();
+    }
+  });
+}
+
+async function updateDeviceStatesFromServer(options = {}) {
+  const skipSchedule = Boolean(options && options.skipSchedule);
+  let hasStateChanges = false;
+  let encounteredError = false;
+
   try {
-    // Limpar comandos antigos antes do polling
     cleanupExpiredCommands();
 
-    const deviceIds = ALL_LIGHT_IDS.join(",");
-    const pollingUrl = isProduction
-      ? `${POLLING_URL}?devices=${deviceIds}`
-      : null; // Em dev, pular polling por enquanto
-
-    console.log("Ã°Å¸â€â€ž POLLING DEBUG:", {
-      isProduction: isProduction,
-      hostname: location.hostname,
-      pollingUrl: pollingUrl,
-      deviceIds: deviceIds,
-      isMobile: isMobile,
-    });
-
-    if (!pollingUrl) {
-      console.log("Ã¢ÂÅ’ POLLING BLOQUEADO - nÃƒÂ£o estÃƒÂ¡ em produÃƒÂ§ÃƒÂ£o");
+    if (!isProduction) {
+      debugLog(() => ['Polling skipped (dev mode)']);
       return;
     }
 
-    const response = await fetch(pollingUrl);
-    if (!response.ok) throw new Error(`Polling failed: ${response.status}`);
+    const deviceIds = ALL_LIGHT_IDS.join(',');
+    const pollingUrl = `${POLLING_URL}?devices=${deviceIds}`;
+
+    debugLog(() => [
+      'pollingRequest',
+      { interval: currentPollingInterval, url: pollingUrl }
+    ]);
+
+    const response = await fetch(pollingUrl, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Polling failed: ${response.status}`);
+    }
 
     const data = await response.json();
-
-    // Normalizar se vier no formato novo { success, data:[...] }
     let devicesMap = data.devices;
+
     if (!devicesMap && Array.isArray(data.data)) {
       devicesMap = {};
-      data.data.forEach((d) => {
-        if (!d || !d.id) return;
-        let state = "off";
+      data.data.forEach((device) => {
+        if (!device || !device.id) {
+          return;
+        }
 
-        if (Array.isArray(d.attributes)) {
-          // Formato antigo: attributes ÃƒÂ© array
-          const sw = d.attributes.find((a) => a.name === "switch");
-          state = sw?.currentValue || sw?.value || "off";
-        } else if (d.attributes && typeof d.attributes === "object") {
-          // Formato atual: attributes ÃƒÂ© objeto
-          if (d.attributes.switch !== undefined) {
-            state = d.attributes.switch;
+        let state = 'off';
+
+        if (Array.isArray(device.attributes)) {
+          const switchAttr = device.attributes.find((attribute) => attribute.name === 'switch');
+          state = switchAttr?.currentValue || switchAttr?.value || 'off';
+        } else if (device.attributes && typeof device.attributes === 'object') {
+          if (device.attributes.switch !== undefined) {
+            state = device.attributes.switch;
           } else {
-            // Pular dispositivos sem switch (botÃƒÂµes, sensores, etc.)
+            debugLog(() => ['Polling skip device (no switch)', device.id]);
             return;
           }
         }
 
-        devicesMap[d.id] = { state, success: true };
+        devicesMap[device.id] = { state, success: true };
 
-        // Se for o Denon AVR (ID 15), tambÃƒÂ©m capturar o volume (comandos) - metadados virÃƒÂ£o do dispositivo 29
-        if (String(d.id) === "15") {
-          console.log("Ã°Å¸â€Å  DEBUG Denon encontrado:", {
-            id: d.id,
-            attributes: d.attributes,
-            volume: d.attributes?.volume,
-          });
-
-          if (d.attributes && d.attributes.volume !== undefined) {
-            devicesMap[d.id].volume = d.attributes.volume;
-            console.log(`Ã°Å¸â€Å  Volume capturado do Denon: ${d.attributes.volume}`);
-          } else {
-            console.warn("Ã¢Å¡Â Ã¯Â¸Â Denon encontrado mas sem atributo volume:", d);
-          }
-          
-          // Nota: Metadados de mÃƒÂºsica (artista, ÃƒÂ¡lbum, capa) sÃƒÂ£o buscados
-          // via updateDenonMetadata() que usa o endpoint full do Hubitat,
-          // pois o polling normal nÃƒÂ£o contÃƒÂ©m essas informaÃƒÂ§ÃƒÂµes
+        if (device.attributes && device.attributes.volume !== undefined) {
+          devicesMap[device.id].volume = device.attributes.volume;
         }
       });
     }
+
     if (!devicesMap) {
-      console.warn("Formato inesperado de resposta no polling:", data);
+      debugLog(() => ['Polling response sem devices', data]);
       return;
     }
 
-    // Atualizar UI com os novos estados (respeitando comandos pendentes)
     Object.entries(devicesMap).forEach(([deviceId, deviceData]) => {
+      if (!deviceData) {
+        return;
+      }
+
       if (deviceData.success) {
-        // SÃƒÂ³ atualizar localStorage se o estado mudou
-        const currentStored = getStoredState(deviceId);
-        if (currentStored !== deviceData.state) {
-          setStoredState(deviceId, deviceData.state);
+        const previousState = getStoredState(deviceId);
+        const nextState = deviceData.state;
+
+        if (previousState !== nextState) {
+          hasStateChanges = true;
         }
 
-        // Atualizar UI (funÃƒÂ§ÃƒÂ£o jÃƒÂ¡ verifica se elemento estÃƒÂ¡ pendente)
-        updateDeviceUI(deviceId, deviceData.state);
+        setStoredState(deviceId, nextState);
+        updateDeviceUI(deviceId, nextState);
 
-        // Se for o Denon AVR e tiver volume, atualizar o slider
-        if (String(deviceId) === "15") {
-          console.log("Ã°Å¸â€Å  DEBUG - Processando Denon no polling:", {
-            deviceId,
-            volume: deviceData.volume,
-            hasVolume: deviceData.volume !== undefined,
-          });
-
-          if (deviceData.volume !== undefined) {
-            updateDenonVolumeUI(deviceData.volume);
-          } else {
-            console.warn("Ã¢Å¡Â Ã¯Â¸Â Denon sem volume no deviceData:", deviceData);
-          }
+        if (String(deviceId) === '15' && deviceData.volume !== undefined) {
+          updateDenonVolumeUI(deviceData.volume);
         }
+      } else {
+        console.warn(`Falha no device ${deviceId}:`, deviceData.error);
       }
     });
 
-    // Atualizar todos os botÃƒÂµes master (home e cenÃƒÂ¡rios)
     updateAllMasterButtons();
-    if (typeof updateMasterLightToggleState === "function") {
+    if (typeof updateMasterLightToggleState === 'function') {
       updateMasterLightToggleState();
     }
   } catch (error) {
-    console.error("Erro no polling:", error);
+    encounteredError = true;
+    console.error('Erro no polling:', error);
 
-    // Se ÃƒÂ© erro de JSON (Functions nÃƒÂ£o funcionam), parar polling
     if (
-      error.message.includes("JSON.parse") ||
-      error.message.includes("unexpected character")
+      error.message.includes('JSON.parse') ||
+      error.message.includes('unexpected character')
     ) {
-      console.error("Ã¢ÂÅ’ PARANDO POLLING - Cloudflare Functions nÃƒÂ£o funcionam");
+      console.error('PARANDO POLLING - Cloudflare Functions não funcionam');
       stopPolling();
       return;
     }
-
-    // Outros erros: tentar novamente em 10 segundos
-    setTimeout(() => {
-      if (pollingInterval) {
-        console.log("Tentando retomar polling apÃƒÂ³s erro...");
+  } finally {
+    if (!skipSchedule && pollingActive) {
+      if (encounteredError) {
+        pollingFailureCount += 1;
+        currentPollingInterval = Math.min(
+          Math.round(currentPollingInterval * 1.5) || POLLING_INTERVAL_BASE_MS,
+          POLLING_INTERVAL_MAX_MS
+        );
+      } else if (hasStateChanges) {
+        pollingFailureCount = 0;
+        currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+      } else {
+        pollingFailureCount = 0;
+        currentPollingInterval = Math.min(
+          currentPollingInterval + POLLING_INTERVAL_STEP_MS,
+          POLLING_INTERVAL_MAX_MS
+        );
       }
-    }, 10000);
+
+      debugLog(() => [
+        'pollingNextInterval',
+        {
+          encounteredError,
+          hasStateChanges,
+          nextInterval: currentPollingInterval,
+          failureCount: pollingFailureCount,
+        },
+      ]);
+
+      scheduleNextPollingRun(currentPollingInterval);
+    }
   }
 }
 
@@ -2617,14 +2879,28 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
   updateAllMasterButtons();
 }
 
-function updateAllMasterButtons() {
-  const masterButtons = document.querySelectorAll(".room-master-btn");
-  masterButtons.forEach((btn) => {
-    const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
-    if (ids.length > 0) {
-      const masterState = anyOn(ids) ? "on" : "off";
-      setMasterIcon(btn, masterState, false); // nÃƒÂ£o forÃƒÂ§ar se pendente
+function updateAllMasterButtons(forceUpdate = false) {
+  pruneStaleEntries();
+
+  masterButtonCache.forEach(function (btn) {
+    if (!btn.isConnected) {
+      masterButtonCache.delete(btn);
+      return;
     }
+
+    const ids = (btn.dataset.deviceIds || '')
+      .split(',')
+      .map(function (id) {
+        return id.trim();
+      })
+      .filter(Boolean);
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    const masterState = anyOn(ids) ? 'on' : 'off';
+    setMasterIcon(btn, masterState, forceUpdate);
   });
 }
 
@@ -2672,67 +2948,44 @@ function getCurtainState(curtainId) {
 }
 
 function setMasterIcon(btn, state, forceUpdate = false) {
-  // NÃƒÂ£o atualizar se estiver com comando pendente (exceto se forÃƒÂ§ado)
-  if (!forceUpdate && btn.dataset.pending === "true") {
-    console.log("Ã°Å¸â€â€™ Master button pendente, ignorando atualizaÃƒÂ§ÃƒÂ£o");
+  if (!forceUpdate && btn.dataset.pending === 'true') {
+    debugLog(() => ['masterButtonPending', btn.dataset.deviceIds]);
     return;
   }
 
-  const img = btn.querySelector("img");
+  const img = btn.querySelector('img');
   if (!img) return;
 
-  const newSrc =
-    state === "on"
-      ? "images/icons/icon-small-light-on.svg"
-      : "images/icons/icon-small-light-off.svg";
-  const currentSrc = img.src;
+  const nextIcon = state === 'on'
+    ? 'images/icons/icon-small-light-on.svg'
+    : 'images/icons/icon-small-light-off.svg';
+  const currentSrc = img.src || '';
 
-  if (!currentSrc.includes(newSrc.split("/").pop())) {
-    img.src = newSrc;
+  if (!currentSrc.includes(nextIcon.split('/').pop())) {
+    img.src = nextIcon;
     btn.dataset.state = state;
-    console.log(`Ã°Å¸Å½Â¨ Master icon atualizado: ${state}`);
+    debugLog(() => ['masterIconUpdated', state, btn.dataset.deviceIds]);
   }
 }
 
-function initHomeMasters() {
-  // Inicializar botÃƒÂµes master de luzes
-  document.querySelectorAll(".room-master-btn").forEach((btn) => {
-    const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
-    const state = anyOn(ids) ? "on" : "off";
-    setMasterIcon(btn, state, true); // forÃƒÂ§ar na inicializaÃƒÂ§ÃƒÂ£o
-  });
-
-  // Inicializar botÃƒÂµes master de cortinas
-  document.querySelectorAll(".room-curtain-master-btn").forEach((btn) => {
-    const curtainIds = (btn.dataset.curtainIds || "")
-      .split(",")
-      .filter(Boolean);
-    const state = anyCurtainOpen(curtainIds) ? "open" : "close";
-    setCurtainMasterIcon(btn, state, true); // forÃƒÂ§ar na inicializaÃƒÂ§ÃƒÂ£o
-  });
-}
-
-// FunÃƒÂ§ÃƒÂ£o para definir o ÃƒÂ­cone do botÃƒÂ£o master de cortinas
 function setCurtainMasterIcon(btn, state, forceUpdate = false) {
-  // NÃƒÂ£o atualizar se estiver com comando pendente (exceto se forÃƒÂ§ado)
-  if (!forceUpdate && btn.dataset.pending === "true") {
-    console.log("Ã°Å¸â€â€™ Curtain master button pendente, ignorando atualizaÃƒÂ§ÃƒÂ£o");
+  if (!forceUpdate && btn.dataset.pending === 'true') {
+    debugLog(() => ['curtainMasterPending', btn.dataset.curtainIds]);
     return;
   }
 
-  const img = btn.querySelector("img");
+  const img = btn.querySelector('img');
   if (!img) return;
 
-  const newSrc =
-    state === "open"
-      ? "images/icons/curtain-open.svg"
-      : "images/icons/curtain-closed.svg";
-  const currentSrc = img.src;
+  const nextIcon = state === 'open'
+    ? 'images/icons/curtain-open.svg'
+    : 'images/icons/curtain-closed.svg';
+  const currentSrc = img.src || '';
 
-  if (!currentSrc.includes(newSrc.split("/").pop())) {
-    img.src = newSrc;
+  if (!currentSrc.includes(nextIcon.split('/').pop())) {
+    img.src = nextIcon;
     btn.dataset.state = state;
-    console.log(`Ã°Å¸Å½Â¨ Curtain master icon atualizado: ${state}`);
+    debugLog(() => ['curtainMasterIconUpdated', state, btn.dataset.curtainIds]);
   }
 }
 
@@ -3313,18 +3566,18 @@ async function loadAllDeviceStatesGlobally() {
 
     // Processar dispositivos com progresso
     const deviceEntries = Object.entries(data.devices || {});
-    console.log(`Ã°Å¸â€Â Processando ${deviceEntries.length} dispositivos...`);
+    console.log(`Processando ${deviceEntries.length} dispositivos...`);
     let processedCount = 0;
 
-    deviceEntries.forEach(([deviceId, deviceData]) => {
+    await processDeviceEntries(deviceEntries);
+
+    function handleDeviceEntry(deviceId, deviceData) {
       if (deviceData.success) {
         setStoredState(deviceId, deviceData.state);
         updateDeviceUI(deviceId, deviceData.state, true); // forceUpdate = true
-        console.log(`Ã¢Å“â€¦ Device ${deviceId}: ${deviceData.state}`);
       } else {
-        console.warn(`Ã¢Å¡Â Ã¯Â¸Â Falha no device ${deviceId}:`, deviceData.error);
-        // Usar estado salvo como fallback
-        const storedState = getStoredState(deviceId) || "off";
+        console.warn(`Falha no device ${deviceId}:`, deviceData.error);
+        const storedState = getStoredState(deviceId) || 'off';
         updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
       }
 
@@ -3334,7 +3587,49 @@ async function loadAllDeviceStatesGlobally() {
         progress,
         `Aplicando estado ${processedCount}/${deviceEntries.length}...`
       );
-    });
+    }
+
+    function scheduleChunk(callback) {
+      if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout: 120 });
+      } else {
+        setTimeout(callback, 16);
+      }
+    }
+
+    function processDeviceEntries(entries) {
+      return new Promise((resolve) => {
+        let index = 0;
+        const CHUNK_SIZE = 20;
+
+        const runChunk = (deadline) => {
+          const hasDeadline = deadline && typeof deadline.timeRemaining === 'function';
+          let processedInChunk = 0;
+
+          while (index < entries.length) {
+            const current = entries[index++];
+            handleDeviceEntry(current[0], current[1]);
+            processedInChunk += 1;
+
+            if (processedInChunk >= CHUNK_SIZE) {
+              break;
+            }
+
+            if (hasDeadline && deadline.timeRemaining() <= 4) {
+              break;
+            }
+          }
+
+          if (index < entries.length) {
+            scheduleChunk(runChunk);
+          } else {
+            resolve();
+          }
+        };
+
+        runChunk();
+      });
+    }
 
     updateProgress(95, "Finalizando sincronizaÃƒÂ§ÃƒÂ£o...");
 
@@ -3461,122 +3756,135 @@ function checkMobileCompatibility() {
 
 // Observador para sincronizar novos elementos no DOM
 function setupDomObserver() {
-  // Verificar se MutationObserver estÃƒÂ¡ disponÃƒÂ­vel
-  if (typeof MutationObserver === "undefined") {
-    console.warn("Ã¢Å¡Â Ã¯Â¸Â MutationObserver nÃƒÂ£o disponÃƒÂ­vel - usando fallback");
-    // Fallback: verificar mudanÃƒÂ§as periodicamente
-    setInterval(() => {
+  const root = document.getElementById('spa-root') || document.body;
+
+  primeControlCaches({ root: root, force: true });
+  pruneStaleEntries();
+  scheduleControlSync(true);
+
+  if (typeof MutationObserver === 'undefined') {
+    console.warn('MutationObserver indisponivel - usando fallback de sincronizacao periodica');
+    if (fallbackSyncTimer) {
+      clearInterval(fallbackSyncTimer);
+    }
+    fallbackSyncTimer = setInterval(function () {
       syncAllVisibleControls();
-    }, 5000);
+    }, 8000);
     return;
   }
 
   try {
-    const observer = new MutationObserver((mutations) => {
-      let needsUpdate = false;
+    if (fallbackSyncTimer) {
+      clearInterval(fallbackSyncTimer);
+      fallbackSyncTimer = null;
+    }
 
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            // Verificar se adicionou controles de dispositivos
-            const controls = node.querySelectorAll
-              ? node.querySelectorAll(
-                  ".control-card[data-device-id], .room-control[data-device-id], .room-master-btn[data-device-ids]"
-                )
-              : [];
+    if (domObserverInstance) {
+      domObserverInstance.disconnect();
+    }
 
-            if (
-              controls.length > 0 ||
-              node.matches?.(
-                ".control-card[data-device-id], .room-control[data-device-id], .room-master-btn[data-device-ids]"
-              )
-            ) {
-              needsUpdate = true;
-              console.log(
-                "Ã°Å¸â€Â Novos controles adicionados ao DOM, inicializando pÃƒÂ¡gina de cÃƒÂ´modo..."
-              );
-            }
+    domObserverInstance = new MutationObserver(function (mutations) {
+      let changed = false;
+
+      mutations.forEach(function (mutation) {
+        mutation.removedNodes.forEach(function (node) {
+          if (removeControlsFromNode(node)) {
+            changed = true;
+          }
+        });
+
+        mutation.addedNodes.forEach(function (node) {
+          if (collectControlsFromNode(node)) {
+            changed = true;
           }
         });
       });
 
-      if (needsUpdate) {
-        // Aguardar um pouco para DOM estar estÃƒÂ¡vel
-        setTimeout(() => {
-          console.log(
-            "Ã°Å¸â€â€ž DOM estabilizado, inicializando controles de cÃƒÂ´modo..."
-          );
-          initRoomPage(); // Inicializar pÃƒÂ¡gina de cÃƒÂ´modo primeiro
-          syncAllVisibleControls(); // Depois sincronizar todos os controles
-        }, 50);
+      if (changed) {
+        scheduleControlSync(true);
       }
     });
 
-    observer.observe(document.body, {
+    domObserverInstance.observe(root, {
       childList: true,
-      subtree: true,
+      subtree: true
     });
-
-    console.log("Ã°Å¸â€˜ÂÃ¯Â¸Â Observador DOM configurado para sincronizaÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica");
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro ao configurar MutationObserver:", error);
-    console.warn("Ã°Å¸â€œÂ± Usando fallback para compatibilidade mobile");
-
-    // Fallback: verificar mudanÃƒÂ§as a cada 5 segundos
-    setInterval(() => {
+    console.error('Erro ao configurar MutationObserver:', error);
+    console.warn('Usando fallback de sincronizacao periodica.');
+    if (fallbackSyncTimer) {
+      clearInterval(fallbackSyncTimer);
+    }
+    fallbackSyncTimer = setInterval(function () {
       syncAllVisibleControls();
-    }, 5000);
+    }, 8000);
   }
 }
 
 // Sincronizar todos os controles visÃƒÂ­veis com estados salvos
 function syncAllVisibleControls(forceMasterUpdate = false) {
-  console.log("Ã°Å¸â€â€ž Sincronizando todos os controles visÃƒÂ­veis...");
+  pruneStaleEntries();
 
-  // Sincronizar controles de cÃƒÂ´modo (room-control E control-card)
-  const roomControls = document.querySelectorAll(
-    ".room-control[data-device-id], .control-card[data-device-id]"
-  );
+  debugLog(() => [
+    'syncAllVisibleControls',
+    { devices: deviceControlCache.size, force: forceMasterUpdate }
+  ]);
+
   let updatedControls = 0;
-  console.log(
-    `Ã°Å¸â€â€ž Encontrados ${roomControls.length} controles para sincronizar`
-  );
 
-  roomControls.forEach((el, index) => {
-    const deviceId = el.dataset.deviceId;
+  deviceControlCache.forEach(function (registry, deviceId) {
+    if (!registry || registry.size === 0) {
+      deviceControlCache.delete(deviceId);
+      return;
+    }
+
     const savedState = getStoredState(deviceId);
-    const currentState = el.dataset.state;
+    const hasState = savedState !== null && savedState !== undefined;
 
-    console.log(
-      `Ã°Å¸â€â€ž Sync ${index + 1}/${
-        roomControls.length
-      } - ID:${deviceId}, atual:"${currentState}", salvo:"${savedState}"`
-    );
+    if (!hasState) {
+      return;
+    }
 
-    if (savedState && currentState !== savedState) {
-      console.log(
-        `Ã°Å¸â€â€ž Atualizando controle ${deviceId}: ${currentState} Ã¢â€ â€™ ${savedState}`
-      );
-      setRoomControlUI(el, savedState);
-      updatedControls++;
-    } else if (savedState) {
-      console.log(`Ã¢Å“â€œ Controle ${deviceId} jÃƒÂ¡ estÃƒÂ¡ sincronizado`);
+    registry.forEach(function (el) {
+      if (!el.isConnected) {
+        registry.delete(el);
+        return;
+      }
+
+      const currentState = el.dataset.state;
+      if (currentState !== savedState || forceMasterUpdate) {
+        setRoomControlUI(el, savedState);
+        updatedControls += 1;
+      }
+    });
+
+    if (registry.size === 0) {
+      deviceControlCache.delete(deviceId);
     }
   });
 
-  // Atualizar botÃƒÂµes master (forÃƒÂ§ar se necessÃƒÂ¡rio)
-  const masterButtons = document.querySelectorAll(".room-master-btn");
-  masterButtons.forEach((btn) => {
-    const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
-    if (ids.length > 0) {
-      const masterState = anyOn(ids) ? "on" : "off";
-      setMasterIcon(btn, masterState, forceMasterUpdate);
+  masterButtonCache.forEach(function (btn) {
+    if (!btn.isConnected) {
+      masterButtonCache.delete(btn);
+      return;
     }
+
+    const ids = (btn.dataset.deviceIds || '')
+      .split(',')
+      .map(function (id) {
+        return id.trim();
+      })
+      .filter(Boolean);
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    const masterState = anyOn(ids) ? 'on' : 'off';
+    setMasterIcon(btn, masterState, forceMasterUpdate);
   });
 
-  console.log(
-    `Ã¢Å“â€¦ SincronizaÃƒÂ§ÃƒÂ£o completa: ${updatedControls} controles atualizados`
-  );
+  debugLog(() => ['syncAllVisibleControls:updated', updatedControls]);
 }
 
 // Comandos de debug globais
@@ -3604,13 +3912,16 @@ window.debugEletrize = {
     console.log(`Ã¢Å“â€¦ Teste completo`);
   },
   clearAllStates: () => {
-    console.log("Ã°Å¸â€”â€˜Ã¯Â¸Â Limpando todos os estados salvos...");
+    console.log('Limpando todos os estados salvos...');
     ALL_LIGHT_IDS.forEach((deviceId) => {
+      deviceStateMemory.delete(deviceId);
       try {
         localStorage.removeItem(deviceStateKey(deviceId));
-      } catch (e) {}
+      } catch (e) {
+        debugLog(() => ['Falha ao limpar estado local', deviceId, e]);
+      }
     });
-    console.log("Ã¢Å“â€¦ Estados limpos");
+    console.log('Estados limpos');
   },
   checkProtectedCommands: () => {
     console.log("Ã°Å¸â€ºÂ¡Ã¯Â¸Â Comandos protegidos:");
@@ -4506,7 +4817,7 @@ function initSimpleMode() {
     updateProgress(90, "Sincronizando controles...");
     setTimeout(function () {
       try {
-        syncAllVisibleControls();
+        scheduleControlSync(true);
         console.log("Ã¢Å“â€¦ Controles sincronizados no modo simples");
       } catch (e) {
         console.warn("Ã¢Å¡Â Ã¯Â¸Â SincronizaÃƒÂ§ÃƒÂ£o falhou:", e);
@@ -4625,8 +4936,8 @@ function initializeApp() {
                 console.log(
                   "Ã°Å¸ÂÂ  Inicializando controles de cÃƒÂ´modos na inicializaÃƒÂ§ÃƒÂ£o..."
                 );
-                initRoomPage(); // Inicializar pÃƒÂ¡gina de cÃƒÂ´modo
-                syncAllVisibleControls(); // Sincronizar todos os controles
+                initRoomPage(); // Inicializar pagina de comodo
+                scheduleControlSync(true); // Sincronizar todos os controles
               }, syncDelay);
 
               // Iniciar polling se estiver em produÃƒÂ§ÃƒÂ£o
@@ -4726,3 +5037,12 @@ window.addEventListener("beforeunload", stopPolling);
 // FunÃƒÂ§ÃƒÂµes de debug disponÃƒÂ­veis globalmente
 window.testHubitatConnection = testHubitatConnection;
 window.showErrorMessage = showErrorMessage;
+
+
+
+
+
+
+
+
+
