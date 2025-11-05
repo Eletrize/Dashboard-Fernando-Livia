@@ -132,7 +132,9 @@ function detectDevice() {
 function isOnTVControlPage() {
   return (
     window.location.pathname.includes("ambiente1-tv") ||
-    window.location.hash.includes("ambiente1-tv")
+    window.location.hash.includes("ambiente1-tv") ||
+    window.location.pathname.includes("ambiente1-htv") ||
+    window.location.hash.includes("ambiente1-htv")
   );
 }
 
@@ -505,10 +507,14 @@ function tvCommand(el, command) {
   }
 
   // Feedback visual
-  el.style.transform = "scale(0.95)";
+  el.style.transform = "scale(0.92)";
+  el.style.background = "rgba(255, 255, 255, 0.15)";
+  el.style.borderColor = "rgba(255, 255, 255, 0.3)";
   setTimeout(() => {
     el.style.transform = "";
-  }, 150);
+    el.style.background = "";
+    el.style.borderColor = "";
+  }, 200);
 
   // Marcar comando recente
   recentCommands.set(deviceId, Date.now());
@@ -1148,10 +1154,19 @@ function initAirConditionerControl() {
   const fanLevels = ["low", "medium", "high"];
   const temperatures = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
 
+  // Detectar a página atual para aplicar configuração correta
+  const currentRoute = (window.location.hash || '').replace('#', '');
+  const isAmbiente1 = currentRoute.includes('ambiente1-conforto');
+
+  // Configurações específicas por ambiente
+  const tempConfig = isAmbiente1
+    ? { minTemp: 18, maxTemp: 25, defaultTemp: 22 }  // Ambiente 1 - Varanda
+    : { minTemp: 17, maxTemp: 30, defaultTemp: 22 }; // Outros ambientes
+
   const state = {
-    minTemp: 17,
-    maxTemp: 30,
-    temperature: 22,
+    minTemp: tempConfig.minTemp,
+    maxTemp: tempConfig.maxTemp,
+    temperature: tempConfig.defaultTemp,
     mode: "cool", // Sempre cool
     powerOn: false,
     fanLevel: "medium",
@@ -1161,9 +1176,9 @@ function initAirConditionerControl() {
   // ConfiguraÃƒÂ§ÃƒÂµes de modo - apenas Cool
   const modeConfig = {
     cool: {
-      minTemp: 17,
-      maxTemp: 30,
-      defaultTemp: 22,
+      minTemp: tempConfig.minTemp,
+      maxTemp: tempConfig.maxTemp,
+      defaultTemp: tempConfig.defaultTemp,
       color: "rgba(59, 130, 246, 0.95)", // Azul
     },
   };
