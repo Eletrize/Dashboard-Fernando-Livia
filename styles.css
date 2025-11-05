@@ -3217,6 +3217,7 @@ div {
   .ac-temp-wrapper {
     max-width: 500px;
     height: 340px;
+    position: relative;
   }
 
   .ac-temp-current {
@@ -3226,6 +3227,10 @@ div {
 
   .ac-temp-list {
     gap: 0;
+  }
+
+  .ac-temp-display {
+    top: calc(50% + 35px);
   }
 
   .ac-temp-knob {
@@ -3244,7 +3249,7 @@ div {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 32px;
     justify-content: center;
     padding: 0 15px;
   }
