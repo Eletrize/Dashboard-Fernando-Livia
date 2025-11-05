@@ -46,6 +46,105 @@ let fallbackSyncTimer = null;
 let pendingControlSyncHandle = null;
 let pendingControlSyncForce = false; // ========================================
 
+const CRITICAL_ASSET_PATHS = [
+  "images/Images/photo-varanda.jpg",
+  "images/Images/photo-living.jpg",
+  "images/Images/photo-piscina.jpg",
+  "images/Images/photo-externo.jpg",
+  "images/Images/photo-servico.jpg",
+  "images/Images/photo-circulacao.jpg",
+  "images/Images/photo-suitei.jpg",
+  "images/Images/photo-suiteii.jpg",
+  "images/Images/photo-suitemaster.jpg",
+  "images/icons/icon-tv.svg",
+  "images/icons/icon-htv.svg",
+  "images/icons/icon-musica.svg",
+  "images/icons/icon-curtain.svg",
+  "images/icons/icon-firetv.svg",
+  "images/icons/icon-conforto.svg",
+  "images/icons/ar-condicionado.svg",
+  "images/icons/icon-piscina.svg",
+  "images/icons/icon-telao-led.svg",
+  "images/icons/icon-small-light-off.svg",
+  "images/icons/icon-small-light-on.svg",
+  "images/icons/icon-small-smartglass-off.svg",
+  "images/icons/icon-small-smartglass-on.svg",
+  "images/icons/icon-small-shader-off.svg",
+  "images/icons/icon-small-shader-on.svg",
+  "images/icons/icon-small-tv-off.svg",
+  "images/icons/icon-small-tv-on.svg",
+  "images/icons/icon-small-telamovel-off.svg",
+  "images/icons/icon-small-telamovel-on.svg",
+  "images/icons/icon-ac-power.svg",
+  "images/icons/icon-ac-fan.svg",
+  "images/icons/icon-ac-cool.svg",
+  "images/icons/icon-ac-heat.svg",
+  "images/icons/icon-ac-auto.svg",
+  "images/icons/icon-ac-aleta-moving.svg",
+  "images/icons/icon-ac-aleta-parada.svg",
+  "images/icons/icon-ac-aleta-alta.svg",
+  "images/icons/icon-ac-aleta-baixa.svg",
+  "images/icons/icon-rotatephone.svg",
+  "images/icons/icon-settings.svg",
+  "images/icons/icon-home.svg",
+  "images/icons/back-button.svg",
+  "images/icons/Eletrize.svg",
+  "images/icons/Fullscreen.svg",
+  "images/icons/icon-limpar.svg",
+  "images/icons/icon-mouse.svg",
+  "images/icons/Instagram.svg",
+  "images/icons/whatsapp.svg",
+  "images/icons/icon-volume.svg",
+  "images/icons/icon-mute.svg",
+  "images/icons/icon-next-track.svg",
+  "images/icons/icon-previous-track.svg",
+  "images/icons/icon-play.svg",
+  "images/icons/icon-pause.svg",
+  "images/icons/icon-stop.svg",
+  "images/icons/Encerrar-expediente.svg",
+  "images/icons/iniciar-expediente.svg",
+  "images/icons/icon-scenes.svg",
+  "images/icons/pageselector.svg",
+];
+
+function warmCriticalAssetCache() {
+  if (typeof window === "undefined") return;
+
+  const queue = Array.from(new Set(CRITICAL_ASSET_PATHS));
+  if (!queue.length) return;
+
+  const loadNext = () => {
+    const src = queue.shift();
+    if (!src) return;
+
+    const img = new Image();
+    img.onload = img.onerror = () => {
+      if (queue.length) {
+        if (typeof requestAnimationFrame === "function") {
+          requestAnimationFrame(loadNext);
+        } else {
+          setTimeout(loadNext, 16);
+        }
+      }
+    };
+    img.src = src;
+  };
+
+  loadNext();
+}
+
+if (typeof window !== "undefined") {
+  const scheduleAssetWarmup = () => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => warmCriticalAssetCache(), { timeout: 2000 });
+    } else {
+      setTimeout(() => warmCriticalAssetCache(), 150);
+    }
+  };
+
+  window.addEventListener("load", scheduleAssetWarmup, { once: true });
+}
+
 // DETECÃƒâ€¡ÃƒÆ’O DE DISPOSITIVOS
 // ========================================
 
