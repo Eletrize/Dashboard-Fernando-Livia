@@ -186,13 +186,11 @@
     </nav>
     <script>
       (function () {
-        var originalConsole =
-          window.__DASHBOARD_ORIGINAL_CONSOLE__ ||
-          {
-            log: console.log ? console.log.bind(console) : function () {},
-            info: console.info ? console.info.bind(console) : function () {},
-            debug: console.debug ? console.debug.bind(console) : function () {},
-          };
+        var originalConsole = window.__DASHBOARD_ORIGINAL_CONSOLE__ || {
+          log: console.log ? console.log.bind(console) : function () {},
+          info: console.info ? console.info.bind(console) : function () {},
+          debug: console.debug ? console.debug.bind(console) : function () {},
+        };
 
         function parseDebugFromQuery() {
           try {
@@ -414,8 +412,9 @@
 
       const appInfoVersionLabel = document.getElementById("app-info-version");
 
-      const fullscreenToggleBtn =
-        document.getElementById("app-fullscreen-toggle");
+      const fullscreenToggleBtn = document.getElementById(
+        "app-fullscreen-toggle"
+      );
       const cacheClearBtn = document.getElementById("app-cache-clear");
       const instagramLink = document.getElementById("app-instagram-link");
       const supportLink = document.getElementById("app-support-link");
@@ -558,10 +557,10 @@
 
         closeAppInfoMenu();
 
-        if (typeof window.brutalCacheClear === 'function') {
+        if (typeof window.brutalCacheClear === "function") {
           window.brutalCacheClear();
         } else {
-          console.warn('Funcao brutalCacheClear indisponivel.');
+          console.warn("Funcao brutalCacheClear indisponivel.");
         }
       }
 
@@ -635,7 +634,7 @@
             "fullscreenchange",
             "webkitfullscreenchange",
             "mozfullscreenchange",
-            "msfullscreenchange"
+            "msfullscreenchange",
           ].forEach((evt) => {
             document.addEventListener(evt, updateFullscreenOptionLabel);
           });
@@ -1253,10 +1252,10 @@
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-power-group">
-              <button class="tv-btn tv-btn--power-on" onclick="updateTVPowerState('on'); tvCommand(this, 'pwr')" data-device-id="111" aria-label="Ligar">
+              <button class="tv-btn tv-btn--power-on" onclick="updateTVPowerState('on'); tvCommand(this, 'pwr')" data-device-id="114" aria-label="Ligar">
                 ON
               </button>
-              <button class="tv-btn tv-btn--power-off" onclick="updateTVPowerState('off'); tvCommand(this, 'pwr')" data-device-id="111" aria-label="Desligar">
+              <button class="tv-btn tv-btn--power-off" onclick="updateTVPowerState('off'); tvCommand(this, 'pwr')" data-device-id="114" aria-label="Desligar">
                 OFF
               </button>
             </div>
@@ -1297,10 +1296,10 @@
                 <!-- Coluna Canais -->
                 <div class="tv-channels-column">
                   <div class="tv-channels-buttons">
-            <button class="tv-btn-square" onclick="tvCommand(this, 'channelDown')" data-device-id="111" aria-label="Canal +">
+            <button class="tv-btn-square" onclick="tvCommand(this, 'channelDown')" data-device-id="114" aria-label="Canal +">
                       <img src="images/icons/arrow-up.svg" alt="Canal +" class="tv-btn-icon-img">
                     </button>
-            <button class="tv-btn-square" onclick="tvCommand(this, 'channelUp')" data-device-id="111" aria-label="Canal -">
+            <button class="tv-btn-square" onclick="tvCommand(this, 'channelUp')" data-device-id="114" aria-label="Canal -">
                       <img src="images/icons/arrow-down.svg" alt="Canal -" class="tv-btn-icon-img">
                     </button>
                   </div>
@@ -1321,24 +1320,24 @@
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-commands-grid">
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'returnButton')" data-device-id="111" aria-label="Voltar">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'returnButton')" data-device-id="114" aria-label="Voltar">
                 <img src="images/icons/back-button.svg" alt="Voltar">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'menu')" data-device-id="111" aria-label="Menu">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'menu')" data-device-id="114" aria-label="Menu">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="3" y1="12" x2="21" y2="12"></line>
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                   <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'volMute')" data-device-id="111" aria-label="Mudo">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'volMute')" data-device-id="114" aria-label="Mudo">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                   <line x1="23" y1="9" x2="17" y2="15"></line>
                   <line x1="17" y1="9" x2="23" y2="15"></line>
                 </svg>
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'home')" data-device-id="111" aria-label="Home">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'home')" data-device-id="114" aria-label="Home">
                 <img src="images/icons/icon-home.svg" alt="Home">
               </button>
             </div>
@@ -1354,25 +1353,25 @@
               <div class="tv-directional-section">
                 <div class="tv-directional-pad">
                   <!-- Linha 1: UP -->
-                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'cursorUp')" data-device-id="111" aria-label="Cima">
+                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'cursorUp')" data-device-id="114" aria-label="Cima">
                     <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
                   </button>
                             
                   <!-- Linha 2: LEFT, OK, RIGHT -->
                   <div class="tv-directional-row-line">
-                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'cursorLeft')" data-device-id="111" aria-label="Esquerda">
+                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'cursorLeft')" data-device-id="114" aria-label="Esquerda">
                       <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'cursorCenter')" data-device-id="111" aria-label="OK">
+                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'cursorCenter')" data-device-id="114" aria-label="OK">
                       <div class="tv-ok-circle"></div>
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'cursorRight')" data-device-id="111" aria-label="Direita">
+                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'cursorRight')" data-device-id="114" aria-label="Direita">
                       <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
                     </button>
                   </div>
                             
                   <!-- Linha 3: DOWN -->
-                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'cursorDown')" data-device-id="111" aria-label="Baixo">
+                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'cursorDown')" data-device-id="114" aria-label="Baixo">
                     <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
                   </button>
                 </div>
@@ -1391,19 +1390,19 @@
             </header>
             <div class="tv-control-group">
               <div class="tv-numpad">
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num1')" data-device-id="111" aria-label="1">1</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num2')" data-device-id="111" aria-label="2">2</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num3')" data-device-id="111" aria-label="3">3</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num4')" data-device-id="111" aria-label="4">4</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num5')" data-device-id="111" aria-label="5">5</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num6')" data-device-id="111" aria-label="6">6</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num7')" data-device-id="111" aria-label="7">7</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num8')" data-device-id="111" aria-label="8">8</button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num9')" data-device-id="111" aria-label="9">9</button>
-                <button class="tv-numpad-btn tv-numpad-btn--icon" onclick="tvCommand(this, 'returnButton')" data-device-id="111" aria-label="Voltar">
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num1')" data-device-id="114" aria-label="1">1</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num2')" data-device-id="114" aria-label="2">2</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num3')" data-device-id="114" aria-label="3">3</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num4')" data-device-id="114" aria-label="4">4</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num5')" data-device-id="114" aria-label="5">5</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num6')" data-device-id="114" aria-label="6">6</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num7')" data-device-id="114" aria-label="7">7</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num8')" data-device-id="114" aria-label="8">8</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num9')" data-device-id="114" aria-label="9">9</button>
+                <button class="tv-numpad-btn tv-numpad-btn--icon" onclick="tvCommand(this, 'returnButton')" data-device-id="114" aria-label="Voltar">
                   <img src="images/icons/back-button.svg" alt="Back">
                 </button>
-                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num0')" data-device-id="111" aria-label="0">0</button>
+                <button class="tv-numpad-btn" onclick="tvCommand(this, 'num0')" data-device-id="114" aria-label="0">0</button>
                 <button class="tv-numpad-btn tv-numpad-btn--icon" onclick="tvCommand(this, 'mouse')" aria-label="Mouse">
                   <img src="images/icons/icon-mouse.svg" alt="Mouse">
                 </button>
@@ -2484,23 +2483,17 @@
             <div class="control-label">Música</div>
         </div>
 
-        <!-- Botão HTV -->
-        <div class="control-card" onclick="spaNavigate('ambiente1-htv')">
-            <img class="control-icon" src="images/icons/icon-htv.svg" alt="HTV">
-            <div class="control-label">HTV</div>
-        </div>
+    <!-- Botão HTV -->
+    <div class="control-card" onclick="spaNavigate('ambiente1-htv')">
+      <img class="control-icon" src="images/icons/icon-htv.svg" alt="HTV">
+      <div class="control-label">HTV</div>
+    </div>
 
-        <!-- Botão Fire TV -->
-        <div class="control-card" onclick="spaNavigate('ambiente1-firetv')">
-            <img class="control-icon" src="images/icons/icon-firetv.svg" alt="Fire TV">
-            <div class="control-label">Fire TV</div>
-        </div>
-
-        <!-- Botão Televisão -->
-        <div class="control-card control-card--full-width" onclick="spaNavigate('ambiente1-tv')">
-            <img class="control-icon" src="images/icons/icon-tv.svg" alt="Televisão">
-            <div class="control-label">Televisão</div>
-        </div>
+    <!-- Botão Televisão -->
+    <div class="control-card" onclick="spaNavigate('ambiente1-tv')">
+      <img class="control-icon" src="images/icons/icon-tv.svg" alt="Televisão">
+      <div class="control-label">Televisão</div>
+    </div>
 
     </div>
 
@@ -3531,7 +3524,7 @@
         conforto: "Conforto",
         musica: "M\u00fasica",
         tv: "Controle TV",
-  htv: "Controle HTV",
+        htv: "Controle HTV",
         piscina: "Piscina",
         "piscina-luzes": "Ilumina\u00e7\u00e3o",
       };
@@ -3588,7 +3581,7 @@
         setupAppInfoMenu();
 
         // Inicializar slider de volume se estiver na página de TV
-  if (page === "ambiente1-tv" || page === "ambiente1-htv") {
+        if (page === "ambiente1-tv" || page === "ambiente1-htv") {
           setTimeout(() => {
             if (typeof initVolumeSlider === "function") {
               initVolumeSlider();
