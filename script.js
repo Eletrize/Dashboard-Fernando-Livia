@@ -1731,40 +1731,88 @@ function toggleDevice(el, deviceType) {
 
 // --- Controle do Hubitat ---
 
-// Detecta se estÃƒÂ¡ em produÃƒÂ§ÃƒÂ£o (Cloudflare Pages) ou desenvolvimento
-// VERIFICAÃƒâ€¡ÃƒÆ’O DE CACHE FORÃƒâ€¡ADA - DEVE SER PRIMEIRA COISA A EXECUTAR
-(function () {
-  console.log("Ã°Å¸Â§Â¹ VERIFICANDO NECESSIDADE DE LIMPEZA DE CACHE...");
+async function brutalCacheClear() {
+  const confirmationMessage =
+    'Deseja realmente limpar todo o cache do aplicativo? Isso ira recarregar a pagina.';
+
+  if (!window.confirm(confirmationMessage)) {
+    console.log('Limpeza manual de cache cancelada pelo usuario.');
+    return;
+  }
+
+  console.log('Iniciando limpeza manual de cache.');
+
+  if (typeof showMobileDebug === 'function') {
+    showMobileDebug('Limpando cache...', 'info');
+  }
+
+  const criticalKeys = ['hubitat_host', 'hubitat_token'];
+  const backup = {};
 
   try {
-    var lastCacheClear = localStorage.getItem("last_cache_clear");
-    var now = Date.now();
-    var oneHour = 60 * 60 * 1000; // 1 hora
-
-    if (!lastCacheClear || now - parseInt(lastCacheClear) > oneHour) {
-      console.log("Ã°Å¸Â§Â¹ Cache expirado, forÃƒÂ§ando reload completo...");
-      localStorage.setItem("last_cache_clear", now.toString());
-
-      // Limpar todos os caches possÃƒÂ­veis
-      if ("caches" in window) {
-        caches.keys().then(function (names) {
-          names.forEach(function (name) {
-            caches.delete(name);
-          });
-        });
+    criticalKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      if (value !== null) {
+        backup[key] = value;
       }
+    });
 
-      // ForÃƒÂ§ar reload sem cache
-      setTimeout(function () {
-        location.reload(true);
-      }, 100);
-      return;
-    }
-  } catch (e) {
-    console.warn("Ã¢Å¡Â Ã¯Â¸Â Erro na verificaÃƒÂ§ÃƒÂ£o de cache:", e);
+    localStorage.clear();
+
+    Object.keys(backup).forEach((key) => {
+      localStorage.setItem(key, backup[key]);
+    });
+  } catch (error) {
+    console.warn('Erro ao limpar localStorage:', error);
   }
-})();
 
+  try {
+    sessionStorage.clear();
+  } catch (error) {
+    console.warn('Erro ao limpar sessionStorage:', error);
+  }
+
+  if ('caches' in window) {
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
+    } catch (error) {
+      console.warn('Erro ao limpar caches do navegador:', error);
+    }
+  }
+
+  if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map((registration) => registration.unregister())
+      );
+    } catch (error) {
+      console.warn('Erro ao remover service workers:', error);
+    }
+  }
+
+  try {
+    const timestamp = Date.now();
+    const cacheBuster =
+      timestamp.toString() + '_' + Math.random().toString(36).substring(2, 10);
+
+    localStorage.setItem('last_cache_clear', timestamp.toString());
+    localStorage.setItem('app_cache_version', cacheBuster);
+  } catch (error) {
+    console.warn('Erro ao atualizar metadados de cache:', error);
+  }
+
+  if (typeof showMobileDebug === 'function') {
+    showMobileDebug('Cache limpo. Recarregando...', 'success');
+  }
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 400);
+}
+
+window.brutalCacheClear = brutalCacheClear;
 const isProductionOriginal = !["localhost", "127.0.0.1", "::1"].includes(
   location.hostname
 );
