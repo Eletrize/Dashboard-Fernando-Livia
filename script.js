@@ -2577,7 +2577,10 @@ const POLLING_INTERVAL_MAX_MS = 20000;
 let currentPollingInterval = POLLING_INTERVAL_BASE_MS;
 let pollingTimerHandle = null;
 let pollingActive = false;
-let pollingFailureCount = 0;\nlet pollingPausedForVisibility = false;\n\n// Sistema para evitar conflitos entre comandos manuais e polling
+let pollingFailureCount = 0;
+let pollingPausedForVisibility = false;
+
+// Sistema para evitar conflitos entre comandos manuais e polling
 const recentCommands = new Map(); // deviceId -> timestamp do ÃƒÂºltimo comando
 const COMMAND_PROTECTION_MS = 8000; // 8 segundos de proteÃƒÂ§ÃƒÂ£o apÃƒÂ³s comando manual
 
