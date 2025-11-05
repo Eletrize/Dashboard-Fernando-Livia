@@ -1216,7 +1216,7 @@ function initAirConditionerControl() {
   }
 
   // Constantes do arco
-  const ARC_LENGTH = 251.2; // Comprimento do arco SVG path
+  const ARC_LENGTH = 251.2; // Comprimento aproximado do arco SVG path
   const ARC_START_ANGLE = 180; // Graus (esquerda)
   const ARC_END_ANGLE = 0; // Graus (direita)
   const ARC_RADIUS = 80; // Raio do arco no viewBox
@@ -1232,6 +1232,9 @@ function initAirConditionerControl() {
     const rect = wrapper.getBoundingClientRect();
     const svgElement = progressArc.closest("svg");
     const svgRect = svgElement.getBoundingClientRect();
+    const viewBox = svgElement?.viewBox?.baseVal;
+    const vbWidth = viewBox ? viewBox.width : 200;
+    const vbHeight = viewBox ? viewBox.height : 120;
 
     // O viewBox ÃƒÂ© 0 0 200 120
     // O arco path ÃƒÂ©: M 20,100 A 80,80 0 0,1 180,100
@@ -1239,17 +1242,43 @@ function initAirConditionerControl() {
     // O raio ÃƒÂ© 80
 
     // Calcular a escala do SVG
-    const scaleX = svgRect.width / 200; // viewBox width = 200
-    const scaleY = svgRect.height / 120; // viewBox height = 120
+    const scaleX = svgRect.width / vbWidth;
+    const scaleY = svgRect.height / vbHeight;
+
+    let arcLength = ARC_LENGTH;
+    try {
+      if (typeof progressArc.getTotalLength === "function") {
+        arcLength = progressArc.getTotalLength();
+      }
+    } catch (error) {
+      console.warn("Falha ao obter comprimento do arco", error);
+    }
+
+    let strokeWidth = 0;
+    try {
+      strokeWidth = parseFloat(
+        window.getComputedStyle(progressArc).strokeWidth || "0"
+      );
+    } catch (error) {
+      strokeWidth = 0;
+    }
+
+    const ctm = typeof progressArc.getCTM === "function" ? progressArc.getCTM() : null;
 
     return {
       rect,
       svgRect,
       svgElement,
+      viewBox: { width: vbWidth, height: vbHeight },
       // Centro do arco em coordenadas da pÃƒÂ¡gina
       centerX: svgRect.left + 100 * scaleX, // X=100 no viewBox
       centerY: svgRect.top + 100 * scaleY, // Y=100 no viewBox
-      radius: 80 * scaleX, // Raio 80 no viewBox, usando escala X
+  radius: 80 * Math.min(scaleX, scaleY), // Ajusta para manter o raio coerente
+      scaleX,
+      scaleY,
+      arcLength,
+      strokeWidth,
+      ctm,
     };
   }
 
@@ -1271,25 +1300,47 @@ function initAirConditionerControl() {
   }
 
   function updateKnobPosition(angle) {
-    if (!knob) return;
+    if (!knob || !progressArc) return;
 
-    // Converte ÃƒÂ¢ngulo para radianos
-    const radians = (angle * Math.PI) / 180;
+    if (!geometry || !geometry.ctm) {
+      geometry = calculateGeometry();
+    }
 
-    // Calcula as coordenadas no arco usando o raio e centro corretos
-    const radius = geometry.radius;
+    const ratio = clamp((180 - angle) / 180, 0, 1);
+    const arcLength = geometry.arcLength ?? ARC_LENGTH;
 
-    // IMPORTANTE: Para o arco superior, Y deve ser NEGATIVO (para cima)
-    // PosiÃƒÂ§ÃƒÂ£o absoluta na pÃƒÂ¡gina
-    const x = geometry.centerX + radius * Math.cos(radians);
-    const y = geometry.centerY - radius * Math.sin(radians); // NEGATIVO para ir para cima!
+    let svgPoint;
+    try {
+      const length = arcLength * ratio;
+      svgPoint = progressArc.getPointAtLength(length);
+    } catch (error) {
+      svgPoint = null;
+    }
 
-    // Converte para posiÃƒÂ§ÃƒÂ£o relativa ao wrapper
+    if (!svgPoint || !geometry.ctm) {
+      return;
+    }
+
+    let screenPoint;
+    const svgElement = geometry.svgElement;
+
+    if (typeof DOMPoint === "function") {
+      screenPoint = new DOMPoint(svgPoint.x, svgPoint.y).matrixTransform(
+        geometry.ctm
+      );
+    } else if (svgElement && typeof svgElement.createSVGPoint === "function") {
+      const point = svgElement.createSVGPoint();
+      point.x = svgPoint.x;
+      point.y = svgPoint.y;
+      screenPoint = point.matrixTransform(geometry.ctm);
+    } else {
+      return;
+    }
+
     const wrapperRect = wrapper.getBoundingClientRect();
-    const relativeX = x - wrapperRect.left;
-    const relativeY = y - wrapperRect.top;
+    const relativeX = screenPoint.x - wrapperRect.left;
+    const relativeY = screenPoint.y - wrapperRect.top;
 
-    // Centraliza o knob
     knob.style.left = `${relativeX}px`;
     knob.style.top = `${relativeY}px`;
     knob.style.transform = "translate(-50%, -50%)";
@@ -1299,13 +1350,22 @@ function initAirConditionerControl() {
     if (!progressArc) return;
 
     // Calcula o progresso (0 a 1)
-    const progress = (180 - angle) / 180;
+    const progress = clamp((180 - angle) / 180, 0, 1);
+    const arcLength = geometry.arcLength ?? ARC_LENGTH;
     // Offset: comeÃƒÂ§a cheio e vai diminuindo conforme progride
-    const offset = ARC_LENGTH - progress * ARC_LENGTH;
+    const offset = arcLength - progress * arcLength;
 
-    // Garante que o offset nÃƒÂ£o seja negativo e nÃƒÂ£o ultrapasse o comprimento
-    const clampedOffset = Math.max(0, Math.min(ARC_LENGTH, offset));
-    progressArc.style.strokeDashoffset = clampedOffset;
+    let dashOffset;
+    if (progress <= 0) {
+      dashOffset = arcLength + (geometry.strokeWidth || 0) + 1;
+    } else if (progress >= 1) {
+      dashOffset = 0;
+    } else {
+      dashOffset = Math.max(0, Math.min(arcLength, offset));
+    }
+
+    progressArc.style.strokeDasharray = arcLength;
+    progressArc.style.strokeDashoffset = dashOffset;
   }
 
   function updateTemperatureDisplay() {
@@ -1630,6 +1690,7 @@ function initAirConditionerControl() {
     geometry = calculateGeometry();
     const angle = angleFromTemperature(state.temperature);
     updateKnobPosition(angle);
+    updateProgress(angle);
   });
 
   // Inicializa (sem enviar comandos no primeiro render)
