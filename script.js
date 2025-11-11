@@ -136,7 +136,9 @@ function warmCriticalAssetCache() {
 if (typeof window !== "undefined") {
   const scheduleAssetWarmup = () => {
     if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(() => warmCriticalAssetCache(), { timeout: 2000 });
+      window.requestIdleCallback(() => warmCriticalAssetCache(), {
+        timeout: 2000,
+      });
     } else {
       setTimeout(() => warmCriticalAssetCache(), 150);
     }
@@ -1805,14 +1807,10 @@ function initAirConditionerControl() {
 
     // Envia comandos para o Hubitat (modo Cool fixo)
     if (aleta === "moving") {
-      console.log(
-        "ALETA MOVIMENTO: Executando comando swingOn (mover aletas)"
-      );
+      console.log("ALETA MOVIMENTO: Executando comando swingOn (mover aletas)");
       sendHubitatCommand(state.deviceId, "swingOn");
     } else if (aleta === "parada") {
-      console.log(
-        "ALETA PARADA: Executando comando swingOff (parar aletas)"
-      );
+      console.log("ALETA PARADA: Executando comando swingOff (parar aletas)");
       sendHubitatCommand(state.deviceId, "swingOff");
     }
   }
@@ -2388,7 +2386,7 @@ const HUBITAT_CLOUD_APP_BASE_URL =
   "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/15";
 const HUBITAT_CLOUD_ACCESS_TOKEN = "1d9b367b-e4cd-4042-b726-718b759a82ef";
 const HUBITAT_CLOUD_DEVICES_BASE_URL = `${HUBITAT_CLOUD_APP_BASE_URL}/devices`;
-const HUBITAT_CLOUD_DEVICE_IDS = new Set(["109"]);
+const HUBITAT_CLOUD_DEVICE_IDS = new Set(["109", "115", "116"]);
 
 function useHubitatCloud(deviceId) {
   return (
