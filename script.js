@@ -641,32 +641,51 @@ function tvCommand(el, command) {
 }
 
 // Macro para ligar HTV + TV + Receiver de uma vez
+
+// Macro para ligar TV e Receiver e setar input SAT/CBL
 function htvMacroOn() {
-  const HTV_ID = "114";
   const TV_ID = "111";
   const RECEIVER_ID = "15";
 
-  console.log("🎬 Iniciando macro: Ligando HTV, TV e Receiver...");
+  console.log("🎬 Macro HTV: Ligando TV e Receiver, depois setando input SAT/CBL...");
 
-  // Enviar comando de ligar para cada dispositivo
-  const devices = [
-    { id: HTV_ID, name: "HTV" },
-    { id: TV_ID, name: "TV" },
-    { id: RECEIVER_ID, name: "Receiver" },
-  ];
+  // Liga TV
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV ligada");
+      // Liga Receiver
+      return sendHubitatCommand(RECEIVER_ID, "on");
+    })
+    .then(() => {
+      console.log("✅ Receiver ligado");
+      // Setar input SAT/CBL
+      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL");
+    })
+    .then(() => {
+      console.log("✅ Input SAT/CBL selecionado no Receiver");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro HTV:", error);
+    });
+}
 
-  devices.forEach((device) => {
-    sendHubitatCommand(device.id, "on")
-      .then(() => {
-        console.log(`✅ ${device.name} (ID: ${device.id}) ligado com sucesso`);
-      })
-      .catch((error) => {
-        console.error(
-          `❌ Erro ao ligar ${device.name} (ID: ${device.id}):`,
-          error
-        );
-      });
-  });
+// Macro para desligar TV e Receiver
+function htvMacroOff() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro HTV: Desligando TV e Receiver...");
+
+  Promise.all([
+    sendHubitatCommand(TV_ID, "off"),
+    sendHubitatCommand(RECEIVER_ID, "off")
+  ])
+    .then(() => {
+      console.log("✅ TV e Receiver desligados");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV/Receiver:", error);
+    });
 }
 
 // Macro para ligar TV + Receiver de uma vez
