@@ -7,28 +7,28 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <title>Dashboard Eletrize</title>
-  <link rel="stylesheet" href="fonts-raleway.css" />
-  <link rel="preload" href="styles.css?v=1.0.3" as="style" />
-  <link rel="stylesheet" href="styles.css?v=1.0.3" />
-  <link rel="preload" href="script.js?v=1.0.3" as="script" />
-  <link rel="preload" href="scenes.js?v=1.0.3" as="script" />
-  <link rel="preload" as="image" href="images/Images/photo-varanda.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-living.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-piscina.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-externo.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-servico.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-circulacao.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-suitei.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-suiteii.jpg" />
-  <link rel="preload" as="image" href="images/Images/photo-suitemaster.jpg" />
-  <link rel="preload" as="image" href="images/icons/icon-tv.svg" />
-  <link rel="preload" as="image" href="images/icons/icon-htv.svg" />
-  <link rel="preload" as="image" href="images/icons/icon-musica.svg" />
-  <link rel="preload" as="image" href="images/icons/icon-curtain.svg" />
-  <link rel="preload" as="image" href="images/icons/ar-condicionado.svg" />
-  <link rel="preload" as="image" href="images/icons/icon-conforto.svg" />
-  <link rel="preload" as="image" href="images/icons/icon-piscina.svg" />
-  <link rel="preload" as="image" href="images/icons/icon-telao-led.svg" />
+    <link rel="stylesheet" href="fonts-raleway.css" />
+    <link rel="preload" href="styles.css?v=1.0.3" as="style" />
+    <link rel="stylesheet" href="styles.css?v=1.0.3" />
+    <link rel="preload" href="script.js?v=1.0.3" as="script" />
+    <link rel="preload" href="scenes.js?v=1.0.3" as="script" />
+    <link rel="preload" as="image" href="images/Images/photo-varanda.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-living.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-piscina.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-externo.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-servico.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-circulacao.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-suitei.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-suiteii.jpg" />
+    <link rel="preload" as="image" href="images/Images/photo-suitemaster.jpg" />
+    <link rel="preload" as="image" href="images/icons/icon-tv.svg" />
+    <link rel="preload" as="image" href="images/icons/icon-htv.svg" />
+    <link rel="preload" as="image" href="images/icons/icon-musica.svg" />
+    <link rel="preload" as="image" href="images/icons/icon-curtain.svg" />
+    <link rel="preload" as="image" href="images/icons/ar-condicionado.svg" />
+    <link rel="preload" as="image" href="images/icons/icon-conforto.svg" />
+    <link rel="preload" as="image" href="images/icons/icon-piscina.svg" />
+    <link rel="preload" as="image" href="images/icons/icon-telao-led.svg" />
     <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#1C1C1C" />
@@ -270,8 +270,8 @@
         setConsoleState(window.__DASHBOARD_DEBUG__);
       })();
     </script>
-  <script src="script.js?v=1.0.3" defer></script>
-  <script src="scenes.js?v=1.0.3" defer></script>
+    <script src="script.js?v=1.0.3" defer></script>
+    <script src="scenes.js?v=1.0.3" defer></script>
     <script>
       // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
 
@@ -2619,13 +2619,49 @@
                 <div class="curtain-tile__line"></div>
             </header>
             <div class="curtain-tile__actions">
-                <button class="curtain-tile__btn" data-device-id="109" onclick="curtainAction(this, 'open')" aria-label="Abrir cortinas">
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="109" onclick="curtainAction(this, 'open')" aria-label="Abrir cortinas">
                     <img src="images/icons/arrow-up.svg" alt="Abrir">
                 </button>
-                <button class="curtain-tile__btn" data-device-id="109" onclick="curtainAction(this, 'stop')" aria-label="Parar cortinas">
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="109" onclick="curtainAction(this, 'stop')" aria-label="Parar cortinas">
                     <img src="images/icons/icon-stop.svg" alt="Parar">
                 </button>
-                <button class="curtain-tile__btn" data-device-id="109" onclick="curtainAction(this, 'close')" aria-label="Fechar cortinas">
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="109" onclick="curtainAction(this, 'close')" aria-label="Fechar cortinas">
+                    <img src="images/icons/arrow-down.svg" alt="Fechar">
+                </button>
+            </div>
+        </article>
+        
+        <article class="curtain-tile curtain-tile--transparent" data-device-id="115" data-environment="Varanda">
+            <header class="curtain-tile__header curtain-tile__header--minimal">
+                <h3 class="curtain-tile__title">Esquerda</h3>
+                <div class="curtain-tile__line"></div>
+            </header>
+            <div class="curtain-tile__actions">
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="115" onclick="curtainAction(this, 'open')" aria-label="Abrir cortina esquerda">
+                    <img src="images/icons/arrow-up.svg" alt="Abrir">
+                </button>
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="115" onclick="curtainAction(this, 'stop')" aria-label="Parar cortina esquerda">
+                    <img src="images/icons/icon-stop.svg" alt="Parar">
+                </button>
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="115" onclick="curtainAction(this, 'close')" aria-label="Fechar cortina esquerda">
+                    <img src="images/icons/arrow-down.svg" alt="Fechar">
+                </button>
+            </div>
+        </article>
+
+        <article class="curtain-tile curtain-tile--transparent" data-device-id="116" data-environment="Varanda">
+            <header class="curtain-tile__header curtain-tile__header--minimal">
+                <h3 class="curtain-tile__title">Direita</h3>
+                <div class="curtain-tile__line"></div>
+            </header>
+            <div class="curtain-tile__actions">
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="116" onclick="curtainAction(this, 'open')" aria-label="Abrir cortina direita">
+                    <img src="images/icons/arrow-up.svg" alt="Abrir">
+                </button>
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="116" onclick="curtainAction(this, 'stop')" aria-label="Parar cortina direita">
+                    <img src="images/icons/icon-stop.svg" alt="Parar">
+                </button>
+                <button class="curtain-tile__btn curtain-tile__btn--transparent" data-device-id="116" onclick="curtainAction(this, 'close')" aria-label="Fechar cortina direita">
                     <img src="images/icons/arrow-down.svg" alt="Fechar">
                 </button>
             </div>
