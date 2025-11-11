@@ -4667,9 +4667,16 @@ body.app-info-open {
 /* Varanda (ambiente1) - cortinas lado a lado na página geral */
 .curtain-section[data-section="ambiente1"] .curtain-section__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   flex-direction: unset;
   gap: 16px;
+}
+
+/* Em telas maiores, mostrar 2 colunas */
+@media (min-width: 600px) {
+  .curtain-section[data-section="ambiente1"] .curtain-section__grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* === ESTILOS GENÉRICOS PARA AMBIENTES === */
