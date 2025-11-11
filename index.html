@@ -1099,12 +1099,12 @@
                     <div class="tv-section-line"></div>
                 </header>
                 <div class="tv-control-group tv-power-group">
-                    <button class="tv-btn tv-btn--power-on" onclick="tvMacroOn()" data-device-id="111" aria-label="Ligar">
-                        ON
-                    </button>
-                    <button class="tv-btn tv-btn--power-off" onclick="tvCommand(this, 'off')" data-device-id="111" aria-label="Desligar">
-                        OFF
-                    </button>
+          <button class="tv-btn tv-btn--power-on" onclick="tvMacroOn()" aria-label="Ligar">
+            ON
+          </button>
+          <button class="tv-btn tv-btn--power-off" onclick="tvMacroOff()" aria-label="Desligar">
+            OFF
+          </button>
                 </div>
             </div>
 
@@ -1250,8 +1250,8 @@
                             <img src="images/icons/back-button.svg" alt="Back">
                         </button>
                         <button class="tv-numpad-btn" onclick="tvCommand(this, 'num0')" data-device-id="111" aria-label="0">0</button>
-                        <button class="tv-numpad-btn tv-numpad-btn--icon" onclick="tvCommand(this, 'config')" aria-label="Configurações">
-                            <img src="images/icons/icon-settings.svg" alt="Settings">
+                        <button class="tv-numpad-btn tv-numpad-btn--icon" onclick="fireTVMacro()" aria-label="Fire TV">
+                            <img src="images/icons/icon-firetv.svg" alt="Fire TV">
                         </button>
                     </div>
                 </div>

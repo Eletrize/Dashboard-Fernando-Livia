@@ -689,30 +689,73 @@ function htvMacroOff() {
 }
 
 // Macro para ligar TV + Receiver de uma vez
+
+// Macro para ligar TV e Receiver e setar input TV
 function tvMacroOn() {
   const TV_ID = "111";
   const RECEIVER_ID = "15";
 
-  console.log("🎬 Iniciando macro: Ligando TV e Receiver...");
+  console.log("🎬 Macro TV: Ligando TV e Receiver, depois setando input TV...");
 
-  // Enviar comando de ligar para cada dispositivo
-  const devices = [
-    { id: TV_ID, name: "TV" },
-    { id: RECEIVER_ID, name: "Receiver" },
-  ];
+  // Liga TV
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV ligada");
+      // Liga Receiver
+      return sendHubitatCommand(RECEIVER_ID, "on");
+    })
+    .then(() => {
+      console.log("✅ Receiver ligado");
+      // Setar input TV
+      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "TV");
+    })
+    .then(() => {
+      console.log("✅ Input TV selecionado no Receiver");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro TV:", error);
+    });
+}
 
-  devices.forEach((device) => {
-    sendHubitatCommand(device.id, "on")
-      .then(() => {
-        console.log(`✅ ${device.name} (ID: ${device.id}) ligado com sucesso`);
-      })
-      .catch((error) => {
-        console.error(
-          `❌ Erro ao ligar ${device.name} (ID: ${device.id}):`,
-          error
-        );
-      });
-  });
+// Macro para desligar TV e Receiver
+function tvMacroOff() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro TV: Desligando TV e Receiver...");
+
+  Promise.all([
+    sendHubitatCommand(TV_ID, "off"),
+    sendHubitatCommand(RECEIVER_ID, "off")
+  ])
+    .then(() => {
+      console.log("✅ TV e Receiver desligados");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV/Receiver:", error);
+    });
+}
+
+// Macro para ativar Fire TV (HDMI 2 + BD no Receiver)
+function fireTVMacro() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro Fire TV: Selecionando HDMI 2 e setando Receiver para BD...");
+
+  // Enviar comando HDMI 2 para TV
+  sendHubitatCommand(TV_ID, "hdmi2")
+    .then(() => {
+      console.log("✅ HDMI 2 selecionado na TV");
+      // Setar input BD no Receiver
+      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "BD");
+    })
+    .then(() => {
+      console.log("✅ Input BD selecionado no Receiver");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro Fire TV:", error);
+    });
 }
 
 // Controle do Slider de Volume

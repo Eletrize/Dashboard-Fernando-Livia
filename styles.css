@@ -6021,6 +6021,20 @@ body.app-info-open {
   transition: opacity 0.3s ease;
 }
 
+/* Seção Fire TV na página HTV */
+.tv-firetv-section {
+  margin-top: auto;
+  padding: 10px;
+  display: flex;
+  justify-content: stretch;
+}
+
+.tv-firetv-section .control-card {
+  flex: 1;
+  height: 80px;
+  font-size: 14px;
+}
+
 /* ========================================
    CONTROLES DE REPRODUÇÃO
    ======================================== */
