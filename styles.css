@@ -4433,30 +4433,74 @@ body.app-info-open {
   width: 100%;
 }
 
-.curtain-tile--full-width {
-  width: 100%;
+.curtain-tile__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* Header com linha minimalista (para páginas de ambiente) */
+.curtain-tile__header--minimal {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.curtain-tile__env {
+  font-size: 11px;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.curtain-tile__title {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: #fff;
+  white-space: nowrap; /* Evita quebra do nome */
+}
+
+/* Linha minimalista ao lado do título */
+.curtain-tile__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.curtain-tile__subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+  margin: 4px 0 0;
 }
 
 /* Ações dos botões */
 .curtain-tile__actions {
   display: flex;
-  flex-direction: row;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   margin-top: 8px;
 }
 
 /* Botões de ação */
 .curtain-tile__btn {
-  flex: 1;
-  min-width: 60px;
+  width: 100%;
   height: 64px;
   border-radius: 14px;
-  border: 2px solid transparent;
-  background: transparent;
-  backdrop-filter: none;
+  border: 2px solid #333;
+  background: rgba(20, 20, 20, 0.97);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4470,31 +4514,15 @@ body.app-info-open {
 }
 
 .curtain-tile__btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(40, 40, 40, 1);
+  border-color: #666;
 }
 
 .curtain-tile__btn:active,
 .curtain-tile__btn:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(40, 40, 40, 1);
+  border-color: #666;
   outline: none;
-}
-
-.curtain-tile__btn--transparent {
-  border-color: transparent;
-  background: transparent;
-}
-
-.curtain-tile__btn--transparent:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.curtain-tile__btn--transparent:active,
-.curtain-tile__btn--transparent:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Ícones dentro dos botões */
@@ -4519,7 +4547,7 @@ body.app-info-open {
 }
 
 .curtain-tile--transparent .curtain-tile__btn {
-  border-color: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
   background: transparent;
   color: #fff;
   transition: background 0.25s ease, border-color 0.25s ease;
@@ -4527,13 +4555,13 @@ body.app-info-open {
 
 .curtain-tile--transparent .curtain-tile__btn:hover,
 .curtain-tile--transparent .curtain-tile__btn:focus {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .curtain-tile--transparent .curtain-tile__btn:active {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Layout da página de cortinas */
@@ -4789,28 +4817,9 @@ body.app-info-open {
   z-index: 1;
   overflow-y: auto;
   padding-bottom: 20px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-}
-
-/* Layout responsivo para cortinas */
-@media (min-width: 900px) {
-  [class*="-cortinas-wrapper"] {
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-flow: dense;
-  }
-  
-  /* "Esquerda" e "Direita" ocupam a primeira linha */
-  .curtain-tile:nth-child(2),
-  .curtain-tile:nth-child(3) {
-    grid-column: auto;
-  }
-  
-  /* "Todas" ocupa a segunda linha inteira */
-  .curtain-tile--full-width {
-    grid-column: 1 / -1;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Responsivo para luzes: 2 colunas a partir de 600px */
