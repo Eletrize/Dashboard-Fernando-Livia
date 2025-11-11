@@ -640,6 +640,62 @@ function tvCommand(el, command) {
     });
 }
 
+// Macro para ligar HTV + TV + Receiver de uma vez
+function htvMacroOn() {
+  const HTV_ID = "114";
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Iniciando macro: Ligando HTV, TV e Receiver...");
+
+  // Enviar comando de ligar para cada dispositivo
+  const devices = [
+    { id: HTV_ID, name: "HTV" },
+    { id: TV_ID, name: "TV" },
+    { id: RECEIVER_ID, name: "Receiver" },
+  ];
+
+  devices.forEach((device) => {
+    sendHubitatCommand(device.id, "on")
+      .then(() => {
+        console.log(`✅ ${device.name} (ID: ${device.id}) ligado com sucesso`);
+      })
+      .catch((error) => {
+        console.error(
+          `❌ Erro ao ligar ${device.name} (ID: ${device.id}):`,
+          error
+        );
+      });
+  });
+}
+
+// Macro para ligar TV + Receiver de uma vez
+function tvMacroOn() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Iniciando macro: Ligando TV e Receiver...");
+
+  // Enviar comando de ligar para cada dispositivo
+  const devices = [
+    { id: TV_ID, name: "TV" },
+    { id: RECEIVER_ID, name: "Receiver" },
+  ];
+
+  devices.forEach((device) => {
+    sendHubitatCommand(device.id, "on")
+      .then(() => {
+        console.log(`✅ ${device.name} (ID: ${device.id}) ligado com sucesso`);
+      })
+      .catch((error) => {
+        console.error(
+          `❌ Erro ao ligar ${device.name} (ID: ${device.id}):`,
+          error
+        );
+      });
+  });
+}
+
 // Controle do Slider de Volume
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");

@@ -4612,7 +4612,7 @@ body.app-info-open {
   .curtain-layout {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   /* Varanda ocupa a linha inteira sozinha */
   .curtain-section[data-section="ambiente1"] {
     grid-column: 1 / -1;
@@ -4624,7 +4624,7 @@ body.app-info-open {
   .curtain-layout {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   /* Varanda continua ocupando a linha inteira */
   .curtain-section[data-section="ambiente1"] {
     grid-column: 1 / -1;

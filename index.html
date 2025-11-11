@@ -337,7 +337,7 @@
           curtains: [
             { deviceId: "109", title: "Todas" },
             { deviceId: "115", title: "Esquerda" },
-            { deviceId: "116", title: "Direita" }
+            { deviceId: "116", title: "Direita" },
           ],
         },
         {
@@ -1099,7 +1099,7 @@
                     <div class="tv-section-line"></div>
                 </header>
                 <div class="tv-control-group tv-power-group">
-                    <button class="tv-btn tv-btn--power-on" onclick="tvCommand(this, 'on')" data-device-id="111" aria-label="Ligar">
+                    <button class="tv-btn tv-btn--power-on" onclick="tvMacroOn()" data-device-id="111" aria-label="Ligar">
                         ON
                     </button>
                     <button class="tv-btn tv-btn--power-off" onclick="tvCommand(this, 'off')" data-device-id="111" aria-label="Desligar">
@@ -1293,7 +1293,7 @@
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-power-group">
-              <button class="tv-btn tv-btn--power-on" onclick="updateTVPowerState('on'); tvCommand(this, 'pwr')" data-device-id="114" aria-label="Ligar">
+              <button class="tv-btn tv-btn--power-on" onclick="updateTVPowerState('on'); htvMacroOn()" data-device-id="114" aria-label="Ligar">
                 ON
               </button>
               <button class="tv-btn tv-btn--power-off" onclick="updateTVPowerState('off'); tvCommand(this, 'pwr')" data-device-id="114" aria-label="Desligar">
