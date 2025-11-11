@@ -306,6 +306,7 @@
       // --- SPA Core ---
 
       const spaRoot = document.getElementById("spa-root");
+  const pageCache = new Map();
 
       // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
       // Mapeamento atualizado com as fotos corretas por ambiente
@@ -3634,7 +3635,37 @@
 
         if (!pages[page]) page = "home";
 
-        spaRoot.innerHTML = pages[page]();
+        const previousPage = spaRoot.dataset.currentPage;
+        if (previousPage) {
+          const fragment = document.createDocumentFragment();
+          while (spaRoot.firstChild) {
+            fragment.appendChild(spaRoot.firstChild);
+          }
+          pageCache.set(previousPage, fragment);
+        } else {
+          while (spaRoot.firstChild) {
+            spaRoot.removeChild(spaRoot.firstChild);
+          }
+        }
+
+        let fragmentToRender;
+        let reused = false;
+
+        if (pageCache.has(page)) {
+          fragmentToRender = pageCache.get(page);
+          pageCache.delete(page);
+          reused = true;
+        } else {
+          const template = document.createElement("template");
+          template.innerHTML = pages[page]();
+          fragmentToRender = template.content;
+        }
+
+        while (spaRoot.firstChild) {
+          spaRoot.removeChild(spaRoot.firstChild);
+        }
+        spaRoot.appendChild(fragmentToRender);
+        spaRoot.dataset.currentPage = page;
 
         const formattedTitle = formatEnvironmentPageTitle(page);
         if (formattedTitle) {
@@ -3669,21 +3700,21 @@
         // Constrói a lista de cômodos na Home
 
         if (page === "home") {
-          const rooms = [
-            { name: "Varanda", route: "ambiente1" },
-            { name: "Living", route: "ambiente2" },
-            { name: "Piscina", route: "ambiente3" },
-            { name: "Externa", route: "ambiente4" },
-            { name: "Serviço", route: "ambiente5" },
-            { name: "Circulação", route: "ambiente6" },
-            { name: "Suíte I", route: "ambiente7" },
-            { name: "Suíte II", route: "ambiente8" },
-            { name: "Suíte Master", route: "ambiente9" },
-          ];
-
           const list = document.querySelector(".rooms-list");
 
-          if (list) {
+          if (list && !reused) {
+            const rooms = [
+              { name: "Varanda", route: "ambiente1" },
+              { name: "Living", route: "ambiente2" },
+              { name: "Piscina", route: "ambiente3" },
+              { name: "Externa", route: "ambiente4" },
+              { name: "Serviço", route: "ambiente5" },
+              { name: "Circulação", route: "ambiente6" },
+              { name: "Suíte I", route: "ambiente7" },
+              { name: "Suíte II", route: "ambiente8" },
+              { name: "Suíte Master", route: "ambiente9" },
+            ];
+
             const order = [
               "ambiente1",
               "ambiente2",
@@ -3697,70 +3728,34 @@
             ];
 
             const visible = rooms
-
               .filter((r) => order.includes(r.route))
-
               .sort((a, b) => order.indexOf(a.route) - order.indexOf(b.route));
 
             const photoMap = ROOM_PHOTOS;
 
             const roomDevices = {
               ambiente1: ["44", "95", "96", "41", "45", "40", "31"],
-
               ambiente2: ["8", "7", "9"],
-
               ambiente3: ["254", "255", "256", "257", "258"],
-
               ambiente4: ["36", "37", "35"],
-
               ambiente5: ["38"],
-
               ambiente6: ["49", "50"],
-
               ambiente7: ["50"],
-
               ambiente8: ["51"],
-
-              ambiente9: ["52"],
-            };
-
-            const roomCurtains = {
-              ambiente1: ["109"],
-
-              ambiente2: ["42", "43"],
-
-              ambiente3: ["39", "40"],
-
-              ambiente4: ["35"],
-
-              ambiente5: ["38"],
-
-              ambiente6: ["49"],
-
-              ambiente7: ["50"],
-
-              ambiente8: ["51"],
-
               ambiente9: ["52"],
             };
 
             list.innerHTML = visible
               .map((r) => {
                 const hasPhoto = Boolean(photoMap[r.route]);
-
                 const ids = roomDevices[r.route] || [];
-
-                const curtainIds = roomCurtains[r.route] || [];
-
-                const hasCurtains = curtainIds.length > 0;
-
                 return `
 
                     <div class="room-card ${hasPhoto ? "has-photo" : ""}">
 
                         ${
                           hasPhoto
-                            ? `<img src="${photoMap[r.route]}" alt="${r.name}">`
+                            ? `<img src="${photoMap[r.route]}" alt="${r.name}" loading="eager" decoding="sync" fetchpriority="high">`
                             : ""
                         }
 
@@ -3784,8 +3779,10 @@
               })
               .join("");
 
-            if (typeof initHomeMasters === "function") initHomeMasters();
+            list.dataset.rendered = "true";
           }
+
+          if (typeof initHomeMasters === "function") initHomeMasters();
         }
 
         // Define o fundo da página interna com a mesma foto do card
