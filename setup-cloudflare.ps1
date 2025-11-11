@@ -1,6 +1,6 @@
 # Script de setup para Cloudflare Workers (PowerShell)
 
-Write-Host "🚀 Configurando Dashboard Vila Estampa para Cloudflare Workers" -ForegroundColor Green
+Write-Host "🚀 Configurando Dashboard para Cloudflare Workers" -ForegroundColor Green
 Write-Host ""
 
 # Verificar se wrangler está instalado

@@ -4434,6 +4434,12 @@ body.app-info-open {
   overflow: visible;
 }
 
+/* Remove pseudo-element highlight on curtain tiles */
+.curtain-tile::after,
+.curtain-tile__btn::after {
+  display: none;
+}
+
 .curtain-tile__header {
   display: flex;
   flex-direction: column;
@@ -4458,6 +4464,9 @@ body.app-info-open {
 }
 
 .curtain-tile__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 18px;
   font-weight: 500;
   margin: 0;
@@ -4465,8 +4474,8 @@ body.app-info-open {
   white-space: nowrap; /* Evita quebra do nome */
 }
 
-/* Linha minimalista ao lado do título */
-.curtain-tile__line {
+.curtain-tile__title::after {
+  content: "";
   flex: 1;
   height: 1px;
   background: linear-gradient(
@@ -4475,6 +4484,11 @@ body.app-info-open {
     rgba(255, 255, 255, 0.1),
     rgba(255, 255, 255, 0)
   );
+}
+
+/* Linha minimalista ao lado do título - REMOVIDA */
+.curtain-tile__line {
+  display: none;
 }
 
 .curtain-tile__subtitle {
@@ -4598,12 +4612,22 @@ body.app-info-open {
   .curtain-layout {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  /* Varanda ocupa a linha inteira sozinha */
+  .curtain-section[data-section="ambiente1"] {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Desktop: 3 ambientes lado a lado a partir de 1300px */
 @media (min-width: 1300px) {
   .curtain-layout {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Varanda continua ocupando a linha inteira */
+  .curtain-section[data-section="ambiente1"] {
+    grid-column: 1 / -1;
   }
 }
 
@@ -4672,9 +4696,16 @@ body.app-info-open {
   gap: 16px;
 }
 
-/* Em telas maiores, mostrar 2 colunas */
+/* Em telas maiores, mostrar 3 colunas para a Varanda */
 @media (min-width: 600px) {
   .curtain-section[data-section="ambiente1"] .curtain-section__grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Para as demais seções (Living, Piscina, etc.), usar 2 colunas em telas grandes */
+@media (min-width: 600px) {
+  .curtain-section:not([data-section="ambiente1"]) .curtain-section__grid {
     grid-template-columns: 1fr 1fr;
   }
 }
