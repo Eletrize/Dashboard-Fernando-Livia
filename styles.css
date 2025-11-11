@@ -4431,6 +4431,7 @@ body.app-info-open {
   border: 2px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.14);
   width: 100%;
+  overflow: visible;
 }
 
 .curtain-tile__header {
@@ -4491,6 +4492,7 @@ body.app-info-open {
   justify-content: flex-start;
   width: 100%;
   margin-top: 8px;
+  overflow: visible;
 }
 
 /* Botões de ação */
@@ -4820,6 +4822,17 @@ body.app-info-open {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* Garantir que os tiles de cortina tenham altura automática */
+[class*="-cortinas-wrapper"] .curtain-tile {
+  height: auto;
+  min-height: auto;
+  overflow: visible;
+}
+
+[class*="-cortinas-wrapper"] .curtain-tile__actions {
+  overflow: visible;
 }
 
 /* Responsivo para luzes: 2 colunas a partir de 600px */
