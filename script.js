@@ -223,8 +223,93 @@ if (typeof window !== "undefined") {
     });
 
   window.__assetPreloadPromise = assetPreloadPromise;
-  window.queueAssetForPreload = (url, priority) =>
-    AssetPreloader.add(url, { priority });
+window.queueAssetForPreload = (url, priority) =>
+  AssetPreloader.add(url, { priority });
+}
+
+function isStandaloneMode() {
+  if (typeof window === "undefined") return false;
+  const mql =
+    typeof window.matchMedia === "function"
+      ? window.matchMedia("(display-mode: standalone)")
+      : null;
+  return Boolean(
+    (mql && mql.matches) || window.navigator?.standalone === true
+  );
+}
+
+async function requestPersistentStorage() {
+  if (
+    typeof navigator === "undefined" ||
+    !navigator.storage ||
+    typeof navigator.storage.persist !== "function"
+  ) {
+    return;
+  }
+  try {
+    const alreadyPersisted = await navigator.storage.persisted();
+    if (alreadyPersisted) {
+      return;
+    }
+    await navigator.storage.persist();
+  } catch (error) {
+    console.warn("Não foi possível garantir armazenamento persistente:", error);
+  }
+}
+
+const fullscreenManager = (() => {
+  let attempted = false;
+
+  function canRequestFullscreen() {
+    return (
+      typeof document !== "undefined" &&
+      typeof document.documentElement.requestFullscreen === "function"
+    );
+  }
+
+  function enterFullscreen() {
+    if (attempted || !canRequestFullscreen()) return;
+    attempted = true;
+    document.documentElement
+      .requestFullscreen({ navigationUI: "hide" })
+      .catch((error) => {
+        console.warn("Não foi possível entrar em tela cheia automaticamente", error);
+      });
+
+    if (screen?.orientation?.lock) {
+      screen.orientation.lock("landscape").catch(() => {});
+    }
+  }
+
+  function setupAutoFullscreen() {
+    if (!isStandaloneMode() || !canRequestFullscreen()) return;
+
+    const handler = () => {
+      document.removeEventListener("click", handler);
+      document.removeEventListener("touchend", handler);
+      enterFullscreen();
+    };
+
+    document.addEventListener("click", handler, { once: true });
+    document.addEventListener("touchend", handler, { once: true });
+  }
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("DOMContentLoaded", setupAutoFullscreen);
+  }
+
+  return { enterFullscreen };
+})();
+
+if (typeof window !== "undefined") {
+  window.requestPersistentStorage = requestPersistentStorage;
+  window.fullscreenManager = fullscreenManager;
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (isStandaloneMode()) {
+      requestPersistentStorage();
+    }
+  });
 }
 
 // DETECÃƒâ€¡ÃƒÆ’O DE DISPOSITIVOS
