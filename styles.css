@@ -3,12 +3,14 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
 .ambiente1-cortinas-grid {
   display: grid;
   grid-template-columns: 1fr;
+  grid-auto-rows: auto;
   gap: 16px;
 }
 
 @media (min-width: 600px) {
   .ambiente1-cortinas-grid {
     grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
   }
 }
 
