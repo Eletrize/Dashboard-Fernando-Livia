@@ -1,6 +1,7 @@
 ﻿#!/usr/bin/env python3
-"""Gera versões WebP de alta qualidade para as fotos principais."""
+"""Gera versões WebP otimizadas para as fotos principais."""
 from pathlib import Path
+import json
 from PIL import Image
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -10,12 +11,12 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 CONFIG_PATH = BASE_DIR / "images" / "optimized-sources.json"
 if CONFIG_PATH.exists():
-    config = __import__("json").loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    TARGET_WIDTHS = config.get("widths", [480, 960, 1440])
-    QUALITY = config.get("quality", 82)
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8-sig"))
+    TARGET_WIDTHS = config.get("widths", [480, 720, 960, 1440, 1920, 2560])
+    QUALITY = config.get("quality", 80)
 else:
-    TARGET_WIDTHS = [960, 1920, 2560]
-    QUALITY = 88
+    TARGET_WIDTHS = [480, 720, 960, 1440, 1920, 2560]
+    QUALITY = 80
 
 for source_path in sorted(SOURCE_DIR.glob("photo-*.jpg")):
     image = Image.open(source_path).convert("RGB")

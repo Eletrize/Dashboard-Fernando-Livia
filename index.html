@@ -82,12 +82,20 @@
     <div id="global-loader" class="global-loader">
       <div class="loader-content">
         <div class="loader-logo">
-          <img
-            src="images/pwa/app-icon-512-transparent.png"
-            alt="Dashboard Eletrize"
-            width="240"
-            height="240"
-          />
+          <picture class="loader-logo__picture">
+            <source
+              srcset="images/pwa/app-icon-420.webp"
+              type="image/webp"
+            />
+            <img
+              src="images/pwa/app-icon-512-transparent.png"
+              alt="Dashboard Eletrize"
+              width="240"
+              height="240"
+              loading="eager"
+              decoding="sync"
+            />
+          </picture>
         </div>
         <div class="loader-spinner"></div>
         <div class="loader-text">Carregando estados dos dispositivos...</div>
@@ -349,17 +357,26 @@
         ambiente9: "photo-suitemaster",
       };
 
-      const RESPONSIVE_WIDTHS = [480, 960, 1440];
+      const RESPONSIVE_WIDTHS = [480, 720, 960, 1440, 1920, 2560];
+      const CARD_DISPLAY_WIDTH = 720;
+      const CARD_IMAGE_SIZES =
+        "(max-width: 600px) 100vw, (max-width: 1200px) 60vw, 720px";
 
       const ROOM_IMAGE_DATA = Object.entries(ROOM_IMAGE_BASE).reduce(
         (acc, [key, base]) => {
+          const sortedWidths = [...RESPONSIVE_WIDTHS].sort((a, b) => a - b);
+          const backgroundWidth = sortedWidths[sortedWidths.length - 1];
+          const cardWidth =
+            sortedWidths.find((width) => width >= CARD_DISPLAY_WIDTH) ||
+            backgroundWidth;
           acc[key] = {
             base,
             fallback: `images/Images/${base}.jpg`,
             webpSrcset: RESPONSIVE_WIDTHS.map(
               (width) => `images/optimized/${base}-${width}.webp ${width}w`
             ).join(", "),
-            backgroundWebp: `images/optimized/${base}-1440.webp`,
+            defaultWebp: `images/optimized/${base}-${cardWidth}.webp`,
+            backgroundWebp: `images/optimized/${base}-${backgroundWidth}.webp`,
           };
           return acc;
         },
@@ -403,7 +420,12 @@
             <source
               type="image/webp"
               srcset="${data.webpSrcset}"
-              sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 360px"
+              sizes="${CARD_IMAGE_SIZES}"
+            />
+            <source
+              type="image/jpeg"
+              srcset="${data.fallback}"
+              sizes="${CARD_IMAGE_SIZES}"
             />
             <img
               ${imgClassAttribute}
@@ -412,8 +434,8 @@
               loading="${loading}"
               decoding="${decoding}"
               ${fetchPriority}
-              width="640"
-              height="360"
+              width="720"
+              height="540"
             />
           </picture>
         `;

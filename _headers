@@ -1,4 +1,4 @@
-# Cache control para Cloudflare Pages
+Ôªø# Cache control para Cloudflare Pages
 
 # HTML - sem cache (sempre atualizado)
 /*.html
@@ -6,7 +6,7 @@
   Pragma: no-cache
   Expires: 0
 
-# CSS e JS - cache curto para desenvolvimento ·gil
+# CSS e JS - cache curto para desenvolvimento √°gil
 /*.css
   Cache-Control: public, max-age=300, s-maxage=300
   Pragma: no-cache
@@ -36,13 +36,16 @@
 /images/optimized/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Õcones - cache 1 ano
+# √çcones - cache 1 ano
 /images/icons/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Fontes - cache longo
+# Fontes - cache 1 ano
 /fonts/*
-  Cache-Control: public, max-age=86400, s-maxage=86400
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts-raleway.css
+  Cache-Control: public, max-age=31536000, immutable
 
 # Functions - CORS handled internally by Functions
 # /functions/*
