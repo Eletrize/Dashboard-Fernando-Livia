@@ -58,7 +58,8 @@ const ROOM_IMAGE_BASES = [
   "photo-suitemaster",
 ];
 
-const ROOM_IMAGE_WIDTHS = [480, 960, 1440];
+const ROOM_IMAGE_WIDTHS = [480, 720, 960, 1440, 1920, 2560];
+const CRITICAL_IMAGE_BASES = ROOM_IMAGE_BASES.slice(0, 3);
 
 const ICON_ASSET_PATHS = [
   "images/icons/icon-tv.svg",
@@ -124,25 +125,25 @@ function buildRoomAssetList() {
 }
 
 const AssetPreloader = (() => {
-  const queue = new Set();
+  const queues = {
+    critical: new Set(),
+    background: new Set(),
+  };
 
-  function add(url) {
-    if (!url || queue.has(url)) return;
-    queue.add(url);
+  function add(url, { priority = "background" } = {}) {
+    if (!url) return;
+    const key = priority === "critical" ? "critical" : "background";
+    queues[key].add(url);
   }
 
-  function start(options = {}) {
+  function startQueue(priority, { weight = 0, offset = 0 } = {}) {
     if (typeof window === "undefined") {
       return Promise.resolve();
     }
-
-    const list = Array.from(queue);
+    const list = Array.from(queues[priority] || []);
     if (!list.length) {
       return Promise.resolve();
     }
-
-    const onProgress =
-      typeof options.onProgress === "function" ? options.onProgress : null;
 
     return new Promise((resolve) => {
       let completed = 0;
@@ -150,13 +151,15 @@ const AssetPreloader = (() => {
 
       const update = (url) => {
         completed += 1;
-        if (onProgress) {
-          try {
-            onProgress(completed, total, url);
-          } catch (error) {
-            console.warn("Falha ao atualizar progresso de preload", error);
-          }
+        if (weight > 0) {
+          const percent =
+            offset + Math.min(weight, Math.round((completed / total) * weight));
+          updateProgress(
+            percent,
+            `Pré-carregando mídia (${completed}/${total})`
+          );
         }
+
         if (completed === total) {
           resolve();
         }
@@ -172,43 +175,56 @@ const AssetPreloader = (() => {
     });
   }
 
-  return { add, start };
+  return {
+    add,
+    startQueue,
+  };
 })();
 
-const DEFAULT_ASSET_PATHS = [
-  ...new Set([
-    ...buildRoomAssetList(),
-    ...ICON_ASSET_PATHS,
-    "images/pwa/app-icon-192.png",
-    "images/pwa/app-icon-512-transparent.png",
-  ]),
-];
+ROOM_IMAGE_BASES.forEach((base) => {
+  ROOM_IMAGE_WIDTHS.forEach((width) => {
+    const priority =
+      CRITICAL_IMAGE_BASES.includes(base) && width <= 720
+        ? "critical"
+        : "background";
+    AssetPreloader.add(`images/optimized/${base}-${width}.webp`, { priority });
+  });
+  AssetPreloader.add(`images/Images/${base}.jpg`, { priority: "background" });
+});
 
-DEFAULT_ASSET_PATHS.forEach((asset) => AssetPreloader.add(asset));
+AssetPreloader.add("images/pwa/app-icon-420.webp", { priority: "critical" });
+AssetPreloader.add("images/pwa/app-icon-192.png", { priority: "background" });
+AssetPreloader.add("images/pwa/app-icon-512-transparent.png", {
+  priority: "background",
+});
+ICON_ASSET_PATHS.forEach((asset) =>
+  AssetPreloader.add(asset, { priority: "background" })
+);
 
 let assetPreloadComplete = false;
 let assetPreloadPromise = null;
 
 if (typeof window !== "undefined") {
-  assetPreloadPromise = AssetPreloader.start({
-    onProgress: (loaded, total) => {
-      const preloadWeight = 25;
-      const percent = Math.min(
-        preloadWeight,
-        Math.round((loaded / total) * preloadWeight)
-      );
-      updateProgress(percent, `Pré-carregando mídia (${loaded}/${total})`);
-    },
+  assetPreloadPromise = AssetPreloader.startQueue("critical", {
+    weight: 30,
+    offset: 0,
   })
     .catch((error) => {
       console.warn("Falha ao pré-carregar mídia crítica", error);
     })
     .finally(() => {
       assetPreloadComplete = true;
+      AssetPreloader.startQueue("background", {
+        weight: 15,
+        offset: 30,
+      }).catch((error) =>
+        console.warn("Falha ao pré-carregar mídia adicional", error)
+      );
     });
 
   window.__assetPreloadPromise = assetPreloadPromise;
-  window.queueAssetForPreload = (url) => AssetPreloader.add(url);
+  window.queueAssetForPreload = (url, priority) =>
+    AssetPreloader.add(url, { priority });
 }
 
 // DETECÃƒâ€¡ÃƒÆ’O DE DISPOSITIVOS
