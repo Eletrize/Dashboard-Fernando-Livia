@@ -10,25 +10,6 @@
     <link rel="stylesheet" href="fonts-raleway.css" />
     <link rel="preload" href="styles.css?v=1.0.3" as="style" />
     <link rel="stylesheet" href="styles.css?v=1.0.3" />
-    <link rel="preload" href="script.js?v=1.0.3" as="script" />
-    <link rel="preload" href="scenes.js?v=1.0.3" as="script" />
-    <link rel="preload" as="image" href="images/Images/photo-varanda.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-living.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-piscina.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-externo.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-servico.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-circulacao.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-suitei.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-suiteii.jpg" />
-    <link rel="preload" as="image" href="images/Images/photo-suitemaster.jpg" />
-    <link rel="preload" as="image" href="images/icons/icon-tv.svg" />
-    <link rel="preload" as="image" href="images/icons/icon-htv.svg" />
-    <link rel="preload" as="image" href="images/icons/icon-musica.svg" />
-    <link rel="preload" as="image" href="images/icons/icon-curtain.svg" />
-    <link rel="preload" as="image" href="images/icons/ar-condicionado.svg" />
-    <link rel="preload" as="image" href="images/icons/icon-conforto.svg" />
-    <link rel="preload" as="image" href="images/icons/icon-piscina.svg" />
-    <link rel="preload" as="image" href="images/icons/icon-telao-led.svg" />
     <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#1C1C1C" />
@@ -271,7 +252,6 @@
       })();
     </script>
     <script src="script.js?v=1.0.3" defer></script>
-    <script src="scenes.js?v=1.0.3" defer></script>
     <script>
       // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
 
@@ -311,25 +291,102 @@
       // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
       // Mapeamento atualizado com as fotos corretas por ambiente
 
-      const ROOM_PHOTOS = {
-        ambiente1: "images/Images/photo-varanda.jpg",
-
-        ambiente2: "images/Images/photo-living.jpg",
-
-        ambiente3: "images/Images/photo-piscina.jpg",
-
-        ambiente4: "images/Images/photo-externo.jpg",
-
-        ambiente5: "images/Images/photo-servico.jpg",
-
-        ambiente6: "images/Images/photo-circulacao.jpg",
-
-        ambiente7: "images/Images/photo-suitei.jpg",
-
-        ambiente8: "images/Images/photo-suiteii.jpg",
-
-        ambiente9: "images/Images/photo-suitemaster.jpg",
+      const ROOM_IMAGE_BASE = {
+        ambiente1: "photo-varanda",
+        ambiente2: "photo-living",
+        ambiente3: "photo-piscina",
+        ambiente4: "photo-externo",
+        ambiente5: "photo-servico",
+        ambiente6: "photo-circulacao",
+        ambiente7: "photo-suitei",
+        ambiente8: "photo-suiteii",
+        ambiente9: "photo-suitemaster",
       };
+
+      const RESPONSIVE_WIDTHS = [480, 960, 1440];
+
+      const ROOM_IMAGE_DATA = Object.entries(ROOM_IMAGE_BASE).reduce(
+        (acc, [key, base]) => {
+          acc[key] = {
+            base,
+            fallback: `images/Images/${base}.jpg`,
+            webpSrcset: RESPONSIVE_WIDTHS.map(
+              (width) => `images/optimized/${base}-${width}.webp ${width}w`
+            ).join(", "),
+            backgroundWebp: `images/optimized/${base}-1440.webp`,
+          };
+          return acc;
+        },
+        {}
+      );
+
+      const WEBP_SUPPORTED = (() => {
+        try {
+          const canvas = document.createElement("canvas");
+          return canvas
+            .toDataURL("image/webp", 0.5)
+            .startsWith("data:image/webp");
+        } catch (error) {
+          return false;
+        }
+      })();
+
+      function getRoomBackgroundUrl(route) {
+        const data = ROOM_IMAGE_DATA[route];
+        if (!data) return null;
+        return WEBP_SUPPORTED ? data.backgroundWebp : data.fallback;
+      }
+
+      function renderRoomResponsivePhoto(route, alt, options = {}) {
+        const data = ROOM_IMAGE_DATA[route];
+        if (!data) return "";
+        const {
+          eager = false,
+          className = "room-card-photo",
+          imageClassName = "",
+        } = options;
+        const loading = eager ? "eager" : "lazy";
+        const decoding = eager ? "sync" : "async";
+        const fetchPriority = eager ? 'fetchpriority="high"' : "";
+        const imgClassAttribute = imageClassName
+          ? `class="${imageClassName}"`
+          : "";
+
+        return `
+          <picture class="${className}" data-route="${route}">
+            <source
+              type="image/webp"
+              srcset="${data.webpSrcset}"
+              sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 360px"
+            />
+            <img
+              ${imgClassAttribute}
+              src="${data.fallback}"
+              alt="${alt}"
+              loading="${loading}"
+              decoding="${decoding}"
+              ${fetchPriority}
+              width="640"
+              height="360"
+            />
+          </picture>
+        `;
+      }
+
+      let scenesScriptPromise = null;
+      function ensureScenesScript() {
+        if (scenesScriptPromise) return scenesScriptPromise;
+        scenesScriptPromise = new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "scenes.js?v=1.0.3";
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = () =>
+            reject(new Error("Falha ao carregar scenes.js"));
+          document.head.appendChild(script);
+        });
+        return scenesScriptPromise;
+      }
 
       const CURTAIN_SECTIONS = [
         {
@@ -726,13 +783,10 @@
         <div class="music-player-content">
           <div class="music-primary">
             <div class="music-album">
-              <img
-                src="images/Images/photo-varanda.jpg"
-                alt="Album art"
-                class="music-album-img"
-                loading="lazy"
-                decoding="async"
-              />
+              ${renderRoomResponsivePhoto("ambiente1", "Capa do álbum", {
+                className: "music-album-picture",
+                imageClassName: "music-album-img",
+              })}
             </div>
 
             <div class="music-info">
@@ -819,13 +873,10 @@
         <div class="music-player-content">
           <div class="music-primary">
             <div class="music-album">
-              <img
-                src="images/Images/photo-living.jpg"
-                alt="Capa do álbum"
-                class="music-album-img"
-                loading="lazy"
-                decoding="async"
-              />
+              ${renderRoomResponsivePhoto("ambiente2", "Capa do álbum", {
+                className: "music-album-picture",
+                imageClassName: "music-album-img",
+              })}
             </div>
 
             <div class="music-info">
@@ -912,13 +963,10 @@
         <div class="music-player-content">
           <div class="music-primary">
             <div class="music-album">
-              <img
-                src="images/Images/photo-piscina.jpg"
-                alt="Capa do álbum"
-                class="music-album-img"
-                loading="lazy"
-                decoding="async"
-              />
+              ${renderRoomResponsivePhoto("ambiente3", "Capa do álbum", {
+                className: "music-album-picture",
+                imageClassName: "music-album-img",
+              })}
             </div>
 
             <div class="music-info">
@@ -3731,7 +3779,7 @@
               .filter((r) => order.includes(r.route))
               .sort((a, b) => order.indexOf(a.route) - order.indexOf(b.route));
 
-            const photoMap = ROOM_PHOTOS;
+            const firstVisibleRoute = visible[0]?.route || null;
 
             const roomDevices = {
               ambiente1: ["44", "95", "96", "41", "45", "40", "31"],
@@ -3747,7 +3795,7 @@
 
             list.innerHTML = visible
               .map((r) => {
-                const hasPhoto = Boolean(photoMap[r.route]);
+                const hasPhoto = Boolean(ROOM_IMAGE_DATA[r.route]);
                 const ids = roomDevices[r.route] || [];
                 return `
 
@@ -3755,7 +3803,9 @@
 
                         ${
                           hasPhoto
-                            ? `<img src="${photoMap[r.route]}" alt="${r.name}" loading="eager" decoding="sync" fetchpriority="high">`
+                            ? renderRoomResponsivePhoto(r.route, r.name, {
+                                eager: r.route === firstVisibleRoute,
+                              })
                             : ""
                         }
 
@@ -3790,7 +3840,7 @@
         (function setPageBackground(route) {
           // Extrai o ambiente base (ex: "ambiente1" de "ambiente1-luzes")
           const baseAmbiente = route.match(/^(ambiente\d+)/)?.[1] || route;
-          const url = ROOM_PHOTOS[baseAmbiente];
+          const url = getRoomBackgroundUrl(baseAmbiente);
 
           if (!url) return;
 
@@ -3864,7 +3914,15 @@
         // Atualiza o botão master na página de cenários
 
         if (page === "scenes") {
-          initScenesPage();
+          ensureScenesScript()
+            .then(() => {
+              if (typeof initScenesPage === "function") {
+                initScenesPage();
+              }
+            })
+            .catch((error) =>
+              console.error("Erro ao carregar scenes.js", error)
+            );
         }
 
         // Inicializa controlador de ar condicionado em todas as páginas de conforto
