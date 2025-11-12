@@ -1,30 +1,43 @@
-# Dashboard Eletrize - Base Genérica
+﻿# Dashboard Eletrize - Base GenÃ©rica
 
-Dashboard modular para controle de automação residencial via Hubitat. Este é um template base pronto para ser customizado para qualquer cliente.
+Dashboard modular para controle de automaÃ§Ã£o residencial via Hubitat. Este Ã© um template base pronto para ser customizado para qualquer cliente.
 
-## 📋 Visão Geral
+## ðŸ“‹ VisÃ£o Geral
 
 Este dashboard oferece:
 
-- ✅ 6 ambientes genéricos configuráveis
-- ✅ Controle de luzes, ar condicionado e cortinas
-- ✅ 2 cenários customizáveis
-- ✅ Interface PWA instalável
-- ✅ Design glassmorphism responsivo
-- ✅ Integração com Hubitat via Cloudflare Functions
+- âœ… 6 ambientes genÃ©ricos configurÃ¡veis
+- âœ… Controle de luzes, ar condicionado e cortinas
+- âœ… 2 cenÃ¡rios customizÃ¡veis
+- âœ… Interface PWA instalÃ¡vel
+- âœ… Design glassmorphism responsivo
+- âœ… IntegraÃ§Ã£o com Hubitat via Cloudflare Functions
 
-## 🚀 Setup Rápido para Novo Cliente
+## ðŸš€ Setup RÃ¡pido para Novo Cliente
 
-### 1. Personalização Básica
+### Build dos assets (CSS/JS)
 
-#### 1.1 Informações do Projeto
+Para diminuir o peso total, os arquivos servidos (`styles.css` e `script.js`) são versões minificadas geradas a partir de `styles.source.css` e `script.source.js`.
+Edite **sempre** os arquivos `.source` e, depois das alterações, rode:
+
+```bash
+npm install          # primeira vez
+npm run build:assets
+```
+
+Isso recompila os assets otimizados antes de publicar.
+
+
+### 1. PersonalizaÃ§Ã£o BÃ¡sica
+
+#### 1.1 InformaÃ§Ãµes do Projeto
 
 Edite `package.json`:
 
 ```json
 {
   "name": "dashboard-[nome-cliente]",
-  "description": "Dashboard de automação para [Nome Cliente]"
+  "description": "Dashboard de automaÃ§Ã£o para [Nome Cliente]"
 }
 ```
 
@@ -38,8 +51,8 @@ PROJECT_NAME = "Dashboard [Nome Cliente]"
 #### 1.2 Branding
 
 - **Logo**: Substitua `images/icons/Eletrize.svg` pelo logo do cliente
-- **Ícone PWA**: Substitua os arquivos em `images/pwa/` com os ícones do cliente
-- **Título**: Edite `index.html` e atualize todas as ocorrências de "Dashboard Eletrize"
+- **Ãcone PWA**: Substitua os arquivos em `images/pwa/` com os Ã­cones do cliente
+- **TÃ­tulo**: Edite `index.html` e atualize todas as ocorrÃªncias de "Dashboard Eletrize"
 
 #### 1.3 Fotos dos Ambientes
 
@@ -56,7 +69,7 @@ const ROOM_PHOTOS = {
 };
 ```
 
-### 2. Configuração dos Ambientes
+### 2. ConfiguraÃ§Ã£o dos Ambientes
 
 #### 2.1 Nomes dos Ambientes
 
@@ -66,7 +79,7 @@ Edite o array `rooms` em `index.html` (linha ~440):
 const rooms = [
   { name: "Sala de Estar", route: "ambiente1" },
   { name: "Quarto Principal", route: "ambiente2" },
-  { name: "Escritório", route: "ambiente3" },
+  { name: "EscritÃ³rio", route: "ambiente3" },
   { name: "Cozinha", route: "ambiente4" },
   { name: "Sala de Jantar", route: "ambiente5" },
   { name: "Garagem", route: "ambiente6" },
@@ -75,9 +88,9 @@ const rooms = [
 
 #### 2.2 Dispositivos de Cada Ambiente
 
-Para cada ambiente, edite as páginas correspondentes em `index.html`:
+Para cada ambiente, edite as pÃ¡ginas correspondentes em `index.html`:
 
-**Exemplo - Ambiente 1 (começando na linha ~1180):**
+**Exemplo - Ambiente 1 (comeÃ§ando na linha ~1180):**
 
 ```html
 <!-- Luzes -->
@@ -125,37 +138,37 @@ const CURTAIN_SECTIONS = [
 ];
 ```
 
-### 3. Configuração dos Cenários
+### 3. ConfiguraÃ§Ã£o dos CenÃ¡rios
 
-Edite `scenes.js` para personalizar os dois cenários:
+Edite `scenes.js` para personalizar os dois cenÃ¡rios:
 
-#### Cenário 1 (linha ~163):
+#### CenÃ¡rio 1 (linha ~163):
 
 ```javascript
 function executeCenario1() {
-  console.log("🌅 Iniciando cenário: Bom Dia");
+  console.log("ðŸŒ… Iniciando cenÃ¡rio: Bom Dia");
 
   const salaLights = ["7", "8"]; // IDs das luzes da sala
   const quartoLights = ["11", "12"]; // IDs das luzes do quarto
   const cortinasAbrir = ["42", "43"]; // IDs das cortinas para abrir
 
-  // ... customize a lógica
+  // ... customize a lÃ³gica
 }
 ```
 
-#### Cenário 2 (linha ~217):
+#### CenÃ¡rio 2 (linha ~217):
 
 ```javascript
 function executeCenario2() {
-  console.log("🌙 Iniciando cenário: Boa Noite");
+  console.log("ðŸŒ™ Iniciando cenÃ¡rio: Boa Noite");
 
   const lightsToKeepOn = ["35", "49"]; // Luzes que ficam acesas
 
-  // ... customize a lógica
+  // ... customize a lÃ³gica
 }
 ```
 
-**Atualize os rótulos** em `index.html` (linha ~620):
+**Atualize os rÃ³tulos** em `index.html` (linha ~620):
 
 ```html
 <div class="control-label">Bom Dia</div>
@@ -182,13 +195,13 @@ const ALL_LIGHT_IDS = [
 ];
 ```
 
-### 5. Configuração do Hubitat
+### 5. ConfiguraÃ§Ã£o do Hubitat
 
 #### 5.1 Obter Credenciais
 
 1. Acesse seu Hubitat
-2. Vá em **Apps** → **Maker API**
-3. Copie a URL completa que contém:
+2. VÃ¡ em **Apps** â†’ **Maker API**
+3. Copie a URL completa que contÃ©m:
    - UUID do hub
    - ID do app
    - Access token
@@ -217,46 +230,46 @@ npm install
 npm run dev
 ```
 
-#### Deploy para Produção
+#### Deploy para ProduÃ§Ã£o
 
 ```bash
 wrangler pages deploy . --project-name dashboard-[nome-cliente]
 ```
 
-Veja `DEPLOY.md` para instruções completas.
+Veja `DEPLOY.md` para instruÃ§Ãµes completas.
 
-## 📁 Estrutura de Arquivos
+## ðŸ“ Estrutura de Arquivos
 
 ```
 /
-├── index.html              # Página principal (edite aqui os ambientes)
-├── script.js              # Lógica de controle (edite IDs de dispositivos)
-├── scenes.js              # Cenários (customize aqui)
-├── styles.css             # Estilos (normalmente não precisa editar)
-├── package.json           # Metadados do projeto
-├── wrangler.toml          # Config Cloudflare
-├── manifest.json          # Config PWA
-├── functions/             # Cloudflare Functions (proxy Hubitat)
-├── images/
-│   ├── icons/            # Ícones da UI
-│   ├── pwa/              # Ícones do app (substitua)
-│   └── Images/           # Fotos dos ambientes (adicione aqui)
-└── fonts/                # Fontes Raleway
+â”œâ”€â”€ index.html              # PÃ¡gina principal (edite aqui os ambientes)
+â”œâ”€â”€ script.js              # LÃ³gica de controle (edite IDs de dispositivos)
+â”œâ”€â”€ scenes.js              # CenÃ¡rios (customize aqui)
+â”œâ”€â”€ styles.css             # Estilos (normalmente nÃ£o precisa editar)
+â”œâ”€â”€ package.json           # Metadados do projeto
+â”œâ”€â”€ wrangler.toml          # Config Cloudflare
+â”œâ”€â”€ manifest.json          # Config PWA
+â”œâ”€â”€ functions/             # Cloudflare Functions (proxy Hubitat)
+â”œâ”€â”€ images/
+â”‚   â”œâ”€â”€ icons/            # Ãcones da UI
+â”‚   â”œâ”€â”€ pwa/              # Ãcones do app (substitua)
+â”‚   â””â”€â”€ Images/           # Fotos dos ambientes (adicione aqui)
+â””â”€â”€ fonts/                # Fontes Raleway
 ```
 
-## 🎨 Customização Avançada
+## ðŸŽ¨ CustomizaÃ§Ã£o AvanÃ§ada
 
 ### Cores e Tema
 
 Edite `styles.css` para alterar:
 
-- Cores de fundo (variáveis CSS no `:root`)
+- Cores de fundo (variÃ¡veis CSS no `:root`)
 - Opacidades do glassmorphism
-- Animações e transições
+- AnimaÃ§Ãµes e transiÃ§Ãµes
 
 ### Adicionar Mais Ambientes
 
-1. Duplique uma página de ambiente em `index.html`
+1. Duplique uma pÃ¡gina de ambiente em `index.html`
 2. Renomeie as classes para `ambiente7-page`, `ambiente7-controls-wrapper`, etc.
 3. Adicione ao array `rooms`
 4. Adicione CSS para `.ambiente7-page` em `styles.css` (copie de outro ambiente)
@@ -264,28 +277,28 @@ Edite `styles.css` para alterar:
 ### Remover Ambientes
 
 1. Remova a entrada do array `rooms`
-2. Remova a página correspondente de `index.html`
-3. Opcional: remova CSS específico
+2. Remova a pÃ¡gina correspondente de `index.html`
+3. Opcional: remova CSS especÃ­fico
 
 ### Controles Especiais
 
 Para adicionar tipos diferentes de controles (ventiladores, TVs, etc.):
 
-1. Adicione os ícones SVG em `images/icons/`
+1. Adicione os Ã­cones SVG em `images/icons/`
 2. Crie controle similar aos existentes
 3. Adicione handlers no `script.js`
 
-## 🔧 Troubleshooting
+## ðŸ”§ Troubleshooting
 
-### Dispositivos não respondem
+### Dispositivos nÃ£o respondem
 
-- Verifique se os IDs estão corretos no Hubitat
-- Confirme que as secrets do Cloudflare estão configuradas
+- Verifique se os IDs estÃ£o corretos no Hubitat
+- Confirme que as secrets do Cloudflare estÃ£o configuradas
 - Veja os logs: `wrangler tail`
 
 ### Cortinas invertidas
 
-Alguns dispositivos têm comandos invertidos. Edite `script.js` (linha ~1122):
+Alguns dispositivos tÃªm comandos invertidos. Edite `script.js` (linha ~1122):
 
 ```javascript
 if (deviceId === "40") {
@@ -294,34 +307,34 @@ if (deviceId === "40") {
 }
 ```
 
-### Caracteres especiais não aparecem
+### Caracteres especiais nÃ£o aparecem
 
-O dashboard já tem correção automática para caracteres com encoding incorreto.
-Edite `script.js` (linha ~717) se necessário adicionar mais correções.
+O dashboard jÃ¡ tem correÃ§Ã£o automÃ¡tica para caracteres com encoding incorreto.
+Edite `script.js` (linha ~717) se necessÃ¡rio adicionar mais correÃ§Ãµes.
 
-## 📱 PWA - App Instalável
+## ðŸ“± PWA - App InstalÃ¡vel
 
-Para ativar a instalação como app:
+Para ativar a instalaÃ§Ã£o como app:
 
-1. Edite `manifest.json` com nome e descrição do cliente
-2. Substitua os ícones em `images/pwa/`
-3. O service worker (`service-worker.js`) já está configurado
+1. Edite `manifest.json` com nome e descriÃ§Ã£o do cliente
+2. Substitua os Ã­cones em `images/pwa/`
+3. O service worker (`service-worker.js`) jÃ¡ estÃ¡ configurado
 
-## 🔐 Segurança
+## ðŸ” SeguranÃ§a
 
-- ✅ Todas as credenciais ficam em secrets do Cloudflare
-- ✅ Proxy server-side para ocultar tokens do cliente
-- ✅ CORS configurado nas functions
-- ✅ Nenhuma credencial exposta no código frontend
+- âœ… Todas as credenciais ficam em secrets do Cloudflare
+- âœ… Proxy server-side para ocultar tokens do cliente
+- âœ… CORS configurado nas functions
+- âœ… Nenhuma credencial exposta no cÃ³digo frontend
 
-## 📞 Suporte
+## ðŸ“ž Suporte
 
-Para questões técnicas ou customizações especiais, consulte:
+Para questÃµes tÃ©cnicas ou customizaÃ§Ãµes especiais, consulte:
 
-- `DEPLOY.md` - Instruções de deploy
+- `DEPLOY.md` - InstruÃ§Ãµes de deploy
 - `VARIAVEIS_HUBITAT.md` - Setup do Hubitat
 - `app-info-menu-snippets.md` - Componentes de UI
 
 ---
 
-**Desenvolvido por Eletrize** 🔌
+**Desenvolvido por Eletrize** ðŸ”Œ
