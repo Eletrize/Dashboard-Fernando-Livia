@@ -4886,6 +4886,19 @@ body.app-info-open {
   gap: 16px;
 }
 
+/* Layout específico para página de cortinas do ambiente1 (Varanda) */
+.ambiente1-cortinas-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .ambiente1-cortinas-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* Garantir que os tiles de cortina tenham altura automática */
 [class*="-cortinas-wrapper"] .curtain-tile {
   height: auto;
