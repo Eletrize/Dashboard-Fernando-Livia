@@ -46,16 +46,21 @@ let fallbackSyncTimer = null;
 let pendingControlSyncHandle = null;
 let pendingControlSyncForce = false; // ========================================
 
-const CRITICAL_ASSET_PATHS = [
-  "images/Images/photo-varanda.jpg",
-  "images/Images/photo-living.jpg",
-  "images/Images/photo-piscina.jpg",
-  "images/Images/photo-externo.jpg",
-  "images/Images/photo-servico.jpg",
-  "images/Images/photo-circulacao.jpg",
-  "images/Images/photo-suitei.jpg",
-  "images/Images/photo-suiteii.jpg",
-  "images/Images/photo-suitemaster.jpg",
+const ROOM_IMAGE_BASES = [
+  "photo-varanda",
+  "photo-living",
+  "photo-piscina",
+  "photo-externo",
+  "photo-servico",
+  "photo-circulacao",
+  "photo-suitei",
+  "photo-suiteii",
+  "photo-suitemaster",
+];
+
+const ROOM_IMAGE_WIDTHS = [480, 960, 1440];
+
+const ICON_ASSET_PATHS = [
   "images/icons/icon-tv.svg",
   "images/icons/icon-htv.svg",
   "images/icons/icon-musica.svg",
@@ -107,44 +112,103 @@ const CRITICAL_ASSET_PATHS = [
   "images/icons/pageselector.svg",
 ];
 
-function warmCriticalAssetCache() {
-  if (typeof window === "undefined") return;
-
-  const queue = Array.from(new Set(CRITICAL_ASSET_PATHS));
-  if (!queue.length) return;
-
-  const loadNext = () => {
-    const src = queue.shift();
-    if (!src) return;
-
-    const img = new Image();
-    img.onload = img.onerror = () => {
-      if (queue.length) {
-        if (typeof requestAnimationFrame === "function") {
-          requestAnimationFrame(loadNext);
-        } else {
-          setTimeout(loadNext, 16);
-        }
-      }
-    };
-    img.src = src;
-  };
-
-  loadNext();
+function buildRoomAssetList() {
+  const assets = [];
+  ROOM_IMAGE_BASES.forEach((base) => {
+    ROOM_IMAGE_WIDTHS.forEach((width) =>
+      assets.push(`images/optimized/${base}-${width}.webp`)
+    );
+    assets.push(`images/Images/${base}.jpg`);
+  });
+  return assets;
 }
 
-if (typeof window !== "undefined") {
-  const scheduleAssetWarmup = () => {
-    if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(() => warmCriticalAssetCache(), {
-        timeout: 2000,
-      });
-    } else {
-      setTimeout(() => warmCriticalAssetCache(), 150);
-    }
-  };
+const AssetPreloader = (() => {
+  const queue = new Set();
 
-  window.addEventListener("load", scheduleAssetWarmup, { once: true });
+  function add(url) {
+    if (!url || queue.has(url)) return;
+    queue.add(url);
+  }
+
+  function start(options = {}) {
+    if (typeof window === "undefined") {
+      return Promise.resolve();
+    }
+
+    const list = Array.from(queue);
+    if (!list.length) {
+      return Promise.resolve();
+    }
+
+    const onProgress =
+      typeof options.onProgress === "function" ? options.onProgress : null;
+
+    return new Promise((resolve) => {
+      let completed = 0;
+      const total = list.length;
+
+      const update = (url) => {
+        completed += 1;
+        if (onProgress) {
+          try {
+            onProgress(completed, total, url);
+          } catch (error) {
+            console.warn("Falha ao atualizar progresso de preload", error);
+          }
+        }
+        if (completed === total) {
+          resolve();
+        }
+      };
+
+      list.forEach((url) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.loading = "eager";
+        img.onload = img.onerror = () => update(url);
+        img.src = url;
+      });
+    });
+  }
+
+  return { add, start };
+})();
+
+const DEFAULT_ASSET_PATHS = [
+  ...new Set([
+    ...buildRoomAssetList(),
+    ...ICON_ASSET_PATHS,
+    "images/pwa/app-icon-192.png",
+    "images/pwa/app-icon-512-transparent.png",
+  ]),
+];
+
+DEFAULT_ASSET_PATHS.forEach((asset) => AssetPreloader.add(asset));
+
+let assetPreloadComplete = false;
+let assetPreloadPromise = null;
+
+if (typeof window !== "undefined") {
+  assetPreloadPromise = AssetPreloader.start({
+    onProgress: (loaded, total) => {
+      const preloadWeight = 25;
+      const percent = Math.min(
+        preloadWeight,
+        Math.round((loaded / total) * preloadWeight)
+      );
+      updateProgress(percent, `Pré-carregando mídia (${loaded}/${total})`);
+    },
+  })
+    .catch((error) => {
+      console.warn("Falha ao pré-carregar mídia crítica", error);
+    })
+    .finally(() => {
+      assetPreloadComplete = true;
+    });
+
+  window.__assetPreloadPromise = assetPreloadPromise;
+  window.queueAssetForPreload = (url) => AssetPreloader.add(url);
 }
 
 // DETECÃƒâ€¡ÃƒÆ’O DE DISPOSITIVOS
@@ -926,24 +990,28 @@ function updateDenonVolumeUI(volume) {
       ? queryActiveMusic("#music-volume-slider")
       : document.querySelector("#music-volume-slider");
 
-  console.log("🔊 updateDenonVolumeUI chamada com volume:", volume);
+  debugLog(() => ["updateDenonVolumeUI chamada", { volume }]);
 
   if (!tvSlider && !musicSlider) {
-    console.warn("⚠️ Nenhum controle de volume do Denon encontrado na página");
+    debugLog(() => "updateDenonVolumeUI: nenhum controle encontrado na página");
     return;
   }
 
   const volumeValue = parseInt(volume, 10);
-  console.log(
-    `🔊 Volume recebido: ${volume}, convertido: ${volumeValue}, tvSlider atual: ${
-      tvSlider ? tvSlider.value : "n/a"
-    }, musicSlider atual: ${musicSlider ? musicSlider.value : "n/a"}`
-  );
+  debugLog(() => [
+    "updateDenonVolumeUI: estado atual",
+    {
+      recebido: volume,
+      convertido: volumeValue,
+      tvSlider: tvSlider ? tvSlider.value : "n/a",
+      musicSlider: musicSlider ? musicSlider.value : "n/a",
+    },
+  ]);
 
   const lastCmd = recentCommands.get("15");
   if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
-    console.log(
-      "🔒 updateDenonVolumeUI: comando manual recente detectado, ignorando atualização de polling"
+    debugLog(
+      () => "updateDenonVolumeUI: comando manual recente, ignorando polling"
     );
     return;
   }
@@ -977,11 +1045,10 @@ function updateDenonVolumeUI(volume) {
   }
 
   if (updated) {
-    console.log(`✅ Volume do Denon atualizado via polling: ${volumeValue}`);
-  } else {
-    console.log(`🔁 Volume já está em ${volumeValue}, não atualizando`);
+    debugLog(() => ["updateDenonVolumeUI: volume sincronizado", { volumeValue }]);
   }
 }
+
 function normalizeDenonPowerState(value) {
   if (value === undefined || value === null) return null;
   const normalized = String(value).trim().toLowerCase();
@@ -3535,22 +3602,37 @@ function showLoader() {
 
 function hideLoader() {
   try {
-    const loader = document.getElementById("global-loader");
-    if (loader) {
-      const delay = 500; // Tempo padrÃƒÂ£o para desktop e mobile
-      setTimeout(() => {
-        loader.classList.add("hidden");
-        // Esconder completamente apÃƒÂ³s transiÃƒÂ§ÃƒÂ£o
+    const finalizeHide = () => {
+      const loader = document.getElementById("global-loader");
+      if (loader) {
+        const delay = 500;
         setTimeout(() => {
-          loader.style.display = "none";
-        }, 500);
-        console.log("Ã°Å¸â€œÂ± Loader escondido");
-      }, delay);
+          loader.classList.add("hidden");
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 500);
+          console.log("Loader escondido");
+        }, delay);
+      }
+    };
+
+    if (!assetPreloadComplete && assetPreloadPromise) {
+      const pending = assetPreloadPromise;
+      assetPreloadPromise = null;
+      pending
+        .catch((error) =>
+          console.warn("Falha ao pré-carregar todos os assets", error)
+        )
+        .finally(finalizeHide);
+      return;
     }
+
+    finalizeHide();
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro ao esconder loader:", error);
+    console.error("Erro ao esconder loader:", error);
   }
 }
+
 
 function updateProgress(percentage, text) {
   try {

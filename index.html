@@ -15,6 +15,52 @@
     <meta name="theme-color" content="#1C1C1C" />
     <link rel="apple-touch-icon" href="images/pwa/app-icon-192.png" />
 
+    <script>
+      (function () {
+        const CLOUDFLARE_BEACON_HOST = "static.cloudflareinsights.com/beacon";
+
+        function suppressCloudflareWarning(event) {
+          const target = event.target || {};
+          const origin =
+            (typeof target.src === "string" && target.src) ||
+            (typeof event.filename === "string" && event.filename) ||
+            "";
+
+          if (!origin || !origin.includes(CLOUDFLARE_BEACON_HOST)) {
+            return;
+          }
+
+          if (typeof event.preventDefault === "function") {
+            event.preventDefault();
+          }
+          if (typeof event.stopImmediatePropagation === "function") {
+            event.stopImmediatePropagation();
+          }
+
+          if (!window.__cfBeaconWarningShown) {
+            window.__cfBeaconWarningShown = true;
+            console.info(
+              "Cloudflare Insights não pôde ser carregado (uso offline ou script bloqueado). Nenhuma ação adicional é necessária."
+            );
+          }
+        }
+
+        function removeScenesPreload() {
+          document
+            .querySelectorAll('link[rel="preload"][href*="scenes.js"]')
+            .forEach((link) => link.remove());
+        }
+
+        window.addEventListener("error", suppressCloudflareWarning, true);
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", removeScenesPreload);
+        } else {
+          removeScenesPreload();
+        }
+      })();
+    </script>
+
     <style>
       /* Botão invisível no card para capturar clique na Home */
 
