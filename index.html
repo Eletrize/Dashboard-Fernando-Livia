@@ -425,9 +425,90 @@
         return WEBP_SUPPORTED ? data.backgroundWebp : data.fallback;
       }
 
+      const ROOM_BACKGROUND_CACHE = new Map();
+      const ROOM_BACKGROUND_PROMISES = new Map();
+
+      function cacheRoomBackground(route, url, { force = false } = {}) {
+        if (!route || !url) return;
+        if (!ROOM_BACKGROUND_CACHE.has(route) || force) {
+          ROOM_BACKGROUND_CACHE.set(route, url);
+        }
+      }
+
+      function preloadRoomBackground(route) {
+        const data = ROOM_IMAGE_DATA[route];
+        if (!data) return Promise.resolve(null);
+        const targetUrl = getRoomBackgroundUrl(route);
+        if (!targetUrl) return Promise.resolve(null);
+
+        if (ROOM_BACKGROUND_CACHE.get(route) === targetUrl) {
+          return Promise.resolve(targetUrl);
+        }
+
+        if (ROOM_BACKGROUND_PROMISES.has(route)) {
+          return ROOM_BACKGROUND_PROMISES.get(route);
+        }
+
+        const promise = new Promise((resolve) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => {
+            cacheRoomBackground(route, targetUrl, { force: true });
+            ROOM_BACKGROUND_PROMISES.delete(route);
+            resolve(targetUrl);
+          };
+          img.onerror = () => {
+            ROOM_BACKGROUND_PROMISES.delete(route);
+            resolve(targetUrl);
+          };
+          img.src = targetUrl;
+        });
+
+        ROOM_BACKGROUND_PROMISES.set(route, promise);
+        return promise;
+      }
+
+      function applyBackground(container, route) {
+        if (!container) return;
+
+        container.dataset.backgroundRoute = route;
+
+        const cached = ROOM_BACKGROUND_CACHE.get(route);
+        if (cached) {
+          container.style.backgroundImage = `url('${cached}')`;
+          container.classList.remove("bg-loading");
+        } else {
+          const data = ROOM_IMAGE_DATA[route];
+          const fallbackUrl =
+            (WEBP_SUPPORTED ? data?.defaultWebp : data?.fallback) ||
+            data?.fallback;
+          if (fallbackUrl) {
+            cacheRoomBackground(route, fallbackUrl);
+            container.style.backgroundImage = `url('${fallbackUrl}')`;
+          } else {
+            container.style.backgroundImage = "";
+          }
+          container.classList.add("bg-loading");
+        }
+
+        preloadRoomBackground(route).then((finalUrl) => {
+          if (!finalUrl) {
+            container.classList.remove("bg-loading");
+            return;
+          }
+          if (container.dataset.backgroundRoute !== route) {
+            return;
+          }
+          container.style.backgroundImage = `url('${finalUrl}')`;
+          container.classList.remove("bg-loading");
+        });
+      }
+
       function renderRoomResponsivePhoto(route, alt, options = {}) {
         const data = ROOM_IMAGE_DATA[route];
         if (!data) return "";
+        const preferredCardUrl = WEBP_SUPPORTED ? data.defaultWebp : data.fallback;
+        cacheRoomBackground(route, preferredCardUrl);
         const {
           eager = false,
           className = "room-card-photo",
@@ -3933,21 +4014,15 @@
         (function setPageBackground(route) {
           // Extrai o ambiente base (ex: "ambiente1" de "ambiente1-luzes")
           const baseAmbiente = route.match(/^(ambiente\d+)/)?.[1] || route;
-          const url = getRoomBackgroundUrl(baseAmbiente);
-
-          if (!url) return;
-
           const container =
             document.querySelector(".page.active .page-container") ||
             document.querySelector(".page.active.page-container");
 
           if (container) {
-            container.style.backgroundImage = `url('${url}')`;
-
-            container.style.backgroundSize = "cover";
-
-            container.style.backgroundPosition = "center";
+            applyBackground(container, baseAmbiente);
           }
+
+          preloadRoomBackground(baseAmbiente);
         })(page);
 
         // Atualiza navbar (ativo + indicador)
