@@ -6,7 +6,7 @@
   Pragma: no-cache
   Expires: 0
 
-# CSS e JS - cache curto para desenvolvimento √°gil
+# CSS e JS - cache curto para desenvolvimento ·gil
 /*.css
   Cache-Control: public, max-age=300, s-maxage=300
   Pragma: no-cache
@@ -28,9 +28,17 @@
 /service-worker.js
   Cache-Control: no-cache, no-store, must-revalidate
 
-# Imagens - cache mais longo (menos altera√ß√µes)
-/images/*
-  Cache-Control: public, max-age=3600, s-maxage=3600
+# Imagens JPG originais - cache 1 ano
+/images/Images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Imagens otimizadas (WebP) - cache 1 ano
+/images/optimized/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Õcones - cache 1 ano
+/images/icons/*
+  Cache-Control: public, max-age=31536000, immutable
 
 # Fontes - cache longo
 /fonts/*
