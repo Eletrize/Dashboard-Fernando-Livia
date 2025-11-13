@@ -3031,49 +3031,49 @@
     <div class="ambiente3-piscina-wrapper">
         <div class="piscina-control-grid">
             <!-- Cascata -->
-            <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="267" data-environment="Piscina">
-                <header class="piscina-control-header">
-                    <h3 class="piscina-control-title">Cascata</h3>
-                    <div class="piscina-control-line"></div>
+            <article class="curtain-tile curtain-tile--transparent piscina-switch-tile" data-device-id="267" data-environment="Piscina">
+                <header class="curtain-tile__header curtain-tile__header--minimal">
+                    <h3 class="curtain-tile__title">Cascata</h3>
+                    <div class="curtain-tile__line"></div>
                 </header>
-                <div class="piscina-control-actions piscina-control-actions--stacked">
-                    <button class="piscina-control-btn piscina-control-btn--on" data-device-id="267" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Cascata">
-                        <span>ON</span>
+                <div class="curtain-tile__actions curtain-tile__actions--dual">
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="267" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Cascata">
+                        ON
                     </button>
-                    <button class="piscina-control-btn piscina-control-btn--off" data-device-id="267" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Cascata">
-                        <span>OFF</span>
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="267" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Cascata">
+                        OFF
                     </button>
                 </div>
             </article>
 
             <!-- Hidromassagem -->
-            <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="268" data-environment="Piscina">
-                <header class="piscina-control-header">
-                    <h3 class="piscina-control-title">Hidromassagem</h3>
-                    <div class="piscina-control-line"></div>
+            <article class="curtain-tile curtain-tile--transparent piscina-switch-tile" data-device-id="268" data-environment="Piscina">
+                <header class="curtain-tile__header curtain-tile__header--minimal">
+                    <h3 class="curtain-tile__title">Hidromassagem</h3>
+                    <div class="curtain-tile__line"></div>
                 </header>
-                <div class="piscina-control-actions piscina-control-actions--stacked">
-                    <button class="piscina-control-btn piscina-control-btn--on" data-device-id="268" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Hidromassagem">
-                        <span>ON</span>
+                <div class="curtain-tile__actions curtain-tile__actions--dual">
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="268" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Hidromassagem">
+                        ON
                     </button>
-                    <button class="piscina-control-btn piscina-control-btn--off" data-device-id="268" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Hidromassagem">
-                        <span>OFF</span>
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="268" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Hidromassagem">
+                        OFF
                     </button>
                 </div>
             </article>
 
             <!-- Deck -->
-            <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="269" data-environment="Piscina">
-                <header class="piscina-control-header">
-                    <h3 class="piscina-control-title">Deck</h3>
-                    <div class="piscina-control-line"></div>
+            <article class="curtain-tile curtain-tile--transparent piscina-switch-tile" data-device-id="269" data-environment="Piscina">
+                <header class="curtain-tile__header curtain-tile__header--minimal">
+                    <h3 class="curtain-tile__title">Deck</h3>
+                    <div class="curtain-tile__line"></div>
                 </header>
-                <div class="piscina-control-actions piscina-control-actions--stacked">
-                    <button class="piscina-control-btn piscina-control-btn--on" data-device-id="269" onclick="togglePoolControl(this, 'on')" aria-label="Coberto Deck">
-                        <span>COBERTO</span>
+                <div class="curtain-tile__actions curtain-tile__actions--dual">
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="269" onclick="togglePoolControl(this, 'on')" aria-label="Cobrir Deck">
+                        COBERTO
                     </button>
-                    <button class="piscina-control-btn piscina-control-btn--off" data-device-id="269" onclick="togglePoolControl(this, 'off')" aria-label="Descoberto Deck">
-                        <span>DESCOBERTO</span>
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="269" onclick="togglePoolControl(this, 'off')" aria-label="Descobrir Deck">
+                        DESCOBERTO
                     </button>
                 </div>
             </article>
@@ -3100,9 +3100,9 @@
             </article>
 
             <!-- Luzes -->
-            <div class="control-card control-card--full-width piscina-lights-card" onclick="spaNavigate('ambiente3-piscina-luzes')">
-                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luzes">
-                <div class="control-label">Luzes</div>
+            <div class="control-card piscina-light-toggle" data-state="off" data-device-id="270" onclick="toggleRoomControl(this)">
+                <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Luz da Piscina">
+                <div class="control-label">Luz da Piscina</div>
             </div>
         </div>
     </div>
