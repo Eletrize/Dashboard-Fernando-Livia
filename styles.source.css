@@ -5041,6 +5041,11 @@ body.app-info-open {
   justify-content: center;
 }
 
+.piscina-secondary-row .control-card--full-width {
+  grid-column: auto;
+  width: 100%;
+}
+
 /* Ações (3 botões - Abre, Para, Fecha) */
 .piscina-control-actions-three {
   display: grid;
