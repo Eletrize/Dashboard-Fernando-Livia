@@ -4891,6 +4891,11 @@ body.app-info-open {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  align-content: flex-start;
+  align-items: start;
+  grid-auto-rows: minmax(auto, max-content);
+  width: 100%;
+  max-width: 100%;
 }
 
 @media (min-width: 600px) {
