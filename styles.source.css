@@ -5005,14 +5005,40 @@ body.app-info-open {
 
 .piscina-control-grid {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+@media (max-width: 1023px) {
+  .piscina-control-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.piscina-secondary-row {
+  display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 18px;
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
-  .piscina-control-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .piscina-secondary-row {
+    grid-template-columns: 4fr 1fr;
+    align-items: stretch;
   }
+}
+
+.piscina-secondary-row .piscina-toldo-tile {
+  height: 100%;
+}
+
+.piscina-secondary-row .piscina-lights-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Ações (3 botões - Abre, Para, Fecha) */
@@ -5032,8 +5058,7 @@ body.app-info-open {
   background: rgba(10, 12, 18, 0.45);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 14px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
