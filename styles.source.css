@@ -4974,10 +4974,11 @@ body.app-info-open {
 
 .piscina-control-title {
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 500;
   margin: 0;
   padding: 0;
+  letter-spacing: 0.02em;
 }
 
 .piscina-control-line {
@@ -4995,7 +4996,7 @@ body.app-info-open {
 .piscina-control-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .piscina-control-actions--stacked {
@@ -5025,10 +5026,15 @@ body.app-info-open {
 .piscina-control-btn {
   padding: 18px 20px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(5, 8, 15, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
