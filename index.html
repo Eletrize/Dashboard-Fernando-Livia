@@ -3029,69 +3029,71 @@
     </div>
 
     <div class="ambiente3-piscina-wrapper">
-        <!-- Cascata -->
-        <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="267" data-environment="Piscina">
-            <header class="piscina-control-header">
-                <h3 class="piscina-control-title">Cascata</h3>
-                <div class="piscina-control-line"></div>
-            </header>
-            <div class="piscina-control-actions piscina-control-actions--stacked">
-                <button class="piscina-control-btn piscina-control-btn--on" data-device-id="267" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Cascata">
-                    <span>ON</span>
-                </button>
-                <button class="piscina-control-btn piscina-control-btn--off" data-device-id="267" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Cascata">
-                    <span>OFF</span>
-                </button>
-            </div>
-        </article>
+        <div class="piscina-control-grid">
+            <!-- Cascata -->
+            <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="267" data-environment="Piscina">
+                <header class="piscina-control-header">
+                    <h3 class="piscina-control-title">Cascata</h3>
+                    <div class="piscina-control-line"></div>
+                </header>
+                <div class="piscina-control-actions piscina-control-actions--stacked">
+                    <button class="piscina-control-btn piscina-control-btn--on" data-device-id="267" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Cascata">
+                        <span>ON</span>
+                    </button>
+                    <button class="piscina-control-btn piscina-control-btn--off" data-device-id="267" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Cascata">
+                        <span>OFF</span>
+                    </button>
+                </div>
+            </article>
 
-        <!-- Hidromassagem -->
-        <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="268" data-environment="Piscina">
-            <header class="piscina-control-header">
-                <h3 class="piscina-control-title">Hidromassagem</h3>
-                <div class="piscina-control-line"></div>
-            </header>
-            <div class="piscina-control-actions piscina-control-actions--stacked">
-                <button class="piscina-control-btn piscina-control-btn--on" data-device-id="268" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Hidromassagem">
-                    <span>ON</span>
-                </button>
-                <button class="piscina-control-btn piscina-control-btn--off" data-device-id="268" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Hidromassagem">
-                    <span>OFF</span>
-                </button>
-            </div>
-        </article>
+            <!-- Hidromassagem -->
+            <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="268" data-environment="Piscina">
+                <header class="piscina-control-header">
+                    <h3 class="piscina-control-title">Hidromassagem</h3>
+                    <div class="piscina-control-line"></div>
+                </header>
+                <div class="piscina-control-actions piscina-control-actions--stacked">
+                    <button class="piscina-control-btn piscina-control-btn--on" data-device-id="268" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Hidromassagem">
+                        <span>ON</span>
+                    </button>
+                    <button class="piscina-control-btn piscina-control-btn--off" data-device-id="268" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Hidromassagem">
+                        <span>OFF</span>
+                    </button>
+                </div>
+            </article>
 
-        <!-- Deck -->
-        <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="269" data-environment="Piscina">
-            <header class="piscina-control-header">
-                <h3 class="piscina-control-title">Deck</h3>
-                <div class="piscina-control-line"></div>
-            </header>
-            <div class="piscina-control-actions piscina-control-actions--stacked">
-                <button class="piscina-control-btn piscina-control-btn--on" data-device-id="269" onclick="togglePoolControl(this, 'on')" aria-label="Coberto Deck">
-                    <span>COBERTO</span>
-                </button>
-                <button class="piscina-control-btn piscina-control-btn--off" data-device-id="269" onclick="togglePoolControl(this, 'off')" aria-label="Descoberto Deck">
-                    <span>DESCOBERTO</span>
-                </button>
-            </div>
-        </article>
+            <!-- Deck -->
+            <article class="piscina-control-tile piscina-control-tile--glass" data-device-id="269" data-environment="Piscina">
+                <header class="piscina-control-header">
+                    <h3 class="piscina-control-title">Deck</h3>
+                    <div class="piscina-control-line"></div>
+                </header>
+                <div class="piscina-control-actions piscina-control-actions--stacked">
+                    <button class="piscina-control-btn piscina-control-btn--on" data-device-id="269" onclick="togglePoolControl(this, 'on')" aria-label="Coberto Deck">
+                        <span>COBERTO</span>
+                    </button>
+                    <button class="piscina-control-btn piscina-control-btn--off" data-device-id="269" onclick="togglePoolControl(this, 'off')" aria-label="Descoberto Deck">
+                        <span>DESCOBERTO</span>
+                    </button>
+                </div>
+            </article>
+        </div>
 
         <!-- Toldo -->
-        <article class="piscina-control-tile" data-device-id="271" data-environment="Piscina">
-            <header class="piscina-control-header">
-                <h3 class="piscina-control-title">Toldo</h3>
-                <div class="piscina-control-line"></div>
+        <article class="curtain-tile curtain-tile--transparent piscina-toldo-tile" data-device-id="271" data-environment="Piscina">
+            <header class="curtain-tile__header curtain-tile__header--minimal">
+                <h3 class="curtain-tile__title">Toldo</h3>
+                <div class="curtain-tile__line"></div>
             </header>
-            <div class="piscina-control-actions-three">
-                <button class="piscina-control-btn piscina-control-btn--action" data-device-id="271" onclick="togglePoolControl(this, 'open')" aria-label="Abrir Toldo">
-                    <span>ABRE</span>
+            <div class="curtain-tile__actions">
+                <button class="curtain-tile__btn" data-device-id="271" onclick="togglePoolControl(this, 'open')" aria-label="Abrir Toldo">
+                    <img src="images/icons/arrow-up.svg" alt="Abrir">
                 </button>
-                <button class="piscina-control-btn piscina-control-btn--action" data-device-id="271" onclick="togglePoolControl(this, 'stop')" aria-label="Parar Toldo">
-                    <span>PARA</span>
+                <button class="curtain-tile__btn" data-device-id="271" onclick="togglePoolControl(this, 'stop')" aria-label="Parar Toldo">
+                    <img src="images/icons/icon-stop.svg" alt="Parar">
                 </button>
-                <button class="piscina-control-btn piscina-control-btn--action" data-device-id="271" onclick="togglePoolControl(this, 'close')" aria-label="Fechar Toldo">
-                    <span>FECHA</span>
+                <button class="curtain-tile__btn" data-device-id="271" onclick="togglePoolControl(this, 'close')" aria-label="Fechar Toldo">
+                    <img src="images/icons/arrow-down.svg" alt="Fechar">
                 </button>
             </div>
         </article>

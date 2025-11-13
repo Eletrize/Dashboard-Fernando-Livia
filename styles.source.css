@@ -5002,6 +5002,18 @@ body.app-info-open {
   grid-template-columns: 1fr;
 }
 
+.piscina-control-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .piscina-control-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* Ações (3 botões - Abre, Para, Fecha) */
 .piscina-control-actions-three {
   display: grid;
@@ -5052,54 +5064,44 @@ body.app-info-open {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.piscina-control-btn--on {
-  color: #fff;
-}
-
-.piscina-control-btn--on:hover {
-  border-color: rgba(74, 222, 128, 0.4);
-}
-
-.piscina-control-btn--on.active {
-  background: rgba(74, 222, 128, 0.15);
-  border-color: rgba(74, 222, 128, 0.4);
-  color: #fff;
-}
-
-.piscina-control-btn--off {
-  color: #fff;
-}
-
-.piscina-control-btn--off:hover {
-  border-color: rgba(239, 68, 68, 0.35);
-}
-
-.piscina-control-btn--off.active {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #fff;
-}
-
+.piscina-control-btn--on,
+.piscina-control-btn--off,
 .piscina-control-btn--action {
   color: #fff;
 }
 
+.piscina-control-btn--on:hover,
+.piscina-control-btn--off:hover,
 .piscina-control-btn--action:hover {
-  border-color: rgba(100, 150, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
+.piscina-control-btn--on.active,
+.piscina-control-btn--off.active,
 .piscina-control-btn--action.active {
-  background: rgba(100, 150, 255, 0.15);
-  border-color: rgba(100, 150, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
   color: #fff;
 }
 
 /* Botão de Luzes na página de piscina */
 .ambiente3-piscina-page .control-card--full-width {
   height: auto;
-  padding: 8px 12px;
-  gap: 4px;
+  padding: 16px 24px;
+  gap: 12px;
   grid-auto-rows: auto;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ambiente3-piscina-page .control-card--full-width .control-icon {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.piscina-toldo-tile {
+  margin-top: 8px;
 }
 
 /* CSS legado removido - todos os ambientes agora usam o grid responsivo padrão */
