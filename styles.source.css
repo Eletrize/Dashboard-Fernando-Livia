@@ -4894,8 +4894,10 @@ body.app-info-open {
   align-content: flex-start;
   align-items: start;
   grid-auto-rows: minmax(auto, max-content);
-  width: 100%;
-  max-width: 100%;
+  bottom: auto;
+  height: auto;
+  max-height: none;
+  overflow: visible;
 }
 
 @media (min-width: 600px) {
@@ -4904,7 +4906,6 @@ body.app-info-open {
   }
 }
 
-/* Garantir que os tiles de cortina tenham altura automática */
 [class*="-cortinas-wrapper"] .curtain-tile {
   height: auto;
   min-height: auto;
