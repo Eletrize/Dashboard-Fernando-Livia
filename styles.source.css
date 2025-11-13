@@ -6186,3 +6186,12 @@ body.app-info-open {
     background-position: 0% 0%, 100% 0%, 0 0;
   }
 }
+
+.curtain-tile__header--minimal .curtain-tile__line {
+  display: block;
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+  opacity: 0.7;
+}
+
