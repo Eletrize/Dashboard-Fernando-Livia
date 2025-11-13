@@ -4945,22 +4945,31 @@ body.app-info-open {
 
 /* Header section com botão de iluminação */
 /* Tile de controle da piscina */
-.piscina-contol-tile {
-  padding: 16px;
-  background: rgba(20, 20, 20, 0.97);
-  border-radius: 14px;
+.piscina-control-tile {
+  padding: 18px;
+  background: rgba(16, 16, 16, 0.95);
+  border-radius: 18px;
   border: 2px solid #333;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.piscina-control-tile--glass {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 18px 40px rgba(15, 20, 30, 0.25);
+  padding: 20px;
 }
 
 /* Header do controle */
 .piscina-control-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .piscina-control-title {
@@ -4976,57 +4985,71 @@ body.app-info-open {
   height: 1px;
   background: linear-gradient(
     90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0)
   );
 }
 
 /* Ações (botões ON/OFF) */
 .piscina-control-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.piscina-control-actions--stacked {
+  grid-template-columns: 1fr;
 }
 
 /* Ações (3 botões - Abre, Para, Fecha) */
 .piscina-control-actions-three {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* Botões ON/OFF */
 .piscina-control-btn {
-  padding: 16px 20px;
-  border-radius: 10px;
-  border: 2px solid #333;
-  background: rgba(20, 20, 20, 0.97);
-  backdrop-filter: blur(10px);
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: #fff;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   outline: none;
-  height: 64px;
+  min-height: 64px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
+}
+
+.piscina-control-btn span {
+  pointer-events: none;
 }
 
 .piscina-control-btn:hover {
-  background: rgba(40, 40, 40, 1);
-  border-color: #666;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .piscina-control-btn:active,
 .piscina-control-btn:focus {
-  background: rgba(40, 40, 40, 1);
-  border-color: #666;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
   outline: none;
+}
+
+.piscina-control-tile--glass .piscina-control-btn {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .piscina-control-btn--on {
@@ -5034,7 +5057,7 @@ body.app-info-open {
 }
 
 .piscina-control-btn--on:hover {
-  border-color: #666;
+  border-color: rgba(74, 222, 128, 0.4);
 }
 
 .piscina-control-btn--on.active {
@@ -5048,7 +5071,7 @@ body.app-info-open {
 }
 
 .piscina-control-btn--off:hover {
-  border-color: #666;
+  border-color: rgba(239, 68, 68, 0.35);
 }
 
 .piscina-control-btn--off.active {
@@ -5062,7 +5085,7 @@ body.app-info-open {
 }
 
 .piscina-control-btn--action:hover {
-  border-color: #666;
+  border-color: rgba(100, 150, 255, 0.4);
 }
 
 .piscina-control-btn--action.active {
