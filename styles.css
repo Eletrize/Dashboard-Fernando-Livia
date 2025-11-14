@@ -14,14 +14,14 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     grid-template-columns: 1fr !important;
 }
 
-/* AC Controls - Telas grandes: botões mais altos e ocupando o container */
+/* AC Controls - Telas grandes: botões com mesma altura, ocupando tela completa */
 @media (width >= 1000px) {
     .ac-controls-wrapper {
         display: flex !important;
         flex-direction: column !important;
-        justify-content: space-between !important;
+        justify-content: flex-start !important;
         height: 100% !important;
-        gap: 20px !important;
+        gap: 0 !important;
     }
     
     .ac-modes,
@@ -30,8 +30,15 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         flex: 1 !important;
         display: flex !important;
         flex-direction: column !important;
-        justify-content: center !important;
+        justify-content: flex-start !important;
         gap: 12px !important;
+        margin: 0 !important;
+        padding: 12px 0 !important;
+    }
+    
+    .ac-section-title {
+        flex-shrink: 0 !important;
+        margin: 0 0 12px 0 !important;
     }
     
     .ac-modes-grid,
@@ -39,8 +46,9 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     .ac-commands-grid {
         flex: 1 !important;
         display: grid !important;
-        align-content: center !important;
+        align-content: stretch !important;
         gap: 12px !important;
+        height: 100% !important;
     }
     
     .ac-modes-grid--single {
@@ -50,9 +58,9 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     .ac-mode-btn,
     .ac-aleta-btn,
     .ac-command-btn {
-        min-height: auto !important;
+        min-height: 0 !important;
         height: 100% !important;
-        flex: 1 !important;
+        flex: none !important;
     }
     
     .ac-mode-btn--selection {
