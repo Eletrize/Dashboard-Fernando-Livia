@@ -23,9 +23,10 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     }
     
     .ac-container {
-        max-height: calc(100vh - 103px - 90px - 20px) !important;
-        height: calc(100vh - 103px - 90px - 20px) !important;
+        max-height: calc(100vh - 103px - 90px - 20px - 48px) !important;
+        height: calc(100vh - 103px - 90px - 20px - 48px) !important;
         overflow: hidden !important;
+        padding: 20px !important;
     }
     
     /* Wrapper dos controles precisa ocupar 40% e ter altura total */
