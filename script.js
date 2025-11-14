@@ -1,10 +1,430 @@
-/* Build from script.source.js — execute npm run build:assets */
-(()=>{function Ye(){return typeof window=="undefined"?!1:!!window.__DASHBOARD_DEBUG__}function A(e,...o){if(Ye()){if(typeof e=="function"){try{const t=e();Array.isArray(t)?console.log(...t):console.log(t)}catch(t){console.error("Debug log failure:",t)}return}console.log(e,...o)}}typeof window!="undefined"&&(window.debugLog=A,window.isDebugEnabled=Ye);const ne=".room-control[data-device-id], .control-card[data-device-id]",ae=".room-master-btn[data-device-ids]",V=new Map,U=new Set,ee=new Map;let Ve=!1,le=null,N=null,J=null,he=!1;const Xe=["photo-varanda","photo-living","photo-piscina","photo-externo","photo-servico","photo-circulacao","photo-suitei","photo-suiteii","photo-suitemaster"],mo=[480,720,960,1440,1920,2560],fo=Xe.slice(0,3),go=["images/icons/icon-tv.svg","images/icons/icon-htv.svg","images/icons/icon-musica.svg","images/icons/icon-curtain.svg","images/icons/icon-firetv.svg","images/icons/icon-conforto.svg","images/icons/ar-condicionado.svg","images/icons/icon-piscina.svg","images/icons/icon-telao-led.svg","images/icons/icon-small-light-off.svg","images/icons/icon-small-light-on.svg","images/icons/icon-small-smartglass-off.svg","images/icons/icon-small-smartglass-on.svg","images/icons/icon-small-shader-off.svg","images/icons/icon-small-shader-on.svg","images/icons/icon-small-tv-off.svg","images/icons/icon-small-tv-on.svg","images/icons/icon-small-telamovel-off.svg","images/icons/icon-small-telamovel-on.svg","images/icons/icon-ac-power.svg","images/icons/icon-ac-fan.svg","images/icons/icon-ac-cool.svg","images/icons/icon-ac-heat.svg","images/icons/icon-ac-auto.svg","images/icons/icon-ac-aleta-moving.svg","images/icons/icon-ac-aleta-parada.svg","images/icons/icon-ac-aleta-alta.svg","images/icons/icon-ac-aleta-baixa.svg","images/icons/icon-rotatephone.svg","images/icons/icon-settings.svg","images/icons/icon-home.svg","images/icons/back-button.svg","images/icons/Eletrize.svg","images/icons/Fullscreen.svg","images/icons/icon-limpar.svg","images/icons/icon-mouse.svg","images/icons/Instagram.svg","images/icons/whatsapp.svg","images/icons/icon-volume.svg","images/icons/icon-mute.svg","images/icons/icon-next-track.svg","images/icons/icon-previous-track.svg","images/icons/icon-play.svg","images/icons/icon-pause.svg","images/icons/icon-stop.svg","images/icons/Encerrar-expediente.svg","images/icons/iniciar-expediente.svg","images/icons/icon-scenes.svg","images/icons/pageselector.svg"];const B=(()=>{const e={critical:new Set,background:new Set};function o(n,{priority:a="background"}={}){if(!n)return;e[a==="critical"?"critical":"background"].add(n)}function t(n,{weight:a=0,offset:s=0}={}){if(typeof window=="undefined")return Promise.resolve();const r=Array.from(e[n]||[]);return r.length?new Promise(i=>{let l=0;const d=r.length,h=p=>{if(l+=1,a>0){const y=s+Math.min(a,Math.round(l/d*a));E(y,`Pr\xE9-carregando m\xEDdia (${l}/${d})`)}l===d&&i()};r.forEach(p=>{const y=new Image;y.decoding="async",y.loading="eager",y.onload=y.onerror=()=>h(p),y.src=p})}):Promise.resolve()}return{add:o,startQueue:t}})();Xe.forEach(e=>{mo.forEach(o=>{const t=fo.includes(e)&&o<=720?"critical":"background";B.add(`images/optimized/${e}-${o}.webp`,{priority:t})}),B.add(`images/Images/${e}.jpg`,{priority:"background"})});B.add("images/pwa/app-icon-420.webp",{priority:"critical"});B.add("images/pwa/app-icon-192.png",{priority:"background"});B.add("images/pwa/app-icon-512-transparent.png",{priority:"background"});go.forEach(e=>B.add(e,{priority:"background"}));let Ke=!1,oe=null;typeof window!="undefined"&&(oe=B.startQueue("critical",{weight:30,offset:0}).catch(e=>{console.warn("Falha ao pr\xE9-carregar m\xEDdia cr\xEDtica",e)}).finally(()=>{Ke=!0,B.startQueue("background",{weight:15,offset:30}).catch(e=>console.warn("Falha ao pr\xE9-carregar m\xEDdia adicional",e))}),window.__assetPreloadPromise=oe,window.queueAssetForPreload=(e,o)=>B.add(e,{priority:o}));function Je(){var o;if(typeof window=="undefined")return!1;const e=typeof window.matchMedia=="function"?window.matchMedia("(display-mode: standalone)"):null;return!!(e&&e.matches||((o=window.navigator)==null?void 0:o.standalone)===!0)}async function Ne(){if(!(typeof navigator=="undefined"||!navigator.storage||typeof navigator.storage.persist!="function"))try{if(await navigator.storage.persisted())return;await navigator.storage.persist()}catch(e){console.warn("N\xE3o foi poss\xEDvel garantir armazenamento persistente:",e)}}const po=(()=>{let e=!1;function o(){return typeof document!="undefined"&&typeof document.documentElement.requestFullscreen=="function"}function t(){var a;e||!o()||(e=!0,document.documentElement.requestFullscreen({navigationUI:"hide"}).catch(s=>{console.warn("N\xE3o foi poss\xEDvel entrar em tela cheia automaticamente",s)}),(a=screen==null?void 0:screen.orientation)!=null&&a.lock&&screen.orientation.lock("landscape").catch(()=>{}))}function n(){if(!Je()||!o())return;const a=()=>{document.removeEventListener("click",a),document.removeEventListener("touchend",a),t()};document.addEventListener("click",a,{once:!0}),document.addEventListener("touchend",a,{once:!0})}return typeof window!="undefined"&&window.addEventListener("DOMContentLoaded",n),{enterFullscreen:t}})();typeof window!="undefined"&&(window.requestPersistentStorage=Ne,window.fullscreenManager=po,window.addEventListener("DOMContentLoaded",()=>{Je()&&Ne()}));const ho=["ambiente1-musica","ambiente2-musica","ambiente3-musica"];function Ae(e=window.location.hash){return ho.some(o=>e.includes(o))}function I(e){const o=document.querySelector(".page.active");return o?o.querySelector(e):null}function vo(){const e=navigator.userAgent.toLowerCase(),o=/ipad/.test(e),t=window.screen.width,n=window.screen.height;return o&&(t===1024&&n===768||t===768&&n===1024)?(document.documentElement.dataset.device="ipad-mini-6",console.log("\xC3\xB0\xC5\xB8\xC2\x8D\xC5\xBD iPad Mini 6 detectado - aplicando fixes espec\xC3\u0192\xC2\xADficos",`Screen: ${t}x${n}`,`Inner: ${window.innerWidth}x${window.innerHeight}`,`DPR: ${window.devicePixelRatio}`),!0):!1}function yo(){const e=navigator.userAgent.toLowerCase(),o=/iphone/.test(e),t=/android/.test(e),n=window.innerWidth<768,a=/ipad|galaxy tab|sm-t/.test(e);return(o||t&&n)&&!a}function wo(){const e=navigator.userAgent.toLowerCase(),o=/ipad|iphone|mac os x/.test(e)&&navigator.maxTouchPoints>1,t=/android/.test(e);(o||t)&&(document.documentElement.dataset.device="mobile",console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xB1 Dispositivo mobile detectado (${o?"Apple":"Android"})`))}function Eo(){return window.location.pathname.includes("ambiente1-tv")||window.location.hash.includes("ambiente1-tv")||window.location.pathname.includes("ambiente1-htv")||window.location.hash.includes("ambiente1-htv")}function Be(){let e=document.getElementById("orientation-overlay");if(!e&&(e=document.createElement("div"),e.id="orientation-overlay",e.innerHTML=`
+﻿// ========================================
+// DEBUG UTILITIES
+// ========================================
+
+function isDebugEnabled() {
+  if (typeof window === "undefined") return false;
+  return Boolean(window.__DASHBOARD_DEBUG__);
+}
+
+function debugLog(messageOrFactory, ...args) {
+  if (!isDebugEnabled()) return;
+
+  if (typeof messageOrFactory === "function") {
+    try {
+      const result = messageOrFactory();
+
+      if (Array.isArray(result)) {
+        console.log(...result);
+      } else {
+        console.log(result);
+      }
+    } catch (error) {
+      console.error("Debug log failure:", error);
+    }
+
+    return;
+  }
+
+  console.log(messageOrFactory, ...args);
+}
+
+if (typeof window !== "undefined") {
+  window.debugLog = debugLog;
+  window.isDebugEnabled = isDebugEnabled;
+}
+
+const CONTROL_SELECTOR =
+  ".room-control[data-device-id], .control-card[data-device-id]";
+const MASTER_BUTTON_SELECTOR = ".room-master-btn[data-device-ids]";
+const deviceControlCache = new Map();
+const masterButtonCache = new Set();
+const deviceStateMemory = new Map();
+let controlCachePrimed = false;
+let domObserverInstance = null;
+let fallbackSyncTimer = null;
+let pendingControlSyncHandle = null;
+let pendingControlSyncForce = false; // ========================================
+
+const ROOM_IMAGE_BASES = [
+  "photo-varanda",
+  "photo-living",
+  "photo-piscina",
+  "photo-externo",
+  "photo-servico",
+  "photo-circulacao",
+  "photo-suitei",
+  "photo-suiteii",
+  "photo-suitemaster",
+];
+
+const ROOM_IMAGE_WIDTHS = [480, 720, 960, 1440, 1920, 2560];
+const CRITICAL_IMAGE_BASES = ROOM_IMAGE_BASES.slice(0, 3);
+
+const ICON_ASSET_PATHS = [
+  "images/icons/icon-tv.svg",
+  "images/icons/icon-htv.svg",
+  "images/icons/icon-musica.svg",
+  "images/icons/icon-curtain.svg",
+  "images/icons/icon-firetv.svg",
+  "images/icons/icon-conforto.svg",
+  "images/icons/ar-condicionado.svg",
+  "images/icons/icon-piscina.svg",
+  "images/icons/icon-telao-led.svg",
+  "images/icons/icon-small-light-off.svg",
+  "images/icons/icon-small-light-on.svg",
+  "images/icons/icon-small-smartglass-off.svg",
+  "images/icons/icon-small-smartglass-on.svg",
+  "images/icons/icon-small-shader-off.svg",
+  "images/icons/icon-small-shader-on.svg",
+  "images/icons/icon-small-tv-off.svg",
+  "images/icons/icon-small-tv-on.svg",
+  "images/icons/icon-small-telamovel-off.svg",
+  "images/icons/icon-small-telamovel-on.svg",
+  "images/icons/icon-ac-power.svg",
+  "images/icons/icon-ac-fan.svg",
+  "images/icons/icon-ac-cool.svg",
+  "images/icons/icon-ac-heat.svg",
+  "images/icons/icon-ac-auto.svg",
+  "images/icons/icon-ac-aleta-moving.svg",
+  "images/icons/icon-ac-aleta-parada.svg",
+  "images/icons/icon-ac-aleta-alta.svg",
+  "images/icons/icon-ac-aleta-baixa.svg",
+  "images/icons/icon-rotatephone.svg",
+  "images/icons/icon-settings.svg",
+  "images/icons/icon-home.svg",
+  "images/icons/back-button.svg",
+  "images/icons/Eletrize.svg",
+  "images/icons/Fullscreen.svg",
+  "images/icons/icon-limpar.svg",
+  "images/icons/icon-mouse.svg",
+  "images/icons/Instagram.svg",
+  "images/icons/whatsapp.svg",
+  "images/icons/icon-volume.svg",
+  "images/icons/icon-mute.svg",
+  "images/icons/icon-next-track.svg",
+  "images/icons/icon-previous-track.svg",
+  "images/icons/icon-play.svg",
+  "images/icons/icon-pause.svg",
+  "images/icons/icon-stop.svg",
+  "images/icons/Encerrar-expediente.svg",
+  "images/icons/iniciar-expediente.svg",
+  "images/icons/icon-scenes.svg",
+  "images/icons/pageselector.svg",
+];
+
+function buildRoomAssetList() {
+  const assets = [];
+  ROOM_IMAGE_BASES.forEach((base) => {
+    ROOM_IMAGE_WIDTHS.forEach((width) =>
+      assets.push(`images/optimized/${base}-${width}.webp`)
+    );
+    assets.push(`images/Images/${base}.jpg`);
+  });
+  return assets;
+}
+
+const AssetPreloader = (() => {
+  const queues = {
+    critical: new Set(),
+    background: new Set(),
+  };
+
+  function add(url, { priority = "background" } = {}) {
+    if (!url) return;
+    const key = priority === "critical" ? "critical" : "background";
+    queues[key].add(url);
+  }
+
+  function startQueue(priority, { weight = 0, offset = 0 } = {}) {
+    if (typeof window === "undefined") {
+      return Promise.resolve();
+    }
+    const list = Array.from(queues[priority] || []);
+    if (!list.length) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      let completed = 0;
+      const total = list.length;
+
+      const update = (url) => {
+        completed += 1;
+        if (weight > 0) {
+          const percent =
+            offset + Math.min(weight, Math.round((completed / total) * weight));
+          updateProgress(
+            percent,
+            `Pré-carregando mídia (${completed}/${total})`
+          );
+        }
+
+        if (completed === total) {
+          resolve();
+        }
+      };
+
+      list.forEach((url) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.loading = "eager";
+        img.onload = img.onerror = () => update(url);
+        img.src = url;
+      });
+    });
+  }
+
+  return {
+    add,
+    startQueue,
+  };
+})();
+
+ROOM_IMAGE_BASES.forEach((base) => {
+  ROOM_IMAGE_WIDTHS.forEach((width) => {
+    const priority =
+      CRITICAL_IMAGE_BASES.includes(base) && width <= 720
+        ? "critical"
+        : "background";
+    AssetPreloader.add(`images/optimized/${base}-${width}.webp`, { priority });
+  });
+  AssetPreloader.add(`images/Images/${base}.jpg`, { priority: "background" });
+});
+
+AssetPreloader.add("images/pwa/app-icon-420.webp", { priority: "critical" });
+AssetPreloader.add("images/pwa/app-icon-192.png", { priority: "background" });
+AssetPreloader.add("images/pwa/app-icon-512-transparent.png", {
+  priority: "background",
+});
+ICON_ASSET_PATHS.forEach((asset) =>
+  AssetPreloader.add(asset, { priority: "background" })
+);
+
+let assetPreloadComplete = false;
+let assetPreloadPromise = null;
+
+if (typeof window !== "undefined") {
+  assetPreloadPromise = AssetPreloader.startQueue("critical", {
+    weight: 30,
+    offset: 0,
+  })
+    .catch((error) => {
+      console.warn("Falha ao pré-carregar mídia crítica", error);
+    })
+    .finally(() => {
+      assetPreloadComplete = true;
+      AssetPreloader.startQueue("background", {
+        weight: 15,
+        offset: 30,
+      }).catch((error) =>
+        console.warn("Falha ao pré-carregar mídia adicional", error)
+      );
+    });
+
+  window.__assetPreloadPromise = assetPreloadPromise;
+window.queueAssetForPreload = (url, priority) =>
+  AssetPreloader.add(url, { priority });
+}
+
+function isStandaloneMode() {
+  if (typeof window === "undefined") return false;
+  const mql =
+    typeof window.matchMedia === "function"
+      ? window.matchMedia("(display-mode: standalone)")
+      : null;
+  return Boolean(
+    (mql && mql.matches) || window.navigator?.standalone === true
+  );
+}
+
+async function requestPersistentStorage() {
+  if (
+    typeof navigator === "undefined" ||
+    !navigator.storage ||
+    typeof navigator.storage.persist !== "function"
+  ) {
+    return;
+  }
+  try {
+    const alreadyPersisted = await navigator.storage.persisted();
+    if (alreadyPersisted) {
+      return;
+    }
+    await navigator.storage.persist();
+  } catch (error) {
+    console.warn("Não foi possível garantir armazenamento persistente:", error);
+  }
+}
+
+const fullscreenManager = (() => {
+  let attempted = false;
+
+  function canRequestFullscreen() {
+    return (
+      typeof document !== "undefined" &&
+      typeof document.documentElement.requestFullscreen === "function"
+    );
+  }
+
+  function enterFullscreen() {
+    if (attempted || !canRequestFullscreen()) return;
+    attempted = true;
+    document.documentElement
+      .requestFullscreen({ navigationUI: "hide" })
+      .catch((error) => {
+        console.warn("Não foi possível entrar em tela cheia automaticamente", error);
+      });
+
+    if (screen?.orientation?.lock) {
+      screen.orientation.lock("landscape").catch(() => {});
+    }
+  }
+
+  function setupAutoFullscreen() {
+    if (!isStandaloneMode() || !canRequestFullscreen()) return;
+
+    const handler = () => {
+      document.removeEventListener("click", handler);
+      document.removeEventListener("touchend", handler);
+      enterFullscreen();
+    };
+
+    document.addEventListener("click", handler, { once: true });
+    document.addEventListener("touchend", handler, { once: true });
+  }
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("DOMContentLoaded", setupAutoFullscreen);
+  }
+
+  return { enterFullscreen };
+})();
+
+if (typeof window !== "undefined") {
+  window.requestPersistentStorage = requestPersistentStorage;
+  window.fullscreenManager = fullscreenManager;
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (isStandaloneMode()) {
+      requestPersistentStorage();
+    }
+  });
+}
+
+// DETECÃƒâ€¡ÃƒÆ’O DE DISPOSITIVOS
+// ========================================
+
+const MUSIC_PAGE_ROUTES = [
+  "ambiente1-musica",
+  "ambiente2-musica",
+  "ambiente3-musica",
+];
+
+function isMusicPageActive(hash = window.location.hash) {
+  return MUSIC_PAGE_ROUTES.some((route) => hash.includes(route));
+}
+
+function queryActiveMusic(selector) {
+  const activePage = document.querySelector(".page.active");
+  if (!activePage) return null;
+  return activePage.querySelector(selector);
+}
+
+// Detectar iPad Mini 6 especificamente
+function detectIPadMini6() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isIPad = /ipad/.test(userAgent);
+
+  // Verificar tamanho: iPad Mini 6 tem 2048x1536 (portrait)
+  const screenWidth = window.screen.width;
+  const screenHeight = window.screen.height;
+
+  // iPad Mini 6: ~1024x768 em modo reportado pelo navegador (scaled)
+  const isIPadMini6 =
+    isIPad &&
+    ((screenWidth === 1024 && screenHeight === 768) ||
+      (screenWidth === 768 && screenHeight === 1024));
+
+  if (isIPadMini6) {
+    document.documentElement.dataset.device = "ipad-mini-6";
+    console.log(
+      "Ã°Å¸ÂÅ½ iPad Mini 6 detectado - aplicando fixes especÃƒÂ­ficos",
+      `Screen: ${screenWidth}x${screenHeight}`,
+      `Inner: ${window.innerWidth}x${window.innerHeight}`,
+      `DPR: ${window.devicePixelRatio}`
+    );
+    return true;
+  }
+
+  return false;
+}
+
+// Detectar se ÃƒÂ© um celular (nÃƒÂ£o tablet)
+function isMobilePhone() {
+  const userAgent = navigator.userAgent.toLowerCase();
+
+  // Considerar celular se:
+  // 1. iPhone ou Android com tela pequena
+  // 2. Largura mÃƒÂ¡xima < 768px (breakpoint de tablet)
+  const isIPhone = /iphone/.test(userAgent);
+  const isAndroid = /android/.test(userAgent);
+  const isSmallScreen = window.innerWidth < 768;
+
+  // iPad e tablets maiores nÃƒÂ£o sÃƒÂ£o celulares
+  const isTablet = /ipad|galaxy tab|sm-t/.test(userAgent);
+
+  return (isIPhone || (isAndroid && isSmallScreen)) && !isTablet;
+}
+
+// Detectar dispositivo geral (Apple, Android ou Desktop)
+function detectDevice() {
+  const userAgent = navigator.userAgent.toLowerCase();
+
+  const isApple =
+    /ipad|iphone|mac os x/.test(userAgent) && navigator.maxTouchPoints > 1;
+  const isAndroid = /android/.test(userAgent);
+
+  if (isApple || isAndroid) {
+    document.documentElement.dataset.device = "mobile";
+    console.log(
+      `Ã°Å¸â€œÂ± Dispositivo mobile detectado (${
+        isApple ? "Apple" : "Android"
+      })`
+    );
+  }
+}
+
+// FunÃƒÂ§ÃƒÂ£o para detectar se estÃƒÂ¡ na pÃƒÂ¡gina de controle remoto da TV
+function isOnTVControlPage() {
+  return (
+    window.location.pathname.includes("ambiente1-tv") ||
+    window.location.hash.includes("ambiente1-tv") ||
+    window.location.pathname.includes("ambiente1-htv") ||
+    window.location.hash.includes("ambiente1-htv")
+  );
+}
+
+// FunÃƒÂ§ÃƒÂ£o para criar/mostrar overlay de orientaÃƒÂ§ÃƒÂ£o
+function showOrientationOverlay() {
+  let overlay = document.getElementById("orientation-overlay");
+
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "orientation-overlay";
+    overlay.innerHTML = `
       <div class="orientation-overlay-content">
         <img src="images/icons/icon-rotatephone.svg" alt="Rotacione o dispositivo" class="orientation-icon">
         <p class="orientation-message">Rotacione o dispositivo</p>
       </div>
-    `,document.body.appendChild(e),!document.getElementById("orientation-overlay-styles"))){const o=document.createElement("style");o.id="orientation-overlay-styles",o.innerHTML=`
+    `;
+    document.body.appendChild(overlay);
+
+    // Adicionar estilos dinamicamente se nÃƒÂ£o existirem
+    if (!document.getElementById("orientation-overlay-styles")) {
+      const style = document.createElement("style");
+      style.id = "orientation-overlay-styles";
+      style.innerHTML = `
         #orientation-overlay {
           display: none;
           position: fixed;
@@ -60,7 +480,2330 @@
             font-size: 18px;
           }
         }
-      `,document.head.appendChild(o)}return e}function Pe(){const e=yo(),o=window.innerWidth>window.innerHeight,t=Eo();e&&o&&t?(Be().classList.add("active"),document.documentElement.dataset.layoutState="mobile-blocked",console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xB5 Celular em landscape no controle remoto - bloqueado")):(Be().classList.remove("active"),document.documentElement.dataset.layoutState="default")}vo();wo();Pe();window.addEventListener("orientationchange",Pe);window.addEventListener("resize",Pe);const P=["231","232","233","234","259","260","261","262","263","256","257","258","15"];const Z={HEALTH_CHECK_TIMEOUT:5e3,FETCH_TIMEOUT_PER_ATTEMPT:15e3,MAX_RETRY_ATTEMPTS:3,RETRY_DELAY_BASE:1e3,RETRY_DELAY_MAX:5e3};function bo(e){const o="images/icons/icon-small-light-on.svg",t="images/icons/icon-small-light-off.svg",n=e.querySelector(".room-control-icon, .control-icon"),s=(e.dataset.state||"off")==="off"?"on":"off",r=e.dataset.deviceId;r&&(_.set(r,Date.now()),e.dataset.state=s,n&&(n.src=s==="on"?o:t),G(r,s),console.log(`Enviando comando ${s} para dispositivo ${r}`),b(r,s==="on"?"on":"off").then(()=>{console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando ${s} enviado com sucesso para dispositivo ${r}`)}).catch(i=>{console.error(`\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando para dispositivo ${r}:`,i);const l=s==="on"?"off":"on";e.dataset.state=l,n&&(n.src=l==="on"?o:t),G(r,l)}))}function So(e,o){const t=e.dataset.deviceId;if(!o||!t)return;const n=e.closest(".piscina-control-tile");if(!n)return;const a=n.querySelector(".piscina-control-btn--on"),s=n.querySelector(".piscina-control-btn--off");a&&a.classList.remove("active"),s&&s.classList.remove("active"),o==="on"&&a?a.classList.add("active"):o==="off"&&s&&s.classList.add("active"),_.set(t,Date.now()),console.log(`Enviando comando ${o} para dispositivo piscina ${t}`),b(t,o).then(()=>{console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando ${o} enviado com sucesso para dispositivo ${t}`)}).catch(r=>{console.error(`\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando para dispositivo ${t}:`,r),o==="on"&&a?a.classList.remove("active"):o==="off"&&s&&s.classList.remove("active")})}let Io="off";function we(e){Io=e;const o=document.querySelector(".tv-btn--power-on"),t=document.querySelector(".tv-btn--power-off"),n=document.querySelectorAll(".tv-volume-canais-wrapper, .tv-commands-grid, .tv-directional-pad, .tv-numpad, .tv-logo-section"),a=document.querySelectorAll(".tv-section-title");e==="on"?(o==null||o.classList.add("active"),t==null||t.classList.remove("active"),n.forEach(s=>{s.style.opacity="1",s.style.pointerEvents="auto"}),a.forEach(s=>{s.style.opacity="1"}),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xBA TV LIGADA - Controles vis\xC3\u0192\xC2\xADveis")):(t==null||t.classList.add("active"),o==null||o.classList.remove("active"),n.forEach(s=>{s.style.opacity="0.15",s.style.pointerEvents="none"}),a.forEach(s=>{s.style.opacity="0.2"}),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xBA TV DESLIGADA - Controles desabilitados"))}function Co(e,o){const t=e.dataset.deviceId;!o||!t||(o==="on"?we("on"):o==="off"&&we("off"),e.style.transform="scale(0.92)",e.style.background="rgba(255, 255, 255, 0.15)",e.style.borderColor="rgba(255, 255, 255, 0.3)",setTimeout(()=>{e.style.transform="",e.style.background="",e.style.borderColor=""},200),_.set(t,Date.now()),console.log(`\u{1F4FA} Enviando comando ${o} para dispositivo ${t}`),b(t,o).then(()=>{console.log(`\u2705 Comando TV ${o} enviado com sucesso para dispositivo ${t}`)}).catch(n=>{console.error(`\u274C Erro ao enviar comando TV para dispositivo ${t}:`,n)}))}function To(){console.log("\u{1F3AC} Macro HTV: Ligando TV e Receiver, depois setando input SAT/CBL..."),b("111","on").then(()=>(console.log("\u2705 TV ligada"),b("15","on"))).then(()=>(console.log("\u2705 Receiver ligado"),b("15","setInputSource","SAT/CBL"))).then(()=>{console.log("\u2705 Input SAT/CBL selecionado no Receiver")}).catch(t=>{console.error("\u274C Erro na macro HTV:",t)})}function Ao(){console.log("\u{1F3AC} Macro HTV: Desligando TV e Receiver..."),Promise.all([b("111","off"),b("15","off")]).then(()=>{console.log("\u2705 TV e Receiver desligados")}).catch(t=>{console.error("\u274C Erro ao desligar TV/Receiver:",t)})}function Po(){console.log("\u{1F3AC} Macro TV: Ligando TV e Receiver, depois setando input TV..."),b("111","on").then(()=>(console.log("\u2705 TV ligada"),b("15","on"))).then(()=>(console.log("\u2705 Receiver ligado"),b("15","setInputSource","TV"))).then(()=>{console.log("\u2705 Input TV selecionado no Receiver")}).catch(t=>{console.error("\u274C Erro na macro TV:",t)})}function Do(){console.log("\u{1F3AC} Macro TV: Desligando TV e Receiver..."),Promise.all([b("111","off"),b("15","off")]).then(()=>{console.log("\u2705 TV e Receiver desligados")}).catch(t=>{console.error("\u274C Erro ao desligar TV/Receiver:",t)})}function Lo(){console.log("\u{1F3AC} Macro Fire TV: Selecionando HDMI 2 e setando Receiver para BD..."),b("111","hdmi2").then(()=>(console.log("\u2705 HDMI 2 selecionado na TV"),b("15","setInputSource","BD"))).then(()=>{console.log("\u2705 Input BD selecionado no Receiver")}).catch(t=>{console.error("\u274C Erro na macro Fire TV:",t)})}function qe(){const e=document.getElementById("tv-volume-slider"),o=document.getElementById("tv-volume-display"),t="15";if(!e||!o){console.log("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Slider ou display n\xC3\u0192\xC2\xA3o encontrado");return}console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC5\xA1\xC3\xAF\xC2\xB8\xC2\x8F Inicializando slider de volume do Denon AVR"),e.dataset.deviceId=t;const n=e.cloneNode(!0);e.parentNode.replaceChild(n,e);const a=document.getElementById("tv-volume-slider");Ze(),a.addEventListener("input",s=>{const r=s.target.value,i=s.target.max||100,l=r/i*100;o.textContent=r,a.style.setProperty("--volume-progress",l+"%"),console.log(`\xC3\xB0\xC5\xB8\xC5\xBD\xC5\xA1\xC3\xAF\xC2\xB8\xC2\x8F Volume display atualizado: ${r} (${l.toFixed(1)}%)`)}),a.addEventListener("change",s=>{const r=s.target.value;console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC5\xA0 Volume alterado para: ${r} - enviando para Denon AVR`),b(t,"setVolume",r).then(()=>{console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Volume do Denon definido para ${r}`)}).catch(i=>{console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao definir volume do Denon:",i)})}),console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Slider de volume do Denon AVR inicializado com sucesso")}async function Ze(){var a,s,r,i,l,d,h;const o=document.getElementById("tv-volume-slider"),t=document.getElementById("tv-volume-display"),n=typeof I=="function"?I("#music-volume-slider"):document.querySelector("#music-volume-slider");try{const p=M?`${q}?devices=15`:null;if(!p){console.log("\xC3\xA2\xC2\x9D\xC5\u2019 N\xC3\u0192\xC2\xA3o \xC3\u0192\xC2\xA9 poss\xC3\u0192\xC2\xADvel buscar volume em desenvolvimento");return}const y=await fetch(p);if(!y.ok)throw new Error(`Polling failed: ${y.status}`);const w=await y.json();let C=null,u=null;if(w.devices&&w.devices[15]){const c=w.devices[15];C=(s=(a=c.volume)!=null?a:c.level)!=null?s:c.attributes&&c.attributes.volume,u=Ee(c)}else if(Array.isArray(w.data)){const c=w.data.find(m=>String(m.id)==="15");if(c){if(c.attributes)if(Array.isArray(c.attributes)){const m=c.attributes.find(f=>(f==null?void 0:f.name)==="volume");C=(l=(i=(r=m==null?void 0:m.currentValue)!=null?r:m==null?void 0:m.value)!=null?i:c.volume)!=null?l:C}else typeof c.attributes=="object"&&(C=(h=(d=c.attributes.volume)!=null?d:c.volume)!=null?h:C);else c.volume!==void 0&&(C=c.volume);u=Ee(c)}}if(C!=null){const c=parseInt(C,10);if(o){const m=parseInt(o.max||"100",10),f=c/m*100;o.value=c,o.style.setProperty("--volume-progress",f+"%")}if(t&&(t.textContent=c),n){const m=parseInt(n.max||"100",10),f=c/m*100;n.value=c,n.style.setProperty("--volume-percent",f+"%")}console.log("[Denon] Volume atualizado:",c)}u&&De(u)}catch(p){console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao buscar volume do Denon:",p)}}function Mo(e){const o=document.getElementById("tv-volume-slider"),t=document.getElementById("tv-volume-display"),n=typeof I=="function"?I("#music-volume-slider"):document.querySelector("#music-volume-slider");if(A(()=>["updateDenonVolumeUI chamada",{volume:e}]),!o&&!n){A(()=>"updateDenonVolumeUI: nenhum controle encontrado na p\xE1gina");return}const a=parseInt(e,10);A(()=>["updateDenonVolumeUI: estado atual",{recebido:e,convertido:a,tvSlider:o?o.value:"n/a",musicSlider:n?n.value:"n/a"}]);const s=_.get("15");if(s&&Date.now()-s<ie){A(()=>"updateDenonVolumeUI: comando manual recente, ignorando polling");return}let r=!1;if(o){const i=parseInt(o.value,10),l=o.max||100,d=a/l*100;i!==a&&(o.value=a,o.style.setProperty("--volume-progress",d+"%"),r=!0),t&&(t.textContent=a)}if(n){const i=parseInt(n.value,10),l=n.max||100,d=a/l*100;i!==a&&(n.value=a,n.style.setProperty("--volume-percent",d+"%"),typeof updateVolumeBar=="function"&&updateVolumeBar(),r=!0)}r&&A(()=>["updateDenonVolumeUI: volume sincronizado",{volumeValue:a}])}function te(e){if(e==null)return null;const o=String(e).trim().toLowerCase();return["on","1","true","online"].includes(o)?"on":["off","0","false","offline","standby"].includes(o)?"off":null}function Ee(e){var n;if(!e||typeof e!="object")return null;const o=[e.switch,e.state,e.power,e.status];for(const a of o){const s=te(a);if(s)return s}const t=e.attributes;if(Array.isArray(t))for(const a of t){if(!a)continue;const s=String(a.name||a.attribute||"").toLowerCase();if(s&&["switch","power","status","state"].includes(s)){const r=te((n=a.currentValue)!=null?n:a.value);if(r)return r}}else if(t&&typeof t=="object"){const a=["switch","power","status","state"];for(const s of a)if(s in t){const r=te(t[s]);if(r)return r}}return null}function De(e){const o=te(e);if(!o)return;if(typeof _!="undefined"){const n=_.get("15");if(n&&Date.now()-n<ie){console.log("[Denon] Ignorando sincronizacao de power por comando recente");return}}const t=o==="on";window.musicPlayerUI=window.musicPlayerUI||{},window.musicPlayerUI.currentPowerState=o,!(window.musicPlayerUI&&typeof window.musicPlayerUI.isPowerOn=="function"&&window.musicPlayerUI.isPowerOn()===t)&&window.musicPlayerUI&&typeof window.musicPlayerUI.setPower=="function"&&window.musicPlayerUI.setPower(t)}document.addEventListener("DOMContentLoaded",()=>{we("off"),qe(),window.addEventListener("hashchange",()=>{setTimeout(()=>{qe()},100)}),window.addEventListener("hashchange",()=>{Ae()?setTimeout(()=>{lo(),ke(),co()},300):Te()})});function Qe(e,o){const t="images/icons/icon-small-light-on.svg",n="images/icons/icon-small-light-off.svg",a=o==="on"?"on":"off";e.dataset.state=a;const s=e.querySelector(".room-control-icon, .control-icon");if(s){const r=a==="on"?t:n;console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 setRoomControlUI: Atualizando imagem ${s.src} \xC3\xA2\xE2\u20AC\xA0\xE2\u20AC\u2122 ${r} (estado: ${o})`),s.src=r}else console.warn(`\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F setRoomControlUI: Imagem n\xC3\u0192\xC2\xA3o encontrada para elemento com classes: ${e.className}`),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\x8D Elementos filhos:",Array.from(e.children).map(r=>r.className))}function Le(e){return`deviceState:${e}`}function k(e){if(ee.has(e))return ee.get(e);try{const o=Le(e),t=localStorage.getItem(o);return t!=null&&ee.set(e,t),t}catch(o){return A(()=>["getStoredState fallback",e,o]),null}}function G(e,o){ee.set(e,o);try{const t=Le(e);localStorage.setItem(t,o)}catch(t){console.warn(`Erro ao salvar estado ${e}:`,t)}}function be(e){if(!e||!e.dataset)return!1;const o=e.dataset.deviceId;if(!o)return!1;let t=V.get(o);return t||(t=new Set,V.set(o,t)),t.has(e)?!1:(t.add(e),!0)}function Ue(e){if(!e||!e.dataset)return!1;const o=e.dataset.deviceId;if(!o)return!1;const t=V.get(o);if(!t)return!1;const n=t.delete(e);return t.size===0&&V.delete(o),n}function Se(e){return!e||U.has(e)?!1:(U.add(e),!0)}function Fe(e){return e?U.delete(e):!1}function _o(e){if(!e||e.nodeType!==Node.ELEMENT_NODE)return!1;let o=!1;return e.matches&&e.matches(ne)&&(o=be(e)||o),e.matches&&e.matches(ae)&&(o=Se(e)||o),typeof e.querySelectorAll=="function"&&(e.querySelectorAll(ne).forEach(function(t){o=be(t)||o}),e.querySelectorAll(ae).forEach(function(t){o=Se(t)||o})),o}function Oo(e){if(!e||e.nodeType!==Node.ELEMENT_NODE)return!1;let o=!1;return e.matches&&e.matches(ne)&&(o=Ue(e)||o),e.matches&&e.matches(ae)&&(o=Fe(e)||o),typeof e.querySelectorAll=="function"&&(e.querySelectorAll(ne).forEach(function(t){o=Ue(t)||o}),e.querySelectorAll(ae).forEach(function(t){o=Fe(t)||o})),o}function eo(e){const o=e||{},t=o.root&&typeof o.root.querySelectorAll=="function"?o.root:document,n=!!o.force;Ve&&!n||(t.querySelectorAll(ne).forEach(function(a){be(a)}),t.querySelectorAll(ae).forEach(function(a){Se(a)}),Ve=!0)}function ge(){V.forEach(function(e,o){e.forEach(function(t){t.isConnected||e.delete(t)}),e.size===0&&V.delete(o)}),U.forEach(function(e){e.isConnected||U.delete(e)})}function Ie(e){if(e&&(he=!0),J===null){var o=function(){J=null;var t=he;he=!1,re(t)};if(typeof window!="undefined"){if(typeof window.requestIdleCallback=="function"){J=window.requestIdleCallback(o,{timeout:120});return}if(typeof window.requestAnimationFrame=="function"){J=window.requestAnimationFrame(function(){o()});return}}J=setTimeout(o,32)}}function $o(){A(()=>["initRoomPage: start"]);const e=document.getElementById("spa-root")||document;eo({root:e,force:!0}),ge(),re(!0);try{(window.location.hash||"").replace("#","")==="ambiente5"&&document.querySelectorAll(".room-control-label").forEach(function(n){(n.textContent||"").trim().toLowerCase().startsWith("ilumin")&&(n.textContent="Bar")})}catch(t){A(()=>["initRoomPage rename fallback",t])}const o=function(){se(!0)};typeof window.requestIdleCallback=="function"?window.requestIdleCallback(o,{timeout:200}):setTimeout(o,50)}window.normalizeAccents=function(o){try{const t=new Map([["Escrit\xC3\xAF\xC2\xBF\xC2\xBD\xC3\xAF\xC2\xBF\xC2\xBDrio","Escrit\xC3\u0192\xC2\xB3rio"],["Programa\xC3\xAF\xC2\xBF\xC2\xBD\xC3\xAF\xC2\xBF\xC2\xBD\xC3\u2021\xC5\u201Co","Programa\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o"],["Recep\xC3\xAF\xC2\xBF\xC2\xBD\xC3\xAF\xC2\xBF\xC2\xBD\xC3\u2021\xC5\u201Co","Recep\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o"],["Refeit\xC3\xAF\xC2\xBF\xC2\xBD\xC3\xAF\xC2\xBF\xC2\xBDrio","Refeit\xC3\u0192\xC2\xB3rio"],["Funcion\xC3\u2021\xC2\xADrios","Funcion\xC3\u0192\xC2\xA1rios"],["Ilumina\xC3\xAF\xC2\xBF\xC2\xBD\xC3\xAF\xC2\xBF\xC2\xBDo","Ilumina\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o"],["Ilumina\xC3\xAF\xC2\xBF\xC2\xBD\xC3\xAF\xC2\xBF\xC2\xBD\xC3\u2021\xC5\u201Co","Ilumina\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o"],["Pain\xC3\u2021\xC2\xB8is","Pain\xC3\u0192\xC2\xA9is"],["Arm\xC3\u2021\xC2\xADrio","Arm\xC3\u0192\xC2\xA1rio"],["Ambient\xC3\u2021\xC5\u201Co","Ambiente"]]);(o||document).querySelectorAll(".page-title, .room-control-label, .room-card span").forEach(s=>{const r=s.textContent||"";let i=r;t.forEach((l,d)=>{i.includes(d)&&(i=i.replaceAll(d,l))}),i!==r&&(s.textContent=i)})}catch{}};async function Ro(){if(!window.confirm("Deseja realmente limpar todo o cache do aplicativo? Isso ira recarregar a pagina.")){console.log("Limpeza manual de cache cancelada pelo usuario.");return}console.log("Iniciando limpeza manual de cache."),typeof ze=="function"&&void 0;const o=["hubitat_host","hubitat_token"],t={};try{o.forEach(n=>{const a=localStorage.getItem(n);a!==null&&(t[n]=a)}),localStorage.clear(),Object.keys(t).forEach(n=>{localStorage.setItem(n,t[n])})}catch(n){console.warn("Erro ao limpar localStorage:",n)}try{sessionStorage.clear()}catch(n){console.warn("Erro ao limpar sessionStorage:",n)}if("caches"in window)try{const n=await caches.keys();await Promise.all(n.map(a=>caches.delete(a)))}catch(n){console.warn("Erro ao limpar caches do navegador:",n)}if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)try{const n=await navigator.serviceWorker.getRegistrations();await Promise.all(n.map(a=>a.unregister()))}catch(n){console.warn("Erro ao remover service workers:",n)}try{const n=Date.now(),a=n.toString()+"_"+Math.random().toString(36).substring(2,10);localStorage.setItem("last_cache_clear",n.toString()),localStorage.setItem("app_cache_version",a)}catch(n){console.warn("Erro ao atualizar metadados de cache:",n)}typeof ze=="function"&&void 0,setTimeout(()=>{window.location.reload()},400)}window.brutalCacheClear=Ro;const ko=!["localhost","127.0.0.1","::1"].includes(location.hostname),M=!0;console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\x8D DEBUG PRODU\xC3\u0192\xE2\u20AC\xA1\xC3\u0192\xC6\u2019O (FOR\xC3\u0192\xE2\u20AC\xA1ADO):",{hostname:location.hostname,isProductionOriginal:ko,isProduction:M,isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)});const j=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),oo=/iPad|iPhone|iPod/.test(navigator.userAgent),Me=!0,ve="1.0.0";(function(){if(0)try{var e,o,t;if(e&&e!==ve){var n,a;for(var s;s<localStorage.length;s++)var r}}catch(i){}})();function Ce(){if(Me&&typeof console!="undefined"&&console.log)try{console.log.apply(console,arguments)}catch{}}function ze(e,o){}Me||(window.console=window.console||{},window.console.log=function(){},window.console.error=function(){},window.console.warn=function(){});Me&&(Ce("=== DASHBOARD ELETRIZE DEBUG ==="),Ce("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\x8D isProduction:",M,"isMobile:",j));Ce("=== AMBIENTE DETECTADO ===",{isProduction:M,isMobile:j,isIOS:oo,userAgent:navigator.userAgent.substring(0,60)+"..."});const to="/hubitat-proxy",q="/polling";window.musicPlayerUI=window.musicPlayerUI||{};const xo=!0,Vo="https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/15",No="1d9b367b-e4cd-4042-b726-718b759a82ef",Bo=`${Vo}/devices`,qo=new Set(["109","115","116"]);function no(e){return xo&&e!==void 0&&qo.has(String(e))}const Uo=/[\u00C3\u00C2\u00E2\uFFFD]/,Fo=[["\xE2\x80\x99","\xC3\xA2\xE2\u201A\xAC\xE2\u201E\xA2"],["\xE2\x80\x98","\xC3\xA2\xE2\u201A\xAC\xCB\u0153"],["\xE2\x80\x9C","\xC3\xA2\xE2\u201A\xAC\xC5\u201C"],["\xE2\x80\x9D","\xC3\xA2\xE2\u201A\xAC\xC2\x9D"],["\xE2\x80\x93","\xC3\xA2\xE2\u201A\xAC\xE2\u20AC\u0153"],["\xE2\x80\x94","\xC3\xA2\xE2\u201A\xAC\xE2\u20AC\x9D"],["\xE2\x80\xA6","\xC3\xA2\xE2\u201A\xAC\xC2\xA6"],["\xE2\x80\xA2","\xC3\xA2\xE2\u201A\xAC\xC2\xA2"],["\xC2\xBA","\xC3\u201A\xC2\xBA"],["\xC2\xAA","\xC3\u201A\xC2\xAA"],["\xC2\xB0","\xC3\u201A\xC2\xB0"],["\xC2\xA9","\xC3\u201A\xC2\xA9"],["\xC2\xAE","\xC3\u201A\xC2\xAE"]],He=typeof TextDecoder!="undefined"?new TextDecoder("utf-8",{fatal:!1}):null;function zo(e){return Uo.test(e)}function Ho(e){if(!He)return null;const o=new Uint8Array(e.length);for(let t=0;t<e.length;t+=1){const n=e.charCodeAt(t);if(n>255)return null;o[t]=n}try{return He.decode(o)}catch{return null}}function X(e){if(e==null)return e;let o=String(e);if(!o.trim())return o.trim();const t=o;if(o=o.trim(),zo(o)){const n=Ho(o);n&&n.trim()&&(o=n.trim())}return o=o.replace(/\u00C2\u00A0/g," ").replace(/\u00C2(?=[^\w\s])/g,"").replace(/\u00C2\s/g," ").replace(/\uFFFD/g,"").replace(/\s{2,}/g," ").replace(/\s+([!?.,;:])/g,"$1").replace(/([(\[{])\s+/g,"$1").replace(/\s+([\)\]}])/g,"$1"),Fo.forEach(([n,a])=>{o.includes(n)&&(o=o.split(n).join(a))}),o||t.trim()}function je(e){if(e==null)return null;const o=String(e).toLowerCase();return o==="playing"||o==="play"||o==="buffering"||o==="resume"||o==="run"||o==="start"||o==="on"?!0:o==="paused"||o==="pause"||o==="stopped"||o==="stop"||o==="idle"||o==="standby"||o==="off"?!1:null}typeof window.musicPlayerUI.currentPlaying!="boolean"&&(window.musicPlayerUI.currentPlaying=!1);function z(e){const o=document.createElement("div");o.className="error-modal",o.style.cssText=`
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  return overlay;
+}
+
+// FunÃƒÂ§ÃƒÂ£o para aplicar estilos baseado em orientaÃƒÂ§ÃƒÂ£o e localizaÃƒÂ§ÃƒÂ£o
+function updateDeviceStyles() {
+  const isMobile = isMobilePhone();
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const onTVPage = isOnTVControlPage();
+
+  // Regra prioritÃƒÂ¡ria: Celulares em landscape no controle remoto sÃƒÂ£o bloqueados
+  if (isMobile && isLandscape && onTVPage) {
+    const overlay = showOrientationOverlay();
+    overlay.classList.add("active");
+    document.documentElement.dataset.layoutState = "mobile-blocked";
+    console.log(
+      "Ã°Å¸â€œÂµ Celular em landscape no controle remoto - bloqueado"
+    );
+  } else {
+    const overlay = showOrientationOverlay();
+    overlay.classList.remove("active");
+    document.documentElement.dataset.layoutState = "default";
+  }
+}
+
+// Executar detecÃƒÂ§ÃƒÂ£o ao carregar
+detectIPadMini6();
+detectDevice();
+updateDeviceStyles();
+
+// Monitorar mudanÃƒÂ§as de orientaÃƒÂ§ÃƒÂ£o
+window.addEventListener("orientationchange", updateDeviceStyles);
+window.addEventListener("resize", updateDeviceStyles);
+
+// ========================================
+// CONFIGURAÃƒâ€¡Ãƒâ€¢ES GERAIS
+// ========================================
+
+// IDs de todos os dispositivos de iluminaÃƒÂ§ÃƒÂ£o (atualizados com devices.json)
+const ALL_LIGHT_IDS = [
+  "231", // Ambiente 1 - Luz 1 (Escritorio-Pendente)
+  "232", // Ambiente 1 - Luz 2 (Escritorio-Trilho)
+  "233", // Ambiente 2 - Luz 1 (Escritorio-Lustre)
+  "234", // Ambiente 2 - Luz 2 (Escritorio-Balizador)
+  "259", // Ambiente 3 - Luz 1 (Cinema-Iluminacao)
+  "260", // Ambiente 3 - Luz 2 (Cinema-Balizadores)
+  "261", // Ambiente 4 - Luz 1 (Recepcao-Lustre)
+  "262", // Ambiente 4 - Luz 2 (Recepcao-Lavabo)
+  "263", // Ambiente 5 - Luz 1 (Recepcao-JardimExterno)
+  "256", // Ambiente 5 - Luz 2 (Funcionarios-LuzVermelha)
+  "257", // Ambiente 6 - Luz 1 (Funcionarios-Banheiro)
+  "258", // Ambiente 6 - Luz 2 (Funcionarios-Paineis)
+  "15", // Denon AVR - Receiver (para atualizaÃƒÂ§ÃƒÂ£o de volume)
+];
+
+// ID do dispositivo de Ar Condicionado (MolSmart - GW3 - AC)
+const AC_DEVICE_ID = "110"; // Ambiente 1 - Ar Condicionado
+
+// ConfiguraÃƒÂ§ÃƒÂµes de timeout e retry
+const NETWORK_CONFIG = {
+  HEALTH_CHECK_TIMEOUT: 5000, // 5s para health check
+  FETCH_TIMEOUT_PER_ATTEMPT: 15000, // 15s por tentativa
+  MAX_RETRY_ATTEMPTS: 3, // 3 tentativas mÃƒÂ¡ximo
+  RETRY_DELAY_BASE: 1000, // 1s base para backoff
+  RETRY_DELAY_MAX: 5000, // 5s mÃƒÂ¡ximo entre tentativas
+};
+
+// FunÃƒÂ§ÃƒÂµes de toggle para ÃƒÂ­cones nos cards da home
+function toggleTelamovelIcon(el) {
+  const img = el.querySelector("img");
+  if (el.dataset.state === "off") {
+    img.src = "images/icons/icon-small-telamovel-on.svg";
+    el.dataset.state = "on";
+  } else {
+    img.src = "images/icons/icon-small-telamovel-off.svg";
+    el.dataset.state = "off";
+  }
+}
+
+function toggleSmartglassIcon(el) {
+  const img = el.querySelector("img");
+  if (el.dataset.state === "off") {
+    img.src = "images/icons/icon-small-smartglass-on.svg";
+    el.dataset.state = "on";
+  } else {
+    img.src = "images/icons/icon-small-smartglass-off.svg";
+    el.dataset.state = "off";
+  }
+}
+
+function toggleShaderIcon(el) {
+  const img = el.querySelector("img");
+  if (el.dataset.state === "off") {
+    img.src = "images/icons/icon-small-shader-on.svg";
+    el.dataset.state = "on";
+  } else {
+    img.src = "images/icons/icon-small-shader-off.svg";
+    el.dataset.state = "off";
+  }
+}
+
+function toggleLightIcon(el) {
+  const img = el.querySelector("img");
+  const deviceIdsAttr = el.dataset.deviceIds;
+  const deviceIds = deviceIdsAttr ? deviceIdsAttr.split(",") : [];
+
+  if (el.dataset.state === "off") {
+    img.src = "images/icons/icon-small-light-on.svg";
+    el.dataset.state = "on";
+    deviceIds.forEach((id) => sendHubitatCommand(id, "on"));
+  } else {
+    img.src = "images/icons/icon-small-light-off.svg";
+    el.dataset.state = "off";
+    deviceIds.forEach((id) => sendHubitatCommand(id, "off"));
+  }
+}
+
+function toggleTvIcon(el) {
+  const img = el.querySelector("img");
+  if (el.dataset.state === "off") {
+    img.src = "images/icons/icon-small-tv-on.svg";
+    el.dataset.state = "on";
+  } else {
+    img.src = "images/icons/icon-small-tv-off.svg";
+    el.dataset.state = "off";
+  }
+}
+
+// BotÃƒÂµes dos cÃƒÂ´modos nas pÃƒÂ¡ginas internas
+function toggleRoomControl(el) {
+  const ICON_ON = "images/icons/icon-small-light-on.svg";
+  const ICON_OFF = "images/icons/icon-small-light-off.svg";
+  // Suporta tanto room-control-icon quanto control-icon
+  const img = el.querySelector(".room-control-icon, .control-icon");
+  const isOff = (el.dataset.state || "off") === "off";
+  const newState = isOff ? "on" : "off";
+  const deviceId = el.dataset.deviceId;
+
+  if (!deviceId) return;
+
+  // Marcar comando recente para proteger contra polling
+  recentCommands.set(deviceId, Date.now());
+
+  // Atualizar UI imediatamente
+  el.dataset.state = newState;
+  if (img) img.src = newState === "on" ? ICON_ON : ICON_OFF;
+
+  // Persist locally
+  setStoredState(deviceId, newState);
+
+  console.log(`Enviando comando ${newState} para dispositivo ${deviceId}`);
+
+  // Send to Hubitat
+  sendHubitatCommand(deviceId, newState === "on" ? "on" : "off")
+    .then(() => {
+      console.log(
+        `Ã¢Å“â€¦ Comando ${newState} enviado com sucesso para dispositivo ${deviceId}`
+      );
+    })
+    .catch((error) => {
+      console.error(
+        `Ã¢ÂÅ’ Erro ao enviar comando para dispositivo ${deviceId}:`,
+        error
+      );
+      // Em caso de erro, reverter o estado visual
+      const revertState = newState === "on" ? "off" : "on";
+      el.dataset.state = revertState;
+      if (img) img.src = revertState === "on" ? ICON_ON : ICON_OFF;
+      setStoredState(deviceId, revertState);
+    });
+}
+
+function togglePoolControl(el, action) {
+  const deviceId = el.dataset.deviceId;
+  if (!action || !deviceId) return;
+
+  // Obter os dois botÃƒÂµes (ON e OFF)
+  const tileElement = el.closest(".piscina-control-tile");
+  if (!tileElement) return;
+
+  const onBtn = tileElement.querySelector(".piscina-control-btn--on");
+  const offBtn = tileElement.querySelector(".piscina-control-btn--off");
+
+  // Remover classe active de ambos
+  if (onBtn) onBtn.classList.remove("active");
+  if (offBtn) offBtn.classList.remove("active");
+
+  // Adicionar classe active ao botÃƒÂ£o clicado
+  if (action === "on" && onBtn) {
+    onBtn.classList.add("active");
+  } else if (action === "off" && offBtn) {
+    offBtn.classList.add("active");
+  }
+
+  // Marcar comando recente
+  recentCommands.set(deviceId, Date.now());
+
+  console.log(
+    `Enviando comando ${action} para dispositivo piscina ${deviceId}`
+  );
+
+  // Send to Hubitat
+  sendHubitatCommand(deviceId, action)
+    .then(() => {
+      console.log(
+        `Ã¢Å“â€¦ Comando ${action} enviado com sucesso para dispositivo ${deviceId}`
+      );
+    })
+    .catch((error) => {
+      console.error(
+        `Ã¢ÂÅ’ Erro ao enviar comando para dispositivo ${deviceId}:`,
+        error
+      );
+      // Em caso de erro, remover a classe active
+      if (action === "on" && onBtn) {
+        onBtn.classList.remove("active");
+      } else if (action === "off" && offBtn) {
+        offBtn.classList.remove("active");
+      }
+    });
+}
+// ========================================
+// CONTROLE DE PODER DA TV
+// ========================================
+
+let tvPowerState = "off"; // Estado inicial: desligado
+
+function updateTVPowerState(newState) {
+  tvPowerState = newState;
+
+  // Selecionar botÃƒÂµes ON e OFF
+  const btnOn = document.querySelector(".tv-btn--power-on");
+  const btnOff = document.querySelector(".tv-btn--power-off");
+
+  // Selecionar todos os outros controles
+  const otherControls = document.querySelectorAll(
+    ".tv-volume-canais-wrapper, .tv-commands-grid, .tv-directional-pad, .tv-numpad, .tv-logo-section"
+  );
+
+  // Selecionar tÃƒÂ­tulos das seÃƒÂ§ÃƒÂµes de controle
+  const titles = document.querySelectorAll(".tv-section-title");
+
+  if (newState === "on") {
+    // TV ligada
+    btnOn?.classList.add("active");
+    btnOff?.classList.remove("active");
+
+    // Mostrar outros controles
+    otherControls.forEach((control) => {
+      control.style.opacity = "1";
+      control.style.pointerEvents = "auto";
+    });
+
+    // Mostrar tÃƒÂ­tulos
+    titles.forEach((title) => {
+      title.style.opacity = "1";
+    });
+
+    console.log("Ã°Å¸â€œÂº TV LIGADA - Controles visÃƒÂ­veis");
+  } else {
+    // TV desligada
+    btnOff?.classList.add("active");
+    btnOn?.classList.remove("active");
+
+    // Escurecer e desabilitar outros controles
+    otherControls.forEach((control) => {
+      control.style.opacity = "0.15";
+      control.style.pointerEvents = "none";
+    });
+
+    // Apagar tÃƒÂ­tulos
+    titles.forEach((title) => {
+      title.style.opacity = "0.2";
+    });
+
+    console.log("Ã°Å¸â€œÂº TV DESLIGADA - Controles desabilitados");
+  }
+}
+
+// Controle de TV
+function tvCommand(el, command) {
+  const deviceId = el.dataset.deviceId;
+  if (!command || !deviceId) return;
+
+  // Controlar estado de poder
+  if (command === "on") {
+    updateTVPowerState("on");
+  } else if (command === "off") {
+    updateTVPowerState("off");
+  }
+
+  // Feedback visual
+  el.style.transform = "scale(0.92)";
+  el.style.background = "rgba(255, 255, 255, 0.15)";
+  el.style.borderColor = "rgba(255, 255, 255, 0.3)";
+  setTimeout(() => {
+    el.style.transform = "";
+    el.style.background = "";
+    el.style.borderColor = "";
+  }, 200);
+
+  // Marcar comando recente
+  recentCommands.set(deviceId, Date.now());
+
+  console.log(`📺 Enviando comando ${command} para dispositivo ${deviceId}`);
+
+  // Enviar para Hubitat
+  sendHubitatCommand(deviceId, command)
+    .then(() => {
+      console.log(
+        `✅ Comando TV ${command} enviado com sucesso para dispositivo ${deviceId}`
+      );
+    })
+    .catch((error) => {
+      console.error(
+        `❌ Erro ao enviar comando TV para dispositivo ${deviceId}:`,
+        error
+      );
+    });
+}
+
+// Macro para ligar HTV + TV + Receiver de uma vez
+
+// Macro para ligar TV e Receiver e setar input SAT/CBL
+function htvMacroOn() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro HTV: Ligando TV e Receiver, depois setando input SAT/CBL...");
+
+  // Liga TV
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV ligada");
+      // Liga Receiver
+      return sendHubitatCommand(RECEIVER_ID, "on");
+    })
+    .then(() => {
+      console.log("✅ Receiver ligado");
+      // Setar input SAT/CBL
+      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL");
+    })
+    .then(() => {
+      console.log("✅ Input SAT/CBL selecionado no Receiver");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro HTV:", error);
+    });
+}
+
+// Macro para desligar TV e Receiver
+function htvMacroOff() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro HTV: Desligando TV e Receiver...");
+
+  Promise.all([
+    sendHubitatCommand(TV_ID, "off"),
+    sendHubitatCommand(RECEIVER_ID, "off")
+  ])
+    .then(() => {
+      console.log("✅ TV e Receiver desligados");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV/Receiver:", error);
+    });
+}
+
+// Macro para ligar TV + Receiver de uma vez
+
+// Macro para ligar TV e Receiver e setar input TV
+function tvMacroOn() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro TV: Ligando TV e Receiver, depois setando input TV...");
+
+  // Liga TV
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV ligada");
+      // Liga Receiver
+      return sendHubitatCommand(RECEIVER_ID, "on");
+    })
+    .then(() => {
+      console.log("✅ Receiver ligado");
+      // Setar input TV
+      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "TV");
+    })
+    .then(() => {
+      console.log("✅ Input TV selecionado no Receiver");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro TV:", error);
+    });
+}
+
+// Macro para desligar TV e Receiver
+function tvMacroOff() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro TV: Desligando TV e Receiver...");
+
+  Promise.all([
+    sendHubitatCommand(TV_ID, "off"),
+    sendHubitatCommand(RECEIVER_ID, "off")
+  ])
+    .then(() => {
+      console.log("✅ TV e Receiver desligados");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV/Receiver:", error);
+    });
+}
+
+// Macro para ativar Fire TV (HDMI 2 + BD no Receiver)
+function fireTVMacro() {
+  const TV_ID = "111";
+  const RECEIVER_ID = "15";
+
+  console.log("🎬 Macro Fire TV: Selecionando HDMI 2 e setando Receiver para BD...");
+
+  // Enviar comando HDMI 2 para TV
+  sendHubitatCommand(TV_ID, "hdmi2")
+    .then(() => {
+      console.log("✅ HDMI 2 selecionado na TV");
+      // Setar input BD no Receiver
+      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "BD");
+    })
+    .then(() => {
+      console.log("✅ Input BD selecionado no Receiver");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro Fire TV:", error);
+    });
+}
+
+// Controle do Slider de Volume
+function initVolumeSlider() {
+  const slider = document.getElementById("tv-volume-slider");
+  const display = document.getElementById("tv-volume-display");
+  const DENON_DEVICE_ID = "15"; // ID do Denon AVR no Hubitat
+
+  if (!slider || !display) {
+    console.log("Ã¢Å¡Â Ã¯Â¸Â Slider ou display nÃƒÂ£o encontrado");
+    return;
+  }
+
+  console.log("Ã°Å¸Å½Å¡Ã¯Â¸Â Inicializando slider de volume do Denon AVR");
+
+  // Definir o device ID no slider
+  slider.dataset.deviceId = DENON_DEVICE_ID;
+
+  // Remover event listeners antigos para evitar duplicaÃƒÂ§ÃƒÂ£o
+  const newSlider = slider.cloneNode(true);
+  slider.parentNode.replaceChild(newSlider, slider);
+
+  // Pegar referÃƒÂªncia ao novo slider
+  const updatedSlider = document.getElementById("tv-volume-slider");
+
+  // Buscar volume atual do Denon e atualizar o slider
+  updateDenonVolumeFromServer();
+
+  // Atualizar display quando slider mudar
+  updatedSlider.addEventListener("input", (e) => {
+    const value = e.target.value;
+    const max = e.target.max || 100;
+    const percentage = (value / max) * 100;
+
+    display.textContent = value;
+    updatedSlider.style.setProperty("--volume-progress", percentage + "%");
+
+    console.log(
+      `Ã°Å¸Å½Å¡Ã¯Â¸Â Volume display atualizado: ${value} (${percentage.toFixed(
+        1
+      )}%)`
+    );
+  });
+
+  // Enviar comando ao soltar o slider
+  updatedSlider.addEventListener("change", (e) => {
+    const value = e.target.value;
+
+    console.log(
+      `Ã°Å¸â€Å  Volume alterado para: ${value} - enviando para Denon AVR`
+    );
+
+    // Enviar comando setVolume para o Denon AVR
+    sendHubitatCommand(DENON_DEVICE_ID, "setVolume", value)
+      .then(() => {
+        console.log(`Ã¢Å“â€¦ Volume do Denon definido para ${value}`);
+      })
+      .catch((error) => {
+        console.error(`Ã¢ÂÅ’ Erro ao definir volume do Denon:`, error);
+      });
+  });
+
+  console.log("Ã¢Å“â€¦ Slider de volume do Denon AVR inicializado com sucesso");
+}
+
+// FunÃƒÂ§ÃƒÂ£o para atualizar o volume do Denon a partir do servidor
+async function updateDenonVolumeFromServer() {
+  const DENON_DEVICE_ID = "15";
+  const tvSlider = document.getElementById("tv-volume-slider");
+  const tvDisplay = document.getElementById("tv-volume-display");
+  const musicSlider =
+    typeof queryActiveMusic === "function"
+      ? queryActiveMusic("#music-volume-slider")
+      : document.querySelector("#music-volume-slider");
+
+  try {
+    const pollingUrl = isProduction
+      ? `${POLLING_URL}?devices=${DENON_DEVICE_ID}`
+      : null;
+
+    if (!pollingUrl) {
+      console.log(
+        "Ã¢ÂÅ’ NÃƒÂ£o ÃƒÂ© possÃƒÂ­vel buscar volume em desenvolvimento"
+      );
+      return;
+    }
+
+    const response = await fetch(pollingUrl);
+    if (!response.ok) throw new Error(`Polling failed: ${response.status}`);
+
+    const data = await response.json();
+
+    // Processar resposta para pegar o volume e o estado de energia
+    let volume = null;
+    let powerState = null;
+
+    if (data.devices && data.devices[DENON_DEVICE_ID]) {
+      const devicePayload = data.devices[DENON_DEVICE_ID];
+      volume =
+        devicePayload.volume ??
+        devicePayload.level ??
+        (devicePayload.attributes && devicePayload.attributes.volume);
+      powerState = getDenonPowerStateFromDevice(devicePayload);
+    } else if (Array.isArray(data.data)) {
+      const denonData = data.data.find((d) => String(d.id) === DENON_DEVICE_ID);
+      if (denonData) {
+        if (denonData.attributes) {
+          if (Array.isArray(denonData.attributes)) {
+            const volumeAttr = denonData.attributes.find(
+              (attr) => attr?.name === "volume"
+            );
+            volume =
+              volumeAttr?.currentValue ??
+              volumeAttr?.value ??
+              denonData.volume ??
+              volume;
+          } else if (typeof denonData.attributes === "object") {
+            volume = denonData.attributes.volume ?? denonData.volume ?? volume;
+          }
+        } else if (denonData.volume !== undefined) {
+          volume = denonData.volume;
+        }
+        powerState = getDenonPowerStateFromDevice(denonData);
+      }
+    }
+
+    if (volume !== null && volume !== undefined) {
+      const volumeValue = parseInt(volume, 10);
+
+      if (tvSlider) {
+        const maxTv = parseInt(tvSlider.max || "100", 10);
+        const percentageTv = (volumeValue / maxTv) * 100;
+        tvSlider.value = volumeValue;
+        tvSlider.style.setProperty("--volume-progress", percentageTv + "%");
+      }
+
+      if (tvDisplay) {
+        tvDisplay.textContent = volumeValue;
+      }
+
+      if (musicSlider) {
+        const maxMusic = parseInt(musicSlider.max || "100", 10);
+        const percentageMusic = (volumeValue / maxMusic) * 100;
+        musicSlider.value = volumeValue;
+        musicSlider.style.setProperty(
+          "--volume-percent",
+          percentageMusic + "%"
+        );
+      }
+
+      console.log("[Denon] Volume atualizado:", volumeValue);
+    }
+
+    if (powerState) {
+      applyDenonPowerState(powerState);
+    }
+  } catch (error) {
+    console.error("Ã¢ÂÅ’ Erro ao buscar volume do Denon:", error);
+  }
+}
+
+// FunÃƒÂ§ÃƒÂ£o para atualizar a UI do volume do Denon (chamada pelo polling)
+function updateDenonVolumeUI(volume) {
+  const tvSlider = document.getElementById("tv-volume-slider");
+  const tvDisplay = document.getElementById("tv-volume-display");
+  const musicSlider =
+    typeof queryActiveMusic === "function"
+      ? queryActiveMusic("#music-volume-slider")
+      : document.querySelector("#music-volume-slider");
+
+  debugLog(() => ["updateDenonVolumeUI chamada", { volume }]);
+
+  if (!tvSlider && !musicSlider) {
+    debugLog(() => "updateDenonVolumeUI: nenhum controle encontrado na página");
+    return;
+  }
+
+  const volumeValue = parseInt(volume, 10);
+  debugLog(() => [
+    "updateDenonVolumeUI: estado atual",
+    {
+      recebido: volume,
+      convertido: volumeValue,
+      tvSlider: tvSlider ? tvSlider.value : "n/a",
+      musicSlider: musicSlider ? musicSlider.value : "n/a",
+    },
+  ]);
+
+  const lastCmd = recentCommands.get("15");
+  if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
+    debugLog(
+      () => "updateDenonVolumeUI: comando manual recente, ignorando polling"
+    );
+    return;
+  }
+
+  let updated = false;
+
+  if (tvSlider) {
+    const currentTv = parseInt(tvSlider.value, 10);
+    const maxTv = tvSlider.max || 100;
+    const percentageTv = (volumeValue / maxTv) * 100;
+    if (currentTv !== volumeValue) {
+      tvSlider.value = volumeValue;
+      tvSlider.style.setProperty("--volume-progress", percentageTv + "%");
+      updated = true;
+    }
+    if (tvDisplay) {
+      tvDisplay.textContent = volumeValue;
+    }
+  }
+
+  if (musicSlider) {
+    const currentMusic = parseInt(musicSlider.value, 10);
+    const maxMusic = musicSlider.max || 100;
+    const percentageMusic = (volumeValue / maxMusic) * 100;
+    if (currentMusic !== volumeValue) {
+      musicSlider.value = volumeValue;
+      musicSlider.style.setProperty("--volume-percent", percentageMusic + "%");
+      if (typeof updateVolumeBar === "function") updateVolumeBar();
+      updated = true;
+    }
+  }
+
+  if (updated) {
+    debugLog(() => ["updateDenonVolumeUI: volume sincronizado", { volumeValue }]);
+  }
+}
+
+function normalizeDenonPowerState(value) {
+  if (value === undefined || value === null) return null;
+  const normalized = String(value).trim().toLowerCase();
+  if (["on", "1", "true", "online"].includes(normalized)) return "on";
+  if (["off", "0", "false", "offline", "standby"].includes(normalized))
+    return "off";
+  return null;
+}
+
+function getDenonPowerStateFromDevice(device) {
+  if (!device || typeof device !== "object") return null;
+
+  const directCandidates = [
+    device.switch,
+    device.state,
+    device.power,
+    device.status,
+  ];
+
+  for (const candidate of directCandidates) {
+    const normalized = normalizeDenonPowerState(candidate);
+    if (normalized) return normalized;
+  }
+
+  const attrs = device.attributes;
+
+  if (Array.isArray(attrs)) {
+    for (const attr of attrs) {
+      if (!attr) continue;
+      const attrName = String(attr.name || attr.attribute || "").toLowerCase();
+      if (!attrName) continue;
+      if (["switch", "power", "status", "state"].includes(attrName)) {
+        const normalized = normalizeDenonPowerState(
+          attr.currentValue ?? attr.value
+        );
+        if (normalized) return normalized;
+      }
+    }
+  } else if (attrs && typeof attrs === "object") {
+    const keys = ["switch", "power", "status", "state"];
+    for (const key of keys) {
+      if (key in attrs) {
+        const normalized = normalizeDenonPowerState(attrs[key]);
+        if (normalized) return normalized;
+      }
+    }
+  }
+
+  return null;
+}
+
+function applyDenonPowerState(rawState) {
+  const normalized = normalizeDenonPowerState(rawState);
+  if (!normalized) return;
+
+  if (typeof recentCommands !== "undefined") {
+    const lastCmd = recentCommands.get("15");
+    if (lastCmd && Date.now() - lastCmd < COMMAND_PROTECTION_MS) {
+      console.log(
+        "[Denon] Ignorando sincronizacao de power por comando recente"
+      );
+      return;
+    }
+  }
+
+  const desiredOn = normalized === "on";
+
+  window.musicPlayerUI = window.musicPlayerUI || {};
+  window.musicPlayerUI.currentPowerState = normalized;
+
+  if (
+    window.musicPlayerUI &&
+    typeof window.musicPlayerUI.isPowerOn === "function" &&
+    window.musicPlayerUI.isPowerOn() === desiredOn
+  ) {
+    return;
+  }
+
+  if (
+    window.musicPlayerUI &&
+    typeof window.musicPlayerUI.setPower === "function"
+  ) {
+    window.musicPlayerUI.setPower(desiredOn);
+  }
+}
+// Inicializar estado ao carregar
+document.addEventListener("DOMContentLoaded", () => {
+  updateTVPowerState("off");
+  initVolumeSlider();
+
+  // Re-inicializar quando a pÃƒÂ¡gina mudar (para SPAs)
+  window.addEventListener("hashchange", () => {
+    setTimeout(() => {
+      initVolumeSlider();
+    }, 100);
+  });
+
+  // Listener especÃƒÂ­fico para pÃƒÂ¡gina de mÃƒÂºsica
+  window.addEventListener("hashchange", () => {
+    if (isMusicPageActive()) {
+      setTimeout(() => {
+        initMusicPlayerUI();
+        updateDenonMetadata();
+        startMusicMetadataPolling();
+      }, 300);
+    } else {
+      stopMusicMetadataPolling();
+    }
+  });
+});
+
+function setRoomControlUI(el, state) {
+  const ICON_ON = "images/icons/icon-small-light-on.svg";
+  const ICON_OFF = "images/icons/icon-small-light-off.svg";
+  const normalized = state === "on" ? "on" : "off";
+
+  el.dataset.state = normalized;
+
+  // Suporta tanto room-control-icon quanto control-icon (mesmo seletor do toggleRoomControl)
+  const img = el.querySelector(".room-control-icon, .control-icon");
+  if (img) {
+    const newSrc = normalized === "on" ? ICON_ON : ICON_OFF;
+    console.log(
+      `Ã°Å¸â€Â§ setRoomControlUI: Atualizando imagem ${img.src} Ã¢â€ â€™ ${newSrc} (estado: ${state})`
+    );
+    img.src = newSrc;
+  } else {
+    console.warn(
+      `Ã¢Å¡Â Ã¯Â¸Â setRoomControlUI: Imagem nÃƒÂ£o encontrada para elemento com classes: ${el.className}`
+    );
+    // Debug: mostrar todos os elementos filhos para diagnÃƒÂ³stico
+    console.log(
+      `Ã°Å¸â€Â Elementos filhos:`,
+      Array.from(el.children).map((child) => child.className)
+    );
+  }
+}
+
+function deviceStateKey(deviceId) {
+  return `deviceState:${deviceId}`;
+}
+
+function getStoredState(deviceId) {
+  if (deviceStateMemory.has(deviceId)) {
+    return deviceStateMemory.get(deviceId);
+  }
+
+  try {
+    const key = deviceStateKey(deviceId);
+    const value = localStorage.getItem(key);
+
+    if (value !== null && value !== undefined) {
+      deviceStateMemory.set(deviceId, value);
+    }
+
+    return value;
+  } catch (error) {
+    debugLog(() => ["getStoredState fallback", deviceId, error]);
+    return null;
+  }
+}
+
+function setStoredState(deviceId, state) {
+  deviceStateMemory.set(deviceId, state);
+
+  try {
+    const key = deviceStateKey(deviceId);
+    localStorage.setItem(key, state);
+  } catch (error) {
+    console.warn(`Erro ao salvar estado ${deviceId}:`, error);
+  }
+}
+
+function registerControlElement(el) {
+  if (!el || !el.dataset) return false;
+  const deviceId = el.dataset.deviceId;
+  if (!deviceId) return false;
+
+  let registry = deviceControlCache.get(deviceId);
+  if (!registry) {
+    registry = new Set();
+    deviceControlCache.set(deviceId, registry);
+  }
+
+  if (registry.has(el)) return false;
+  registry.add(el);
+  return true;
+}
+
+function unregisterControlElement(el) {
+  if (!el || !el.dataset) return false;
+  const deviceId = el.dataset.deviceId;
+  if (!deviceId) return false;
+
+  const registry = deviceControlCache.get(deviceId);
+  if (!registry) return false;
+  const removed = registry.delete(el);
+  if (registry.size === 0) {
+    deviceControlCache.delete(deviceId);
+  }
+  return removed;
+}
+
+function registerMasterButton(btn) {
+  if (!btn) return false;
+  if (masterButtonCache.has(btn)) return false;
+  masterButtonCache.add(btn);
+  return true;
+}
+
+function unregisterMasterButton(btn) {
+  if (!btn) return false;
+  return masterButtonCache.delete(btn);
+}
+
+function collectControlsFromNode(node) {
+  if (!node || node.nodeType !== Node.ELEMENT_NODE) return false;
+  let changed = false;
+
+  if (node.matches && node.matches(CONTROL_SELECTOR)) {
+    changed = registerControlElement(node) || changed;
+  }
+
+  if (node.matches && node.matches(MASTER_BUTTON_SELECTOR)) {
+    changed = registerMasterButton(node) || changed;
+  }
+
+  if (typeof node.querySelectorAll === "function") {
+    node.querySelectorAll(CONTROL_SELECTOR).forEach(function (el) {
+      changed = registerControlElement(el) || changed;
+    });
+
+    node.querySelectorAll(MASTER_BUTTON_SELECTOR).forEach(function (btn) {
+      changed = registerMasterButton(btn) || changed;
+    });
+  }
+
+  return changed;
+}
+
+function removeControlsFromNode(node) {
+  if (!node || node.nodeType !== Node.ELEMENT_NODE) return false;
+  let changed = false;
+
+  if (node.matches && node.matches(CONTROL_SELECTOR)) {
+    changed = unregisterControlElement(node) || changed;
+  }
+
+  if (node.matches && node.matches(MASTER_BUTTON_SELECTOR)) {
+    changed = unregisterMasterButton(node) || changed;
+  }
+
+  if (typeof node.querySelectorAll === "function") {
+    node.querySelectorAll(CONTROL_SELECTOR).forEach(function (el) {
+      changed = unregisterControlElement(el) || changed;
+    });
+
+    node.querySelectorAll(MASTER_BUTTON_SELECTOR).forEach(function (btn) {
+      changed = unregisterMasterButton(btn) || changed;
+    });
+  }
+
+  return changed;
+}
+
+function primeControlCaches(options) {
+  const config = options || {};
+  const root =
+    config.root && typeof config.root.querySelectorAll === "function"
+      ? config.root
+      : document;
+  const force = Boolean(config.force);
+
+  if (controlCachePrimed && !force) {
+    return;
+  }
+
+  root.querySelectorAll(CONTROL_SELECTOR).forEach(function (el) {
+    registerControlElement(el);
+  });
+
+  root.querySelectorAll(MASTER_BUTTON_SELECTOR).forEach(function (btn) {
+    registerMasterButton(btn);
+  });
+
+  controlCachePrimed = true;
+}
+
+function pruneStaleEntries() {
+  deviceControlCache.forEach(function (registry, deviceId) {
+    registry.forEach(function (el) {
+      if (!el.isConnected) {
+        registry.delete(el);
+      }
+    });
+
+    if (registry.size === 0) {
+      deviceControlCache.delete(deviceId);
+    }
+  });
+
+  masterButtonCache.forEach(function (btn) {
+    if (!btn.isConnected) {
+      masterButtonCache.delete(btn);
+    }
+  });
+}
+
+function scheduleControlSync(forceMasterUpdate) {
+  if (forceMasterUpdate) {
+    pendingControlSyncForce = true;
+  }
+
+  if (pendingControlSyncHandle !== null) {
+    return;
+  }
+
+  var runSync = function () {
+    pendingControlSyncHandle = null;
+    var force = pendingControlSyncForce;
+    pendingControlSyncForce = false;
+    syncAllVisibleControls(force);
+  };
+
+  if (typeof window !== "undefined") {
+    if (typeof window.requestIdleCallback === "function") {
+      pendingControlSyncHandle = window.requestIdleCallback(runSync, {
+        timeout: 120,
+      });
+      return;
+    }
+
+    if (typeof window.requestAnimationFrame === "function") {
+      pendingControlSyncHandle = window.requestAnimationFrame(function () {
+        runSync();
+      });
+      return;
+    }
+  }
+
+  pendingControlSyncHandle = setTimeout(runSync, 32);
+}
+
+async function fetchDeviceState(deviceId) {
+  try {
+    const url = urlDeviceInfo(deviceId);
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`Hubitat state fetch failed: ${resp.status}`);
+    const data = await resp.json();
+    // Maker API returns attributes array; prefer currentValue, fallback to value
+    const attr = Array.isArray(data.attributes)
+      ? data.attributes.find((a) => a.name === "switch")
+      : null;
+    const state = attr?.currentValue || attr?.value || "off";
+    return state;
+  } catch (error) {
+    console.error(`Error fetching state for device ${deviceId}:`, error);
+    return "off"; // fallback
+  }
+}
+
+async function refreshRoomControlFromHubitat(el) {
+  return;
+}
+
+function initRoomPage() {
+  debugLog(() => ["initRoomPage: start"]);
+
+  const root = document.getElementById("spa-root") || document;
+  primeControlCaches({ root: root, force: true });
+  pruneStaleEntries();
+  syncAllVisibleControls(true);
+
+  // Rename label on Sinuca page: Iluminacao -> Bar (UI-only)
+  try {
+    const route = (window.location.hash || "").replace("#", "");
+    if (route === "ambiente5") {
+      document
+        .querySelectorAll(".room-control-label")
+        .forEach(function (label) {
+          const text = (label.textContent || "").trim().toLowerCase();
+          if (text.startsWith("ilumin")) {
+            label.textContent = "Bar";
+          }
+        });
+    }
+  } catch (error) {
+    debugLog(() => ["initRoomPage rename fallback", error]);
+  }
+
+  // Garantir atualizacao de botoes master apos o layout estabilizar
+  const masterUpdate = function () {
+    updateAllMasterButtons(true);
+  };
+
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(masterUpdate, { timeout: 200 });
+  } else {
+    setTimeout(masterUpdate, 50);
+  }
+}
+
+// === CONTROLADOR DE AR CONDICIONADO ===
+
+// FunÃƒÂ§ÃƒÂ£o para inicializar o controle de AR quando a pÃƒÂ¡gina de conforto for carregada
+function initAirConditionerControl() {
+  const fanLevels = ["low", "medium", "high"];
+  const temperatures = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+
+  // Detectar a página atual para aplicar configuração correta
+  const currentRoute = (window.location.hash || "").replace("#", "");
+  const isAmbiente1 = currentRoute.includes("ambiente1-conforto");
+
+  // Configurações específicas por ambiente
+  const tempConfig = isAmbiente1
+    ? { minTemp: 18, maxTemp: 25, defaultTemp: 22 } // Ambiente 1 - Varanda
+    : { minTemp: 17, maxTemp: 30, defaultTemp: 22 }; // Outros ambientes
+
+  const state = {
+    minTemp: tempConfig.minTemp,
+    maxTemp: tempConfig.maxTemp,
+    temperature: tempConfig.defaultTemp,
+    mode: "cool", // Sempre cool
+    powerOn: false,
+    fanLevel: "medium",
+    deviceId: AC_DEVICE_ID, // ID do dispositivo ar-condicionado
+  };
+
+  // ConfiguraÃƒÂ§ÃƒÂµes de modo - apenas Cool
+  const modeConfig = {
+    cool: {
+      minTemp: tempConfig.minTemp,
+      maxTemp: tempConfig.maxTemp,
+      defaultTemp: tempConfig.defaultTemp,
+      color: "rgba(59, 130, 246, 0.95)", // Azul
+    },
+  };
+
+  // Timer para debounce da temperatura
+  let temperatureDebounceTimer = null;
+
+  const root = document.querySelector('[data-component="ac-control"]');
+
+  if (!root) {
+    console.warn(
+      "Componente de controle de ar-condicionado nÃƒÂ£o encontrado."
+    );
+    return;
+  }
+
+  const knobWrapper = root.querySelector('[data-role="knob"]');
+  const knob = knobWrapper ? knobWrapper.querySelector(".ac-temp-knob") : null;
+  const progressArc = root.querySelector('[data-role="progress-ring"]');
+  const tempCurrent = root.querySelector('[data-role="temp-current"]');
+  const tempPrev = root.querySelector('[data-role="temp-prev"]');
+  const tempNext = root.querySelector('[data-role="temp-next"]');
+  const liveRegion = root.querySelector('[data-role="temperature-live"]');
+  const fanButtons = Array.from(root.querySelectorAll("[data-fan-button]"));
+  const modeButtons = Array.from(root.querySelectorAll("[data-mode-button]"));
+  const powerButton = root.querySelector('[data-role="power"]');
+  const wrapper = root.querySelector(".ac-temp-wrapper");
+  const temperatureSection = document.querySelector(".ac-temperature-section");
+
+  if (!progressArc || !knob || !wrapper) {
+    console.warn("Elementos essenciais do AC nÃƒÂ£o encontrados");
+    return;
+  }
+
+  if (!temperatureSection) {
+    console.warn("SeÃƒÂ§ÃƒÂ£o de temperatura nÃƒÂ£o encontrada");
+  }
+
+  // Constantes do arco
+  const ARC_LENGTH = 251.2; // Comprimento aproximado do arco SVG path
+  const ARC_START_ANGLE = 180; // Graus (esquerda)
+  const ARC_END_ANGLE = 0; // Graus (direita)
+  const ARC_RADIUS = 80; // Raio do arco no viewBox
+  const ARC_CENTER_X = 100; // Centro X no viewBox
+  const ARC_CENTER_Y = 100; // Centro Y no viewBox
+
+  let geometry = calculateGeometry();
+  let isDragging = false;
+  // Controle de sincronizaÃƒÂ§ÃƒÂ£o inicial (evita UI desatualizada ao reentrar)
+  let initialSyncDone = false;
+
+  function calculateGeometry() {
+    const rect = wrapper.getBoundingClientRect();
+    const svgElement = progressArc.closest("svg");
+    const svgRect = svgElement.getBoundingClientRect();
+    const viewBox = svgElement?.viewBox?.baseVal;
+    const vbWidth = viewBox ? viewBox.width : 200;
+    const vbHeight = viewBox ? viewBox.height : 120;
+
+    // O viewBox ÃƒÂ© 0 0 200 120
+    // O arco path ÃƒÂ©: M 20,100 A 80,80 0 0,1 180,100
+    // Isso significa que o centro do arco estÃƒÂ¡ em (100, 100) no viewBox
+    // O raio ÃƒÂ© 80
+
+    // Calcular a escala do SVG
+    const scaleX = svgRect.width / vbWidth;
+    const scaleY = svgRect.height / vbHeight;
+
+    let arcLength = ARC_LENGTH;
+    try {
+      if (typeof progressArc.getTotalLength === "function") {
+        arcLength = progressArc.getTotalLength();
+      }
+    } catch (error) {
+      console.warn("Falha ao obter comprimento do arco", error);
+    }
+
+    let strokeWidth = 0;
+    try {
+      strokeWidth = parseFloat(
+        window.getComputedStyle(progressArc).strokeWidth || "0"
+      );
+    } catch (error) {
+      strokeWidth = 0;
+    }
+
+    const ctm =
+      typeof progressArc.getScreenCTM === "function"
+        ? progressArc.getScreenCTM()
+        : typeof progressArc.getCTM === "function"
+        ? progressArc.getCTM()
+        : null;
+
+    return {
+      rect,
+      svgRect,
+      svgElement,
+      viewBox: { width: vbWidth, height: vbHeight },
+      // Centro do arco em coordenadas da pÃƒÂ¡gina
+      centerX: svgRect.left + 100 * scaleX, // X=100 no viewBox
+      centerY: svgRect.top + 100 * scaleY, // Y=100 no viewBox
+      radius: 80 * Math.min(scaleX, scaleY), // Ajusta para manter o raio coerente
+      scaleX,
+      scaleY,
+      arcLength,
+      strokeWidth,
+      ctm,
+    };
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function angleFromTemperature(temperature) {
+    const ratio =
+      (temperature - state.minTemp) / (state.maxTemp - state.minTemp);
+    // 180Ã‚Â° (esquerda/18Ã‚Â°C) para 0Ã‚Â° (direita/30Ã‚Â°C)
+    return 180 - ratio * 180;
+  }
+
+  function temperatureFromAngle(angle) {
+    const ratio = (180 - angle) / 180;
+    const temp = state.minTemp + ratio * (state.maxTemp - state.minTemp);
+    return Math.round(clamp(temp, state.minTemp, state.maxTemp));
+  }
+
+  function updateKnobPosition(angle) {
+    if (!knob || !progressArc) return;
+
+    if (!geometry || !geometry.ctm) {
+      geometry = calculateGeometry();
+    }
+
+    const ratio = clamp((180 - angle) / 180, 0, 1);
+    const arcLength = geometry.arcLength ?? ARC_LENGTH;
+
+    let svgPoint;
+    try {
+      const length = arcLength * ratio;
+      svgPoint = progressArc.getPointAtLength(length);
+    } catch (error) {
+      svgPoint = null;
+    }
+
+    if (!svgPoint || !geometry.ctm) {
+      // Fallback para trigonometria clÃƒÂ¡ssica
+      const radians = (angle * Math.PI) / 180;
+      const radius = geometry.radius;
+      const x = geometry.centerX + radius * Math.cos(radians);
+      const y = geometry.centerY - radius * Math.sin(radians);
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      knob.style.left = `${x - wrapperRect.left}px`;
+      knob.style.top = `${y - wrapperRect.top}px`;
+      knob.style.transform = "translate(-50%, -50%)";
+      knob.classList.remove("is-hidden");
+      return;
+    }
+
+    let screenPoint;
+    const svgElement = geometry.svgElement;
+
+    if (typeof DOMPoint === "function") {
+      screenPoint = new DOMPoint(svgPoint.x, svgPoint.y).matrixTransform(
+        geometry.ctm
+      );
+    } else if (svgElement && typeof svgElement.createSVGPoint === "function") {
+      const point = svgElement.createSVGPoint();
+      point.x = svgPoint.x;
+      point.y = svgPoint.y;
+      screenPoint = point.matrixTransform(geometry.ctm);
+    } else {
+      return;
+    }
+
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const relativeX = screenPoint.x - wrapperRect.left;
+    const relativeY = screenPoint.y - wrapperRect.top;
+
+    knob.style.left = `${relativeX}px`;
+    knob.style.top = `${relativeY}px`;
+    knob.style.transform = "translate(-50%, -50%)";
+    knob.classList.remove("is-hidden");
+  }
+
+  function updateProgress(angle) {
+    if (!progressArc) return;
+
+    // Calcula o progresso (0 a 1)
+    const progress = clamp((180 - angle) / 180, 0, 1);
+    const arcLength = geometry.arcLength ?? ARC_LENGTH;
+    // Offset: comeÃƒÂ§a cheio e vai diminuindo conforme progride
+    const offset = arcLength - progress * arcLength;
+
+    let dashOffset;
+    if (progress <= 0) {
+      dashOffset = arcLength + (geometry.strokeWidth || 0) + 1;
+    } else if (progress >= 1) {
+      dashOffset = 0;
+    } else {
+      dashOffset = Math.max(0, Math.min(arcLength, offset));
+    }
+
+    progressArc.style.strokeDasharray = arcLength;
+    progressArc.style.strokeDashoffset = dashOffset;
+  }
+
+  function updateTemperatureDisplay() {
+    if (!tempCurrent) return;
+
+    const temp = state.temperature;
+
+    // Atualiza temperatura atual
+    tempCurrent.textContent = temp;
+
+    // Atualiza temperatura anterior
+    if (tempPrev) {
+      if (temp > state.minTemp) {
+        tempPrev.textContent = temp - 1;
+        tempPrev.style.opacity = "1";
+        tempPrev.style.visibility = "visible";
+      } else {
+        // Se ÃƒÂ© a temperatura mÃƒÂ­nima, esconde o anterior
+        tempPrev.style.opacity = "0";
+        tempPrev.style.visibility = "hidden";
+      }
+    }
+
+    // Atualiza temperatura seguinte
+    if (tempNext) {
+      if (temp < state.maxTemp) {
+        tempNext.textContent = temp + 1;
+        tempNext.style.opacity = "1";
+        tempNext.style.visibility = "visible";
+      } else {
+        // Se ÃƒÂ© a temperatura mÃƒÂ¡xima, esconde o seguinte
+        tempNext.style.opacity = "0";
+        tempNext.style.visibility = "hidden";
+      }
+    }
+  }
+
+  function updateTemperature(newTemp, options = {}) {
+    const temperature = clamp(newTemp, state.minTemp, state.maxTemp);
+    const angle = angleFromTemperature(temperature);
+
+    state.temperature = temperature;
+
+    if (liveRegion) {
+      liveRegion.textContent = `Temperatura ajustada para ${temperature} graus.`;
+    }
+
+    updateKnobPosition(angle);
+    updateProgress(angle);
+    updateTemperatureDisplay();
+
+    // Limpa o timer anterior se existir
+    if (temperatureDebounceTimer) {
+      clearTimeout(temperatureDebounceTimer);
+    }
+
+    // Configura novo timer de 1.5 segundos para enviar comando
+    if (state.powerOn && !options.silent) {
+      temperatureDebounceTimer = setTimeout(() => {
+        const tempCommand = `temp${state.temperature}`;
+        console.log(
+          `Enviando comando de temperatura apÃƒÂ³s 1.5s: ${tempCommand}`
+        );
+        sendHubitatCommand(state.deviceId, tempCommand);
+        temperatureDebounceTimer = null;
+      }, 1500);
+    }
+  }
+
+  function getAngleFromPointer(event) {
+    const pointerX =
+      event.clientX ?? (event.touches && event.touches[0]?.clientX);
+    const pointerY =
+      event.clientY ?? (event.touches && event.touches[0]?.clientY);
+
+    if (typeof pointerX !== "number" || typeof pointerY !== "number") {
+      return null;
+    }
+
+    // Calcula a posiÃƒÂ§ÃƒÂ£o relativa ao centro do arco
+    const deltaX = pointerX - geometry.centerX;
+    const deltaY = geometry.centerY - pointerY; // INVERTIDO: centerY - pointerY (para cima ÃƒÂ© positivo)
+
+    // Calcula o ÃƒÂ¢ngulo em radianos, depois converte para graus
+    let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+    // Normaliza para 0-360
+    if (angle < 0) angle += 360;
+
+    // Limita ao arco superior (0Ã‚Â° a 180Ã‚Â°)
+    // 0Ã‚Â° = direita, 90Ã‚Â° = cima, 180Ã‚Â° = esquerda
+    // Queremos apenas o arco superior, entÃƒÂ£o limitamos ÃƒÂ¢ngulos > 180Ã‚Â°
+    if (angle > 180) {
+      // Se estÃƒÂ¡ fora do arco superior, mapeia para a extremidade mais prÃƒÂ³xima
+      angle = angle > 270 ? 0 : 180;
+    }
+
+    return angle;
+  }
+
+  function handlePointerMove(event) {
+    if (!state.powerOn || !isDragging) return;
+
+    const angle = getAngleFromPointer(event);
+    if (angle !== null) {
+      const temperature = temperatureFromAngle(angle);
+      updateTemperature(temperature);
+    }
+  }
+
+  function startDragging(event) {
+    if (!state.powerOn) return;
+
+    event.preventDefault();
+    isDragging = true;
+    geometry = calculateGeometry();
+
+    if (knob) {
+      knob.classList.add("is-active");
+    }
+
+    handlePointerMove(event);
+
+    document.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("pointerup", stopDragging);
+    document.addEventListener("pointercancel", stopDragging);
+  }
+
+  function stopDragging() {
+    isDragging = false;
+
+    if (knob) {
+      knob.classList.remove("is-active");
+    }
+
+    // Comando de temperatura agora ÃƒÂ© enviado via debounce em updateTemperature()
+    // nÃƒÂ£o precisa mais enviar aqui
+
+    document.removeEventListener("pointermove", handlePointerMove);
+    document.removeEventListener("pointerup", stopDragging);
+    document.removeEventListener("pointercancel", stopDragging);
+  }
+
+  function setFanLevel(level) {
+    if (!fanLevels.includes(level)) {
+      return;
+    }
+
+    state.fanLevel = level;
+    root.dataset.fanLevel = level;
+
+    fanButtons.forEach((button) => {
+      const isActive = button.dataset.fan === level;
+      button.setAttribute("aria-pressed", isActive.toString());
+    });
+  }
+
+  function setMode(mode) {
+    if (!modeConfig[mode]) return;
+
+    state.mode = mode;
+    root.dataset.mode = mode;
+
+    // NÃƒÆ’O envia comando para o Hubitat (modo fixo em Cool)
+    // sendHubitatCommand(state.deviceId, mode);
+
+    // Atualiza os limites de temperatura conforme o modo
+    const config = modeConfig[mode];
+    state.minTemp = config.minTemp;
+    state.maxTemp = config.maxTemp;
+
+    // Define a temperatura padrÃƒÂ£o do modo
+    state.temperature = config.defaultTemp;
+
+    // Atualiza a cor do arco de progresso e knob
+    updateModeColors(config.color);
+
+    // Atualiza os botÃƒÂµes de modo
+    modeButtons.forEach((button) => {
+      const isActive = button.dataset.mode === mode;
+      button.setAttribute("aria-pressed", isActive.toString());
+    });
+
+    // Atualiza a temperatura com os novos limites
+    updateTemperature(state.temperature);
+  }
+
+  function updateModeColors(color) {
+    if (!progressArc) return;
+
+    // Atualiza a cor do arco de progresso
+    progressArc.style.stroke = color;
+
+    // Atualiza a cor do glow do arco
+    if (color.includes("59, 130, 246")) {
+      // Azul (cool)
+      progressArc.style.filter = "drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))";
+    } else if (color.includes("249, 115, 22")) {
+      // Laranja (heat)
+      progressArc.style.filter = "drop-shadow(0 0 8px rgba(249, 115, 22, 0.5))";
+    } else {
+      // Branco (auto)
+      progressArc.style.filter =
+        "drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))";
+    }
+  }
+
+  function setPowerState(isOn, options = {}) {
+    state.powerOn = isOn;
+    console.log(
+      "setPowerState chamado:",
+      isOn,
+      "temperatureSection:",
+      temperatureSection
+    );
+
+    // Envia comando para o Hubitat (a menos que esteja em modo silencioso)
+    if (!options.silent) {
+      const command = isOn ? "on" : "off";
+      sendHubitatCommand(state.deviceId, command);
+    }
+
+    if (powerButton) {
+      powerButton.setAttribute("aria-pressed", isOn.toString());
+      powerButton.setAttribute(
+        "aria-label",
+        isOn ? "Desligar o ar-condicionado" : "Ligar o ar-condicionado"
+      );
+    }
+
+    modeButtons.forEach((button) => {
+      button.toggleAttribute("disabled", !isOn);
+    });
+
+    fanButtons.forEach((button) => {
+      button.toggleAttribute("disabled", !isOn);
+    });
+
+    // Desabilita os botÃƒÂµes de aleta quando o AC estÃƒÂ¡ desligado
+    aletaButtons.forEach((button) => {
+      button.toggleAttribute("disabled", !isOn);
+    });
+
+    root.toggleAttribute("data-power-off", !isOn);
+
+    // Controla o fade in/out do seletor de temperatura
+    if (temperatureSection) {
+      if (isOn) {
+        console.log("Removendo power-off");
+        temperatureSection.classList.add("power-on");
+      } else {
+        console.log("Adicionando power-off");
+        temperatureSection.classList.remove("power-on");
+      }
+    }
+  }
+
+  function togglePower() {
+    setPowerState(!state.powerOn);
+  }
+
+  // Event listeners
+  if (knob) {
+    knob.addEventListener("pointerdown", startDragging);
+  }
+
+  fanButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!state.powerOn) return;
+      const level = button.dataset.fan;
+      if (level) {
+        setFanLevel(level);
+      }
+    });
+  });
+
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!state.powerOn) return;
+      const mode = button.dataset.mode;
+      if (mode) {
+        setMode(mode);
+      }
+    });
+  });
+
+  if (powerButton) {
+    powerButton.addEventListener("click", togglePower);
+  }
+
+  // BotÃƒÂµes de aleta
+  const aletaButtons = Array.from(root.querySelectorAll("[data-aleta-button]"));
+
+  function setAletaState(aleta) {
+    if (!state.powerOn) return;
+
+    aletaButtons.forEach((btn) => {
+      const isActive = btn.dataset.aleta === aleta;
+      btn.setAttribute("aria-pressed", isActive.toString());
+    });
+
+    // Envia comandos para o Hubitat (modo Cool fixo)
+    if (aleta === "moving") {
+      console.log("ALETA MOVIMENTO: Executando comando swingOn (mover aletas)");
+      sendHubitatCommand(state.deviceId, "swingOn");
+    } else if (aleta === "parada") {
+      console.log("ALETA PARADA: Executando comando swingOff (parar aletas)");
+      sendHubitatCommand(state.deviceId, "swingOff");
+    }
+  }
+
+  aletaButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (!state.powerOn) return;
+      setAletaState(btn.dataset.aleta);
+    });
+  });
+
+  window.addEventListener("resize", () => {
+    geometry = calculateGeometry();
+    const angle = angleFromTemperature(state.temperature);
+    updateKnobPosition(angle);
+    updateProgress(angle);
+  });
+
+  // Inicializa (sem enviar comandos no primeiro render)
+  setPowerState(state.powerOn, { silent: true });
+  setMode(state.mode);
+  setFanLevel(state.fanLevel);
+  updateTemperature(state.temperature, { silent: true });
+
+  // Recalcula geometria apÃƒÂ³s renderizaÃƒÂ§ÃƒÂ£o inicial (mÃƒÂºltiplas tentativas para garantir)
+  const recalculate = () => {
+    geometry = calculateGeometry();
+    const angle = angleFromTemperature(state.temperature);
+    updateKnobPosition(angle);
+    updateProgress(angle);
+  };
+
+  setTimeout(recalculate, 50);
+  setTimeout(recalculate, 150);
+  setTimeout(recalculate, 300);
+
+  // Fallback: buscar estado completo via /polling e aplicar valores ausentes
+  async function applyACFromPolling({
+    needPower = true,
+    needTemp = true,
+    needFan = true,
+  } = {}) {
+    try {
+      const url = `/polling?devices=${encodeURIComponent(AC_DEVICE_ID)}`;
+      const resp = await fetch(url, { cache: "no-store" });
+      if (!resp.ok) return;
+      const payload = await resp.json();
+      const list = Array.isArray(payload?.data) ? payload.data : [];
+      const device = list.find((d) => String(d?.id) === String(AC_DEVICE_ID));
+      if (!device) return;
+
+      // Normaliza atributos para um mapa { name: value }
+      let attrsMap = {};
+      if (Array.isArray(device.attributes)) {
+        device.attributes.forEach((a) => {
+          if (!a || !a.name) return;
+          const key = String(a.name).toLowerCase();
+          const v = a.currentValue ?? a.value;
+          attrsMap[key] = v;
+        });
+      } else if (device.attributes && typeof device.attributes === "object") {
+        Object.keys(device.attributes).forEach((k) => {
+          attrsMap[String(k).toLowerCase()] = device.attributes[k];
+        });
+      }
+
+      let applied = false;
+      // PotÃƒÂªncia
+      if (needPower) {
+        const sw = String(attrsMap["switch"] ?? "").toLowerCase();
+        if (sw) {
+          setPowerState(sw === "on", { silent: true });
+          applied = true;
+        }
+      }
+
+      // Temperatura / setpoint
+      if (needTemp) {
+        let t =
+          attrsMap["coolingsetpoint"] ??
+          attrsMap["thermostatsetpoint"] ??
+          attrsMap["setpoint"] ??
+          attrsMap["temperature"];
+        if (typeof t === "string") {
+          const m = t.match(/(-?\d{1,2})/);
+          if (m) t = parseInt(m[1], 10);
+        }
+        if (typeof t === "number" && !Number.isNaN(t)) {
+          updateTemperature(Math.round(t), { silent: true });
+          applied = true;
+        }
+      }
+
+      // VentilaÃƒÂ§ÃƒÂ£o
+      if (needFan) {
+        let f =
+          attrsMap["thermostatfanmode"] ??
+          attrsMap["fan"] ??
+          attrsMap["fanlevel"];
+        if (typeof f === "string") {
+          const val = f.toLowerCase();
+          const mapped =
+            val === "med" || val === "mid" || val === "auto"
+              ? "medium"
+              : val === "min"
+              ? "low"
+              : val === "max"
+              ? "high"
+              : val;
+          if (["low", "medium", "high"].includes(mapped)) {
+            setFanLevel(mapped);
+            applied = true;
+          }
+        } else if (typeof f === "number") {
+          if (f <= 1) {
+            setFanLevel("low");
+            applied = true;
+          } else if (f === 2) {
+            setFanLevel("medium");
+            applied = true;
+          } else if (f >= 3) {
+            setFanLevel("high");
+            applied = true;
+          }
+        }
+      }
+
+      recalculate();
+      if (applied) initialSyncDone = true;
+    } catch (e) {
+      console.warn("Falha no fallback de polling do AC:", e);
+    }
+  }
+
+  // Buscar ÃƒÂºltimo status do AC via webhook e aplicar na UI (modo silencioso)
+  (async function syncFromWebhook() {
+    try {
+      const resp = await fetch("/webhook/eletr1z33333d4sh/status", {
+        cache: "no-store",
+      });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const evt = data && data.lastACStatus;
+      if (!evt) {
+        return applyACFromPolling({
+          needPower: true,
+          needTemp: true,
+          needFan: true,
+        });
+      }
+
+      // Verifica se corresponde ao nosso dispositivo (quando presente)
+      if (evt.deviceId && String(evt.deviceId) !== String(AC_DEVICE_ID)) {
+        return applyACFromPolling({
+          needPower: true,
+          needTemp: true,
+          needFan: true,
+        });
+      }
+
+      const name = (evt.name || "").toLowerCase();
+      const rawVal = evt.value;
+      const val = (
+        rawVal !== undefined && rawVal !== null ? String(rawVal) : ""
+      ).toLowerCase();
+
+      let desiredPower = null;
+      let desiredTemp = null;
+      let desiredFan = null;
+      let desiredMode = null;
+
+      // PotÃƒÂªncia
+      if (
+        name === "switch" ||
+        name === "power" ||
+        name === "ac" ||
+        name === "acpower"
+      ) {
+        desiredPower = val === "on" || val === "true" || val === "1";
+      }
+
+      // Temperatura / setpoint
+      if (name.includes("temp") || name.includes("setpoint")) {
+        const m = val.match(/(-?\d{1,2})/);
+        if (m) {
+          const t = parseInt(m[1], 10);
+          if (!Number.isNaN(t)) desiredTemp = t;
+        } else if (typeof rawVal === "number") {
+          desiredTemp = Math.round(rawVal);
+        }
+      }
+
+      // VentilaÃƒÂ§ÃƒÂ£o
+      if (name.includes("fan")) {
+        if (
+          [
+            "low",
+            "medium",
+            "med",
+            "mid",
+            "high",
+            "auto",
+            "min",
+            "max",
+          ].includes(val)
+        ) {
+          desiredFan =
+            val === "med" || val === "mid" || val === "auto"
+              ? "medium"
+              : val === "min"
+              ? "low"
+              : val === "max"
+              ? "high"
+              : val;
+        } else {
+          const n = parseInt(val, 10);
+          if (!Number.isNaN(n)) {
+            if (n <= 1) desiredFan = "low";
+            else if (n === 2) desiredFan = "medium";
+            else if (n >= 3) desiredFan = "high";
+          }
+        }
+      }
+
+      // Modo (o UI suporta apenas 'cool' visualmente)
+      if (name.includes("mode")) {
+        desiredMode = "cool";
+      }
+
+      // Aplica incrementos do evento (se houver), por cima do persistido
+      if (desiredMode) setMode(desiredMode);
+      if (typeof desiredTemp === "number")
+        updateTemperature(desiredTemp, { silent: true });
+      if (desiredFan) setFanLevel(desiredFan);
+      if (desiredPower !== null)
+        setPowerState(!!desiredPower, { silent: true });
+
+      // Se faltou algum dado, completa pelo polling
+      const needPower = desiredPower === null;
+      const needTemp = !(typeof desiredTemp === "number");
+      const needFan = !desiredFan;
+      if (needPower || needTemp || needFan) {
+        await applyACFromPolling({ needPower, needTemp, needFan });
+      }
+
+      // Recalcula posiÃƒÂ§ÃƒÂ£o do knob apÃƒÂ³s aplicar
+      recalculate();
+    } catch (e) {
+      console.warn("Falha ao sincronizar AC via webhook:", e);
+    }
+  })();
+
+  // Garantir sincronizaÃƒÂ§ÃƒÂ£o: tenta tambÃƒÂ©m via polling apÃƒÂ³s um pequeno atraso
+  setTimeout(() => {
+    try {
+      applyACFromPolling({ needPower: true, needTemp: true, needFan: true });
+    } catch (_) {}
+  }, 1200);
+}
+
+// === FIM DO CONTROLADOR DE AR CONDICIONADO ===
+
+// Normalize mis-encoded Portuguese accents across the UI
+window.normalizeAccents = function normalizeAccents(root) {
+  try {
+    const map = new Map([
+      ["EscritÃ¯Â¿Â½Ã¯Â¿Â½rio", "EscritÃƒÂ³rio"],
+      ["ProgramaÃ¯Â¿Â½Ã¯Â¿Â½Ã‡Å“o", "ProgramaÃƒÂ§ÃƒÂ£o"],
+      ["RecepÃ¯Â¿Â½Ã¯Â¿Â½Ã‡Å“o", "RecepÃƒÂ§ÃƒÂ£o"],
+      ["RefeitÃ¯Â¿Â½Ã¯Â¿Â½rio", "RefeitÃƒÂ³rio"],
+      ["FuncionÃ‡Â­rios", "FuncionÃƒÂ¡rios"],
+      ["IluminaÃ¯Â¿Â½Ã¯Â¿Â½o", "IluminaÃƒÂ§ÃƒÂ£o"],
+      ["IluminaÃ¯Â¿Â½Ã¯Â¿Â½Ã‡Å“o", "IluminaÃƒÂ§ÃƒÂ£o"],
+      ["PainÃ‡Â¸is", "PainÃƒÂ©is"],
+      ["ArmÃ‡Â­rio", "ArmÃƒÂ¡rio"],
+      ["AmbientÃ‡Å“o", "Ambiente"],
+    ]);
+    const selector = ".page-title, .room-control-label, .room-card span";
+    const scope = root || document;
+    scope.querySelectorAll(selector).forEach((el) => {
+      const before = el.textContent || "";
+      let after = before;
+      map.forEach((val, key) => {
+        if (after.includes(key)) after = after.replaceAll(key, val);
+      });
+      if (after !== before) el.textContent = after;
+    });
+  } catch (_) {}
+};
+
+// --- FunÃƒÂ§ÃƒÂµes para a pÃƒÂ¡gina do EscritÃƒÂ³rio ---
+
+function toggleDevice(el, deviceType) {
+  const img = el.querySelector(".control-icon");
+  const stateEl = el.querySelector(".control-state");
+  const currentState = el.dataset.state;
+  let newState;
+  let newLabel;
+
+  const icons = {
+    light: {
+      on: "images/icons/icon-small-light-on.svg",
+      off: "images/icons/icon-small-light-off.svg",
+    },
+    tv: {
+      on: "images/icons/icon-small-tv-on.svg",
+      off: "images/icons/icon-small-tv-off.svg",
+    },
+    shader: {
+      on: "images/icons/icon-small-shader-on.svg",
+      off: "images/icons/icon-small-shader-off.svg",
+    },
+  };
+
+  if (!icons[deviceType]) return;
+
+  let deviceId = el.dataset.deviceId || null;
+  // Fallback por label para compatibilidade
+  if (!deviceId) {
+    const controlLabel = el
+      .querySelector(".control-label")
+      ?.textContent?.trim();
+    if (controlLabel === "Pendente") {
+      deviceId = "102";
+    } else if (controlLabel === "Trilho") {
+      deviceId = "101";
+    }
+  }
+
+  if (currentState === "off" || currentState === "closed") {
+    newState = "on";
+    newLabel = deviceType === "shader" ? "Abertas" : "ON";
+    img.src = icons[deviceType].on;
+    if (deviceId) sendHubitatCommand(deviceId, "on");
+  } else {
+    newState = deviceType === "shader" ? "closed" : "off";
+    newLabel = deviceType === "shader" ? "Fechadas" : "OFF";
+    img.src = icons[deviceType].off;
+    if (deviceId) sendHubitatCommand(deviceId, "off");
+  }
+
+  el.dataset.state = newState;
+  if (stateEl) stateEl.textContent = newLabel;
+}
+
+// (removido) setupThermostat: nÃƒÂ£o utilizado apÃƒÂ³s retirada da pÃƒÂ¡gina "escritorio"
+
+// --- Controle do Hubitat ---
+
+async function brutalCacheClear() {
+  const confirmationMessage =
+    "Deseja realmente limpar todo o cache do aplicativo? Isso ira recarregar a pagina.";
+
+  if (!window.confirm(confirmationMessage)) {
+    console.log("Limpeza manual de cache cancelada pelo usuario.");
+    return;
+  }
+
+  console.log("Iniciando limpeza manual de cache.");
+
+  if (typeof showMobileDebug === "function") {
+    showMobileDebug("Limpando cache...", "info");
+  }
+
+  const criticalKeys = ["hubitat_host", "hubitat_token"];
+  const backup = {};
+
+  try {
+    criticalKeys.forEach((key) => {
+      const value = localStorage.getItem(key);
+      if (value !== null) {
+        backup[key] = value;
+      }
+    });
+
+    localStorage.clear();
+
+    Object.keys(backup).forEach((key) => {
+      localStorage.setItem(key, backup[key]);
+    });
+  } catch (error) {
+    console.warn("Erro ao limpar localStorage:", error);
+  }
+
+  try {
+    sessionStorage.clear();
+  } catch (error) {
+    console.warn("Erro ao limpar sessionStorage:", error);
+  }
+
+  if ("caches" in window) {
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
+    } catch (error) {
+      console.warn("Erro ao limpar caches do navegador:", error);
+    }
+  }
+
+  if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map((registration) => registration.unregister())
+      );
+    } catch (error) {
+      console.warn("Erro ao remover service workers:", error);
+    }
+  }
+
+  try {
+    const timestamp = Date.now();
+    const cacheBuster =
+      timestamp.toString() + "_" + Math.random().toString(36).substring(2, 10);
+
+    localStorage.setItem("last_cache_clear", timestamp.toString());
+    localStorage.setItem("app_cache_version", cacheBuster);
+  } catch (error) {
+    console.warn("Erro ao atualizar metadados de cache:", error);
+  }
+
+  if (typeof showMobileDebug === "function") {
+    showMobileDebug("Cache limpo. Recarregando...", "success");
+  }
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 400);
+}
+
+window.brutalCacheClear = brutalCacheClear;
+const isProductionOriginal = !["localhost", "127.0.0.1", "::1"].includes(
+  location.hostname
+);
+// TEMPORÃƒÂRIO: ForÃƒÂ§ar produÃƒÂ§ÃƒÂ£o para debug mobile
+const isProduction = true;
+console.log("Ã°Å¸â€Â DEBUG PRODUÃƒâ€¡ÃƒÆ’O (FORÃƒâ€¡ADO):", {
+  hostname: location.hostname,
+  isProductionOriginal: isProductionOriginal,
+  isProduction: isProduction,
+  isMobile:
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    ),
+});
+
+// Detectar dispositivos mÃƒÂ³veis
+const isMobile =
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+// SOLUÃƒâ€¡ÃƒÆ’O: Desabilitar console.log em mobile para evitar travamentos
+const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
+
+// Sistema de detecÃƒÂ§ÃƒÂ£o de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
+const APP_VERSION = "1.0.0"; // Ã°Å¸Å½â€° MARCO v1.0 - SISTEMA TOTALMENTE FUNCIONAL
+(function () {
+  if (false && isMobile) {
+    // DESABILITADO para debug
+    try {
+      var lastVersion = localStorage.getItem("app_version");
+      var lastLoad = localStorage.getItem("last_mobile_load");
+      var now = new Date().getTime();
+
+      // SÃƒÂ³ recarregar se versÃƒÂ£o realmente mudou (nÃƒÂ£o por tempo)
+      if (lastVersion && lastVersion !== APP_VERSION) {
+        console.log(
+          "Ã°Å¸â€œÂ± Nova versÃƒÂ£o detectada - forÃƒÂ§ando reload cache"
+        );
+        console.log(
+          "Ã°Å¸â€œÂ± VersÃƒÂ£o anterior:",
+          lastVersion,
+          "Nova:",
+          APP_VERSION
+        );
+
+        // Marcar que jÃƒÂ¡ foi recarregado para esta versÃƒÂ£o
+        localStorage.setItem("app_version", APP_VERSION);
+        localStorage.setItem("last_mobile_load", now.toString());
+        localStorage.setItem("reload_done_" + APP_VERSION, "true");
+
+        // Limpar caches exceto os marcadores de versÃƒÂ£o
+        var itemsToKeep = [
+          "app_version",
+          "last_mobile_load",
+          "reload_done_" + APP_VERSION,
+        ];
+        var keysToRemove = [];
+        for (var i = 0; i < localStorage.length; i++) {
+          var key = localStorage.key(i);
+          if (
+            key &&
+            !itemsToKeep.includes(key) &&
+            !key.startsWith("reload_done_")
+          ) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
+
+        // ForÃƒÂ§ar reload apenas se nÃƒÂ£o foi feito ainda para esta versÃƒÂ£o
+        if (!localStorage.getItem("reload_done_" + APP_VERSION)) {
+          setTimeout(function () {
+            console.log(
+              "Ã°Å¸â€œÂ± Recarregando pÃƒÂ¡gina para nova versÃƒÂ£o..."
+            );
+            window.location.reload(true);
+          }, 2000);
+          return; // NÃƒÂ£o continuar inicializaÃƒÂ§ÃƒÂ£o
+        }
+      } else {
+        // Primeira vez ou mesma versÃƒÂ£o - continuar normalmente
+        localStorage.setItem("app_version", APP_VERSION);
+        localStorage.setItem("last_mobile_load", now.toString());
+        console.log("Ã°Å¸â€œÂ± Mobile cache OK - versÃƒÂ£o", APP_VERSION);
+      }
+    } catch (e) {
+      console.warn(
+        "Ã°Å¸â€œÂ± Erro na verificaÃƒÂ§ÃƒÂ£o de versÃƒÂ£o mobile:",
+        e
+      );
+    }
+  }
+})();
+
+// FunÃƒÂ§ÃƒÂ£o de log segura para mobile
+function safeLog() {
+  if (ENABLE_DEBUG_LOGS && typeof console !== "undefined" && console.log) {
+    try {
+      console.log.apply(console, arguments);
+    } catch (e) {
+      // Silenciar se console falhar
+    }
+  }
+}
+
+// Sistema de debug visual para mobile (DESABILITADO - compatibilidade resolvida)
+function showMobileDebug(message, type) {
+  // Debug desabilitado - funcionalidade mobile estÃƒÂ¡vel
+  return;
+}
+
+// Substituir console.log globalmente para mobile
+if (!ENABLE_DEBUG_LOGS) {
+  // Criar console mock silencioso para mobile
+  window.console = window.console || {};
+  window.console.log = function () {};
+  window.console.error = function () {};
+  window.console.warn = function () {};
+}
+
+// Debug mÃƒÂ­nimo apenas se necessÃƒÂ¡rio
+if (ENABLE_DEBUG_LOGS) {
+  safeLog("=== DASHBOARD ELETRIZE DEBUG ===");
+  safeLog("Ã°Å¸â€Â isProduction:", isProduction, "isMobile:", isMobile);
+}
+
+safeLog("=== AMBIENTE DETECTADO ===", {
+  isProduction,
+  isMobile,
+  isIOS,
+  userAgent: navigator.userAgent.substring(0, 60) + "...",
+});
+const HUBITAT_PROXY_URL = "/hubitat-proxy";
+const POLLING_URL = "/polling";
+window.musicPlayerUI = window.musicPlayerUI || {};
+
+// Hubitat Cloud (Maker API) configuration
+const HUBITAT_CLOUD_ENABLED = true;
+const HUBITAT_CLOUD_APP_BASE_URL =
+  "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/15";
+const HUBITAT_CLOUD_ACCESS_TOKEN = "1d9b367b-e4cd-4042-b726-718b759a82ef";
+const HUBITAT_CLOUD_DEVICES_BASE_URL = `${HUBITAT_CLOUD_APP_BASE_URL}/devices`;
+const HUBITAT_CLOUD_DEVICE_IDS = new Set(["109", "115", "116"]);
+
+function useHubitatCloud(deviceId) {
+  return (
+    HUBITAT_CLOUD_ENABLED &&
+    deviceId !== undefined &&
+    HUBITAT_CLOUD_DEVICE_IDS.has(String(deviceId))
+  );
+}
+
+const TEXT_MOJIBAKE_REGEX = /[\u00C3\u00C2\u00E2\uFFFD]/;
+const TEXT_MOJIBAKE_REPLACEMENTS = [
+  ["\u00e2\u0080\u0099", "Ã¢â‚¬â„¢"],
+  ["\u00e2\u0080\u0098", "Ã¢â‚¬Ëœ"],
+  ["\u00e2\u0080\u009c", "Ã¢â‚¬Å“"],
+  ["\u00e2\u0080\u009d", "Ã¢â‚¬Â"],
+  ["\u00e2\u0080\u0093", "Ã¢â‚¬â€œ"],
+  ["\u00e2\u0080\u0094", "Ã¢â‚¬â€"],
+  ["\u00e2\u0080\u00a6", "Ã¢â‚¬Â¦"],
+  ["\u00e2\u0080\u00a2", "Ã¢â‚¬Â¢"],
+  ["\u00c2\u00ba", "Ã‚Âº"],
+  ["\u00c2\u00aa", "Ã‚Âª"],
+  ["\u00c2\u00b0", "Ã‚Â°"],
+  ["\u00c2\u00a9", "Ã‚Â©"],
+  ["\u00c2\u00ae", "Ã‚Â®"],
+];
+const UTF8_DECODER =
+  typeof TextDecoder !== "undefined"
+    ? new TextDecoder("utf-8", { fatal: false })
+    : null;
+
+function hasMojibake(str) {
+  return TEXT_MOJIBAKE_REGEX.test(str);
+}
+
+function decodeLatin1ToUtf8(str) {
+  if (!UTF8_DECODER) return null;
+
+  const bytes = new Uint8Array(str.length);
+
+  for (let i = 0; i < str.length; i += 1) {
+    const code = str.charCodeAt(i);
+    if (code > 255) {
+      return null;
+    }
+    bytes[i] = code;
+  }
+
+  try {
+    return UTF8_DECODER.decode(bytes);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function normalizePortugueseText(value) {
+  if (value === null || value === undefined) return value;
+
+  let text = String(value);
+  if (!text.trim()) return text.trim();
+
+  const original = text;
+  text = text.trim();
+
+  if (hasMojibake(text)) {
+    const decoded = decodeLatin1ToUtf8(text);
+    if (decoded && decoded.trim()) {
+      text = decoded.trim();
+    }
+  }
+
+  text = text
+    .replace(/\u00C2\u00A0/g, " ")
+    .replace(/\u00C2(?=[^\w\s])/g, "")
+    .replace(/\u00C2\s/g, " ")
+    .replace(/\uFFFD/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([!?.,;:])/g, "$1")
+    .replace(/([(\[{])\s+/g, "$1")
+    .replace(/\s+([\)\]}])/g, "$1");
+
+  TEXT_MOJIBAKE_REPLACEMENTS.forEach(([wrong, right]) => {
+    if (text.includes(wrong)) {
+      text = text.split(wrong).join(right);
+    }
+  });
+
+  return text || original.trim();
+}
+
+function interpretPlaybackStatus(value) {
+  if (value === null || value === undefined) return null;
+  const normalized = String(value).toLowerCase();
+
+  if (
+    normalized === "playing" ||
+    normalized === "play" ||
+    normalized === "buffering" ||
+    normalized === "resume" ||
+    normalized === "run" ||
+    normalized === "start" ||
+    normalized === "on"
+  ) {
+    return true;
+  }
+
+  if (
+    normalized === "paused" ||
+    normalized === "pause" ||
+    normalized === "stopped" ||
+    normalized === "stop" ||
+    normalized === "idle" ||
+    normalized === "standby" ||
+    normalized === "off"
+  ) {
+    return false;
+  }
+
+  return null;
+}
+
+if (typeof window.musicPlayerUI.currentPlaying !== "boolean") {
+  window.musicPlayerUI.currentPlaying = false;
+}
+// (Removido: HUBITAT_DIRECT_URL / HUBITAT_ACCESS_TOKEN do frontend por seguranÃƒÂ§a)
+
+// FunÃƒÂ§ÃƒÂ£o para mostrar erro ao usuÃƒÂ¡rio
+function showErrorMessage(message) {
+  // Criar modal de erro
+  const errorModal = document.createElement("div");
+  errorModal.className = "error-modal";
+  errorModal.style.cssText = `
         position: fixed;
         top: 50%;
         left: 50%;
@@ -70,9 +2813,11 @@
         min-width: 320px;
         z-index: 10000;
         text-align: center;
-    `,o.innerHTML=`
-        <h3 style="margin-bottom: 12px; font-size: 1.4rem;">\xC3\xA2\xC2\x9D\xC5\u2019 Erro de Conex\xC3\u0192\xC2\xA3o</h3>
-        <p style="margin-bottom: 20px; line-height: 1.5;">${e}</p>
+    `;
+
+  errorModal.innerHTML = `
+        <h3 style="margin-bottom: 12px; font-size: 1.4rem;">Ã¢ÂÅ’ Erro de ConexÃƒÂ£o</h3>
+        <p style="margin-bottom: 20px; line-height: 1.5;">${message}</p>
         <button onclick="this.parentElement.remove()" style="
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
@@ -84,4 +2829,2989 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(231, 76, 60, 0.4)'" 
            onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">Fechar</button>
-    `,document.body.appendChild(o),setTimeout(()=>{o.parentElement&&o.remove()},1e4)}async function jo(e){console.warn("Fallback direto desativado. Usando apenas estados locais armazenados."),Array.isArray(e)||(e=typeof e=="string"?e.split(",").map(t=>t.trim()):[]);const o={};return e.forEach(t=>{const n=k(t)||"off";R(t,n,!0),o[t]={state:n,success:!1,error:"Direct polling disabled"}}),{timestamp:new Date().toISOString(),devices:o,fallback:!0,disabled:!0}}async function ao(){console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Testando conex\xC3\u0192\xC2\xA3o com Hubitat...");try{const e=await fetch(`${q}?devices=231`);console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Status da resposta:",e.status),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Headers da resposta:",Object.fromEntries(e.headers.entries()));const o=await e.text();if(console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Conte\xC3\u0192\xC2\xBAdo da resposta:",o.substring(0,300)),e.ok)try{const t=JSON.parse(o);return console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Conex\xC3\u0192\xC2\xA3o OK - Dados:",t),!0}catch(t){return console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Resposta n\xC3\u0192\xC2\xA3o \xC3\u0192\xC2\xA9 JSON v\xC3\u0192\xC2\xA1lido:",t),!1}else return console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro HTTP:",e.status,e.statusText),!1}catch(e){return console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro na conex\xC3\u0192\xC2\xA3o:",e),!1}}function Go(e,o,t){if(no(e)){let n=`${Bo}/${encodeURIComponent(e)}`;o&&(n+=`/${encodeURIComponent(o)}`,t!=null&&t!==""&&(n+=`/${encodeURIComponent(t)}`));const a=n.includes("?")?"&":"?";return`${n}${a}access_token=${encodeURIComponent(No)}`}return`${to}?device=${e}&command=${encodeURIComponent(o)}${t!==void 0?`&value=${encodeURIComponent(t)}`:""}`}async function b(e,o,t){console.log(`Enviando comando: ${o} para dispositivo ${e}${t!==void 0?` com valor ${t}`:""}`);try{if(M){const n=`${to}?device=${e}&command=${encodeURIComponent(o)}${t!==void 0?`&value=${encodeURIComponent(t)}`:""}`;try{const a=await fetch(n),s=await a.text();if(s.trim().startsWith("<!DOCTYPE")||s.includes("<html"))throw new Error("Function retornou HTML - fazendo fallback para API direta");if(!a.ok)throw new Error(`HTTP error! status: ${a.status}`);console.log("Comando enviado com sucesso via proxy");try{return JSON.parse(s)}catch{return null}}catch(a){console.log("Proxy falhou, tentando API direta:",a.message)}}throw new Error("Proxy indispon\xC3\u0192\xC2\xADvel e acesso direto desativado")}catch(n){throw console.error("Erro ao enviar comando para o Hubitat:",n),n}}function Wo(e,o,t){if(no(e)){const i={open:"open",stop:"stop",close:"close"}[o];if(!i)throw new Error("A\xE7\xE3o de cortina inv\xE1lida");return b(e,i)}const n=t||"push";let a;String(e)==="39"?(a={open:3,stop:2,close:1},console.log(`\u{1FA9F} Cortina com comandos invertidos (ID ${e}): comando ${o} mapeado para valor ${a[o]}`)):a={open:1,stop:2,close:3};const s=a[o];if(s===void 0)throw new Error("A\xE7\xE3o de cortina inv\xE1lida");return b(e,n,s)}function _e(e,o){var t,n,a,s;try{const r=((t=e==null?void 0:e.dataset)==null?void 0:t.deviceId)||((a=(n=e.closest("[data-device-id]"))==null?void 0:n.dataset)==null?void 0:a.deviceId),i=((s=e==null?void 0:e.dataset)==null?void 0:s.cmd)||"push";if(!r)return;Wo(r,o,i)}catch(r){console.error("Falha ao acionar cortina:",r)}}try{typeof b=="function"&&(b=function(o,t,n){const a=Go(o,t,n),s=a+(a.includes("?")?"&":"?")+`_ts=${Date.now()}`;console.log(`Enviando comando para o Hubitat (no-cors): ${s}`);try{return fetch(s,{mode:"no-cors",cache:"no-store",credentials:"omit",redirect:"follow",referrerPolicy:"no-referrer",keepalive:!0}).then(()=>null).catch(r=>{try{const i=new Image;i.referrerPolicy="no-referrer",i.src=s}catch{}return console.error("Erro ao enviar comando (CORS?):",r),null})}catch{try{const i=new Image;i.referrerPolicy="no-referrer",i.src=s}catch{}return Promise.resolve(null)}})}catch{}const K=5e3,Yo=2e3,Ge=2e4;let x=K,H=null,W=!1,Y=0,ye=!1;const _=new Map,ie=8e3;function de(e,o){console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E setMasterButtonLoading chamada:",e,"loading:",o),o?(e.classList.add("loading"),e.dataset.loading="true",console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Loading ativado - classes:",e.className)):(e.classList.remove("loading"),e.dataset.loading="false",console.log("\xC3\xA2\xC2\x9D\xC5\u2019 Loading desativado - classes:",e.className))}function Xo(){const e=Date.now();for(const[o,t]of _.entries())e-t>ie&&_.delete(o)}function Ko(e){if(!W)return;const o=Math.max(e,500);H!==null&&clearTimeout(H),H=setTimeout(function(){H=null,$e()},o),A(()=>["scheduleNextPollingRun",o])}function so(){if(!W){if(!M){A(()=>["Polling desativado em ambiente de desenvolvimento"]);return}W=!0,Y=0,x=K,$e(),console.log("Polling iniciado - intervalo base",K/1e3,"segundos")}}function Oe(){W&&(W=!1,Y=0,x=K,H!==null&&(clearTimeout(H),H=null),console.log("Polling parado"))}typeof document!="undefined"&&document.addEventListener("visibilitychange",function(){document.hidden?W&&(ye=!0,Oe()):ye&&(ye=!1,so())});async function $e(e={}){const o=!!(e&&e.skipSchedule);let t=!1,n=!1;try{if(Xo(),!M){A(()=>["Polling skipped (dev mode)"]);return}const a=P.join(","),s=`${q}?devices=${a}`;A(()=>["pollingRequest",{interval:x,url:s}]);const r=await fetch(s,{cache:"no-store"});if(!r.ok)throw new Error(`Polling failed: ${r.status}`);const i=await r.json();let l=i.devices;if(!l&&Array.isArray(i.data)&&(l={},i.data.forEach(d=>{if(!d||!d.id)return;let h="off";if(Array.isArray(d.attributes)){const p=d.attributes.find(y=>y.name==="switch");h=(p==null?void 0:p.currentValue)||(p==null?void 0:p.value)||"off"}else if(d.attributes&&typeof d.attributes=="object")if(d.attributes.switch!==void 0)h=d.attributes.switch;else{A(()=>["Polling skip device (no switch)",d.id]);return}l[d.id]={state:h,success:!0},d.attributes&&d.attributes.volume!==void 0&&(l[d.id].volume=d.attributes.volume)})),!l){A(()=>["Polling response sem devices",i]);return}Object.entries(l).forEach(([d,h])=>{if(h)if(h.success){const p=k(d),y=h.state;p!==y&&(t=!0),G(d,y),R(d,y),String(d)==="15"&&h.volume!==void 0&&Mo(h.volume)}else console.warn(`Falha no device ${d}:`,h.error)}),se(),typeof updateMasterLightToggleState=="function"&&updateMasterLightToggleState()}catch(a){if(n=!0,console.error("Erro no polling:",a),a.message.includes("JSON.parse")||a.message.includes("unexpected character")){console.error("PARANDO POLLING - Cloudflare Functions n\xE3o funcionam"),Oe();return}}finally{!o&&W&&(n?(Y+=1,x=Math.min(Math.round(x*1.5)||K,Ge)):t?(Y=0,x=K):(Y=0,x=Math.min(x+Yo,Ge)),A(()=>["pollingNextInterval",{encounteredError:n,hasStateChanges:t,nextInterval:x,failureCount:Y}]),Ko(x))}}function R(e,o,t=!1){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",()=>R(e,o,t));return}if(!t){const a=_.get(e);if(a&&Date.now()-a<ie)return}const n=document.querySelectorAll(`[data-device-id="${e}"]`);console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 updateDeviceUI(${e}, ${o}) - Encontrados ${n.length} controles`),n.forEach((a,s)=>{if(console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Controle ${s+1}: classes="${a.className}", currentState="${a.dataset.state}"`),a.classList.contains("room-control")||a.classList.contains("control-card")){const r=a.dataset.state;r!==o||t?(console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Atualizando controle ${e}: "${r}" \xC3\xA2\xE2\u20AC\xA0\xE2\u20AC\u2122 "${o}" (force=${t})`),Qe(a,o),G(e,o)):console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\u0153 Controle ${e} j\xC3\u0192\xC2\xA1 est\xC3\u0192\xC2\xA1 no estado correto: "${o}"`)}else console.log(`\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Elemento encontrado mas n\xC3\u0192\xC2\xA3o \xC3\u0192\xC2\xA9 room-control nem control-card: ${a.className}`)}),String(e)==="15"&&De(o),se()}function se(e=!1){ge(),U.forEach(function(o){if(!o.isConnected){U.delete(o);return}const t=(o.dataset.deviceIds||"").split(",").map(function(a){return a.trim()}).filter(Boolean);if(t.length===0)return;const n=fe(t)?"on":"off";Re(o,n,e)})}function fe(e){return(e||[]).some(o=>(k(o)||"off")==="on")}function Re(e,o,t=!1){if(!t&&e.dataset.pending==="true"){A(()=>["masterButtonPending",e.dataset.deviceIds]);return}const n=e.querySelector("img");if(!n)return;const a=o==="on"?"images/icons/icon-small-light-on.svg":"images/icons/icon-small-light-off.svg";(n.src||"").includes(a.split("/").pop())||(n.src=a,e.dataset.state=o,A(()=>["masterIconUpdated",o,e.dataset.deviceIds]))}function ro(){try{const e=document.getElementById("global-loader");e?(e.classList.remove("hidden"),e.style.display="flex",E(0,"Iniciando carregamento..."),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xB1 Loader exibido")):console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Elemento loader n\xC3\u0192\xC2\xA3o encontrado")}catch(e){console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao mostrar loader:",e)}}function Q(){try{const e=()=>{const o=document.getElementById("global-loader");o&&setTimeout(()=>{o.classList.add("hidden"),setTimeout(()=>{o.style.display="none"},500),console.log("Loader escondido")},500)};if(!Ke&&oe){const o=oe;oe=null,o.catch(t=>console.warn("Falha ao pr\xE9-carregar todos os assets",t)).finally(e);return}e()}catch(e){console.error("Erro ao esconder loader:",e)}}function E(e,o){try{const t=document.getElementById("progress-fill"),n=document.getElementById("progress-text"),a=document.querySelector(".loader-text");t&&(t.style.width=e+"%"),n&&(n.textContent=Math.round(e)+"%"),a&&o&&(a.textContent=o),console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC5\xA0 Progresso: ${e}% - ${o||"Carregando..."}`)}catch(t){console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Erro ao atualizar progresso:",t)}}async function io(){if(console.log("\xC3\xB0\xC5\xB8\xC5\u2019\xC2\x8D Iniciando carregamento global de estados..."),console.log("\xC3\xB0\xC5\xB8\xC5\u2019\xC2\x8D ALL_LIGHT_IDS dispon\xC3\u0192\xC2\xADvel:",!!P,"Length:",P?P.length:"undefined"),console.log("\xC3\xB0\xC5\xB8\xC5\u2019\xC2\x8D DEBUG CARREGAMENTO:",{isProduction:M,hostname:location.hostname,isMobile:j,userAgent:navigator.userAgent.substring(0,100)}),console.log("\xC3\xB0\xC5\xB8\xC5\u2019\xC2\x8D Carregamento universal (desktop e mobile id\xC3\u0192\xC2\xAAnticos)"),!M){console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u2122\xC2\xBB MODO DESENVOLVIMENTO ATIVO - carregando do localStorage"),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u2122\xC2\xBB ISSO PODE SER O PROBLEMA NO MOBILE!"),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xE2\u20AC\xB9 Dispositivos a carregar:",P.length),E(20,"Modo DEV - Estados salvos...");try{await new Promise(a=>setTimeout(a,500))}catch{console.warn("Promise fallback ativo")}let n=0;return P.forEach((a,s)=>{let r="off";try{r=k(a)||"off",R(a,r,!0),n++}catch(l){console.warn(`\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao processar ${a}:`,l)}const i=20+(s+1)/P.length*80;E(i,`Dispositivo ${s+1}/${P.length}...`)}),console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Carregamento completo: ${n}/${P.length} dispositivos`),E(100,"Carregamento conclu\xC3\u0192\xC2\xADdo!"),!0}try{let y=function(u,c){if(c.success)G(u,c.state),R(u,c.state,!0);else{console.warn(`Falha no device ${u}:`,c.error);const f=k(u)||"off";R(u,f,!0)}p++;const m=70+p/h.length*25;E(m,`Aplicando estado ${p}/${h.length}...`)},w=function(u){typeof window!="undefined"&&typeof window.requestIdleCallback=="function"?window.requestIdleCallback(u,{timeout:120}):setTimeout(u,16)},C=function(u){return new Promise(c=>{let m=0;const f=20,g=S=>{const T=S&&typeof S.timeRemaining=="function";let D=0;for(;m<u.length;){const F=u[m++];if(y(F[0],F[1]),D+=1,D>=f||T&&S.timeRemaining()<=4)break}m<u.length?w(g):c()};g()})};var e=y,o=w,t=C;console.log("\xC3\xB0\xC5\xB8\xC5\u2019\xC2\x8D MODO PRODU\xC3\u0192\xE2\u20AC\xA1\xC3\u0192\xC6\u2019O ATIVO - buscando do servidor"),E(10,"Testando conectividade...");try{const u=new AbortController,c=setTimeout(()=>u.abort(),Z.HEALTH_CHECK_TIMEOUT),m=await fetch(q+"?health=1",{method:"GET",signal:u.signal,mode:"cors"});clearTimeout(c),console.log("\xC3\xB0\xC5\xB8\xC2\x8F\xC2\xA5 Health check:",m.ok?"OK":"FAIL")}catch(u){console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Health check falhou, continuando mesmo assim:",u.message)}E(20,"Conectando com servidor...");const n=P.join(",");console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Buscando estados de ${P.length} dispositivos no servidor...`),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 URL ser\xC3\u0192\xC2\xA1:",`${q}?devices=${n}`),E(30,"Enviando solicita\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o...");const a=async(u,c,m=Z.MAX_RETRY_ATTEMPTS)=>{for(let f=1;f<=m;f++)try{console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Tentativa ${f}/${m} para ${u}`),E(30+(f-1)*5,`Tentativa ${f}/${m}...`);let g,S;const T=Z.FETCH_TIMEOUT_PER_ATTEMPT;typeof AbortController!="undefined"&&(g=new AbortController,S=setTimeout(()=>{console.warn(`\xC3\xA2\xC2\x8F\xC2\xB0 Timeout de ${T/1e3}s atingido na tentativa ${f}`),g.abort()},T),c.signal=g.signal);const D=await fetch(u,c);if(S&&clearTimeout(S),console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Tentativa ${f} - Status: ${D.status}`),!D.ok)throw new Error(`HTTP ${D.status}: ${D.statusText}`);return D}catch(g){if(console.warn(`\xC3\xA2\xC2\x9D\xC5\u2019 Tentativa ${f} falhou:`,g.message),f===m)throw new Error(`Falha ap\xC3\u0192\xC2\xB3s ${m} tentativas: ${g.message}`);const S=Math.min(Z.RETRY_DELAY_BASE*Math.pow(2,f-1),Z.RETRY_DELAY_MAX);console.log(`\xC3\xA2\xC2\x8F\xC2\xB3 Aguardando ${S}ms antes da pr\xC3\u0192\xC2\xB3xima tentativa...`),E(30+f*5,`Reagendando em ${S/1e3}s...`),await new Promise(T=>setTimeout(T,S))}},s={method:"GET",cache:"no-cache",mode:"cors"},r=`${q}?devices=${n}`;console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Fazendo fetch com retry para:",r);const i=await a(r,s);if(console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Resposta recebida, status:",i.status),E(50,"Recebendo dados..."),!i.ok)throw new Error(`HTTP ${i.status}: ${i.statusText}`);let l,d="";try{if(console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Parseando resposta JSON..."),d=await i.text(),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Resposta recebida (texto):",d.substring(0,500)),!d)throw new Error("Resposta vazia do servidor");if(d.trim().startsWith("<!DOCTYPE html")||d.trim().startsWith("<html")){console.error("\xC3\xA2\xC2\x9D\xC5\u2019 CR\xC3\u0192\xC2\x8DTICO: Cloudflare Functions n\xC3\u0192\xC2\xA3o est\xC3\u0192\xC2\xA3o funcionando!"),console.error("\xC3\xA2\xC2\x9D\xC5\u2019 O servidor est\xC3\u0192\xC2\xA1 retornando HTML em vez de executar as Functions."),console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Implementando fallback autom\xC3\u0192\xC2\xA1tico para API direta do Hubitat..."),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Tentando API direta do Hubitat como fallback..."),E(60,"Usando API direta como fallback...");try{const u=await jo(P);console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Fallback bem-sucedido:",u);const c=Object.entries(u.devices);let m=0;return c.forEach(([f,g])=>{if(g.success)G(f,g.state),R(f,g.state,!0),console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Device ${f}: ${g.state} (direto)`);else{const T=k(f)||"off";R(f,T,!0),console.log(`\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Device ${f}: usando estado salvo "${T}"`)}m++;const S=60+m/c.length*35;E(S,`Processando ${m}/${c.length}...`)}),E(100,"Carregamento via API direta conclu\xC3\u0192\xC2\xADdo!"),setTimeout(()=>{se(),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Bot\xC3\u0192\xC2\xB5es master atualizados ap\xC3\u0192\xC2\xB3s fallback")},100),console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Fallback autom\xC3\u0192\xC2\xA1tico conclu\xC3\u0192\xC2\xADdo com sucesso"),!0}catch(u){throw console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Fallback tamb\xC3\u0192\xC2\xA9m falhou:",u),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA6 Usando estados salvos como \xC3\u0192\xC2\xBAltimo recurso..."),P.forEach(c=>{const m=k(c)||"off";R(c,m,!0)}),new Error("Functions n\xC3\u0192\xC2\xA3o funcionam e API direta tamb\xC3\u0192\xC2\xA9m falhou - usando estados salvos")}}l=JSON.parse(d),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 JSON parseado com sucesso")}catch(u){throw console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao parsear JSON:",u),console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Conte\xC3\u0192\xC2\xBAdo da resposta que falhou:",d==null?void 0:d.substring(0,200)),new Error(`Resposta inv\xC3\u0192\xC2\xA1lida do servidor: ${u.message}`)}if(console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xA1 Estados recebidos:",l),!l.devices)try{if(Array.isArray(l.data)){console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Normalizando",l.data.length,"dispositivos do formato novo...");const u={};l.data.forEach((c,m)=>{if(!c||!c.id){console.warn(`\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Dispositivo ${m} inv\xC3\u0192\xC2\xA1lido:`,c);return}let f="off";if(Array.isArray(c.attributes)){const g=c.attributes.find(S=>S.name==="switch");g&&(f=(g==null?void 0:g.currentValue)||(g==null?void 0:g.value)||"off")}else if(c.attributes&&typeof c.attributes=="object")if(c.attributes.switch!==void 0)f=c.attributes.switch,console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xE2\u20AC\xB9 Device ${c.id}: switch=${f}`);else{console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xCB\u0153 Device ${c.id}: n\xC3\u0192\xC2\xA3o \xC3\u0192\xC2\xA9 l\xC3\u0192\xC2\xA2mpada (sem atributo 'switch'), pulando...`);return}else console.warn(`\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Device ${c.id}: attributes inv\xC3\u0192\xC2\xA1lido:`,c.attributes);u[c.id]={state:f,success:!0}}),l.devices=u,console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Resposta normalizada para formato devices (",Object.keys(u).length,"dispositivos )"),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\x8D Estados finais mapeados:",u)}else throw new Error("Formato de resposta inesperado: falta campo devices e data[]")}catch(u){throw console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Falha ao normalizar resposta:",u),u}E(70,"Processando estados...");const h=Object.entries(l.devices||{});console.log(`Processando ${h.length} dispositivos...`);let p=0;return await C(h),E(95,"Finalizando sincroniza\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o..."),setTimeout(()=>{se(),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Bot\xC3\u0192\xC2\xB5es master atualizados ap\xC3\u0192\xC2\xB3s carregamento global")},100),E(100,"Estados carregados com sucesso!"),console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Carregamento global conclu\xC3\u0192\xC2\xADdo com sucesso"),!0}catch(n){console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro no carregamento global:",n);try{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Executando diagn\xC3\u0192\xC2\xB3stico da conex\xC3\u0192\xC2\xA3o..."),await ao()||z("Falha na conex\xC3\u0192\xC2\xA3o com Hubitat. Verifique se as configura\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xB5es foram alteradas no painel do Cloudflare.")}catch(s){console.error("Erro no diagn\xC3\u0192\xC2\xB3stico:",s)}return n.name==="AbortError"?(console.warn("\xC3\xA2\xC2\x8F\xC2\xB1\xC3\xAF\xC2\xB8\xC2\x8F Timeout ap\xC3\u0192\xC2\xB3s m\xC3\u0192\xC2\xBAltiplas tentativas"),E(60,"Timeout - usando backup..."),z("Timeout na conex\xC3\u0192\xC2\xA3o. Verifique sua internet e tente novamente.")):n.message.includes("Falha ap\xC3\u0192\xC2\xB3s")?(console.warn("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E M\xC3\u0192\xC2\xBAltiplas tentativas falharam"),E(60,"Falhas m\xC3\u0192\xC2\xBAltiplas - modo backup..."),z("Servidor temporariamente indispon\xC3\u0192\xC2\xADvel. Usando dados salvos.")):n.name==="TypeError"&&n.message.includes("fetch")?(console.warn("\xC3\xB0\xC5\xB8\xC5\u2019\xC2\x90 Problema de conectividade de rede"),E(60,"Sem rede - modo offline..."),z("Sem conex\xC3\u0192\xC2\xA3o com a internet. Modo offline ativado.")):n.message.includes("HTTP 5")?(console.warn("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA5 Erro no servidor (5xx)"),E(60,"Erro servidor - backup..."),z("Problema no servidor. Usando \xC3\u0192\xC2\xBAltimos dados conhecidos.")):(console.warn("\xC3\xA2\xC2\x9D\xC5\u2019 Erro desconhecido no carregamento:",n.message),E(60,"Erro geral - usando backup..."),z("Erro no carregamento. Usando dados salvos localmente.")),P.forEach((s,r)=>{const i=k(s)||"off";R(s,i,!0);const l=60+(r+1)/P.length*35;E(l,`Carregando backup ${r+1}/${P.length}...`)}),E(100,"Carregamento conclu\xC3\u0192\xC2\xADdo (modo offline)"),!1}}function Jo(){const e=[],o=[];typeof fetch=="undefined"&&e.push("Fetch API n\xC3\u0192\xC2\xA3o suportada"),typeof Promise=="undefined"&&e.push("Promises n\xC3\u0192\xC2\xA3o suportadas"),typeof MutationObserver=="undefined"&&o.push("MutationObserver n\xC3\u0192\xC2\xA3o suportado (usar fallback)"),typeof AbortController=="undefined"&&o.push("AbortController n\xC3\u0192\xC2\xA3o suportado (sem timeout)"),typeof localStorage=="undefined"&&o.push("LocalStorage n\xC3\u0192\xC2\xA3o suportado (sem persist\xC3\u0192\xC2\xAAncia)");try{const t="__test_ls__";localStorage.setItem(t,"test"),localStorage.removeItem(t)}catch{o.push("LocalStorage bloqueado (modo privado?)")}return o.length>0&&console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Avisos de compatibilidade:",o),e.length>0?(console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Problemas cr\xC3\u0192\xC2\xADticos detectados:",e),!1):(console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Compatibilidade mobile verificada"),!0)}function Zo(){const e=document.getElementById("spa-root")||document.body;if(eo({root:e,force:!0}),ge(),Ie(!0),typeof MutationObserver=="undefined"){console.warn("MutationObserver indisponivel - usando fallback de sincronizacao periodica"),N&&clearInterval(N),N=setInterval(function(){re()},8e3);return}try{N&&(clearInterval(N),N=null),le&&le.disconnect(),le=new MutationObserver(function(o){let t=!1;o.forEach(function(n){n.removedNodes.forEach(function(a){Oo(a)&&(t=!0)}),n.addedNodes.forEach(function(a){_o(a)&&(t=!0)})}),t&&Ie(!0)}),le.observe(e,{childList:!0,subtree:!0})}catch(o){console.error("Erro ao configurar MutationObserver:",o),console.warn("Usando fallback de sincronizacao periodica."),N&&clearInterval(N),N=setInterval(function(){re()},8e3)}}function re(e=!1){ge(),A(()=>["syncAllVisibleControls",{devices:V.size,force:e}]);let o=0;V.forEach(function(t,n){if(!t||t.size===0){V.delete(n);return}const a=k(n);a!=null&&(t.forEach(function(r){if(!r.isConnected){t.delete(r);return}(r.dataset.state!==a||e)&&(Qe(r,a),o+=1)}),t.size===0&&V.delete(n))}),U.forEach(function(t){if(!t.isConnected){U.delete(t);return}const n=(t.dataset.deviceIds||"").split(",").map(function(s){return s.trim()}).filter(Boolean);if(n.length===0)return;const a=fe(n)?"on":"off";Re(t,a,e)}),A(()=>["syncAllVisibleControls:updated",o])}window.debugEletrize={forcePolling:$e,reloadStates:io,syncControls:re,showLoader:ro,hideLoader:Q,checkDevice:e=>{const o=k(e);console.log(`Device ${e}: stored=${o}`)},checkAllDevices:()=>{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xE2\u20AC\xB9 Estados de todos os dispositivos:"),P.forEach(e=>{const o=k(e);console.log(`  ${e}: ${o}`)})},testSetState:(e,o)=>{console.log(`\xC3\xB0\xC5\xB8\xC2\xA7\xC2\xAA Testando setState(${e}, ${o})`),G(e,o),R(e,o,!0),console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Teste completo")},clearAllStates:()=>{console.log("Limpando todos os estados salvos..."),P.forEach(e=>{ee.delete(e);try{localStorage.removeItem(Le(e))}catch(o){A(()=>["Falha ao limpar estado local",e,o])}}),console.log("Estados limpos")},checkProtectedCommands:()=>{if(console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\xBA\xC2\xA1\xC3\xAF\xC2\xB8\xC2\x8F Comandos protegidos:"),_.size===0){console.log("  \xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Nenhum comando protegido");return}const e=Date.now();_.forEach((o,t)=>{const n=Math.max(0,ie-(e-o)),a=n>0?"\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u2122 ATIVO":"\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u0153 EXPIRADO";console.log(`  ${a} ${t}: ${Math.ceil(n/1e3)}s restantes`)})},testMasterLoading:()=>{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E Testando loading nos bot\xC3\u0192\xC2\xB5es master...");const e=document.querySelectorAll(".room-master-btn"),o=document.querySelectorAll(".scene-control-card");console.log("Bot\xC3\u0192\xC2\xB5es master encontrados:",e.length),console.log("Bot\xC3\u0192\xC2\xB5es de cen\xC3\u0192\xC2\xA1rio encontrados:",o.length),e.forEach((t,n)=>{console.log(`Testando bot\xC3\u0192\xC2\xA3o master ${n+1}:`,t),setTimeout(()=>{de(t,!0),setTimeout(()=>{de(t,!1)},3e3)},n*200)}),o.forEach((t,n)=>{setTimeout(()=>{de(t,!0),setTimeout(()=>{de(t,!1)},3e3)},(e.length+n)*200)})},checkMasterButtons:()=>{console.log("\xC3\xB0\xC5\xB8\xC2\x8F\xC2\xA0 Status dos bot\xC3\u0192\xC2\xB5es master:"),document.querySelectorAll(".room-master-btn").forEach((e,o)=>{const t=(e.dataset.deviceIds||"").split(",").filter(Boolean),n=e.dataset.route||"unknown",a=e.dataset.pending==="true",s=e.dataset.state||"unknown",r=fe(t)?"on":"off",i=s===r;console.log(`  ${o+1}. ${n}: ${s} (calc: ${r}) ${i?"\xC3\xA2\xC5\u201C\xE2\u20AC\xA6":"\xC3\xA2\xC2\x9D\xC5\u2019"} ${a?"\xC3\xA2\xC2\x8F\xC2\xB3":"\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u0153"}`)})},fixMasterButtons:()=>{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\xA7 Corrigindo todos os bot\xC3\u0192\xC2\xB5es master..."),document.querySelectorAll(".room-master-btn").forEach(e=>{e.dataset.pending="false";const o=(e.dataset.deviceIds||"").split(",").filter(Boolean),t=fe(o)?"on":"off";Re(e,t,!0)}),console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Bot\xC3\u0192\xC2\xB5es master corrigidos!")},mobileInfo:()=>{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\xB1 Informa\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xB5es do dispositivo m\xC3\u0192\xC2\xB3vel:"),console.log("  isMobile:",j),console.log("  isIOS:",oo),console.log("  isProduction:",M),console.log("  User Agent:",navigator.userAgent),console.log("  App Version:",ve);try{console.log("  \xC3\u0192\xC5\xA1ltima carga:",new Date(parseInt(localStorage.getItem("last_mobile_load")||"0"))),console.log("  Vers\xC3\u0192\xC2\xA3o cache:",localStorage.getItem("app_version"))}catch{console.log("  localStorage indispon\xC3\u0192\xC2\xADvel")}},clearMobileCache:()=>{console.log("\xC3\xB0\xC5\xB8\xC2\xA7\xC2\xB9 Limpando cache mobile...");try{localStorage.removeItem("app_version"),localStorage.removeItem("last_mobile_load"),localStorage.removeItem("app_cache_version"),sessionStorage.clear(),console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Cache mobile limpo! Recarregue a p\xC3\u0192\xC2\xA1gina.")}catch(e){console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao limpar cache:",e)}},forceMobileReload:()=>{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\u017E For\xC3\u0192\xC2\xA7ando recarga mobile com limpeza de cache...");try{localStorage.clear(),sessionStorage.clear()}catch{}setTimeout(()=>{window.location.reload(!0)},1e3)},checkMobileCache:()=>{console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC2\x8D Status do cache mobile:");try{const e=localStorage.getItem("app_version"),o=localStorage.getItem("last_mobile_load"),t=new Date().getTime();if(console.log("  App Version atual:",ve),console.log("  Vers\xC3\u0192\xC2\xA3o em cache:",e),console.log("  Cache v\xC3\u0192\xC2\xA1lido:",e===ve),o){const n=Math.floor((t-parseInt(o))/6e4);console.log("  Idade do cache:",n,"minutos"),console.log("  Cache expirado:",n>60)}else console.log("  Primeira carga detectada")}catch(e){console.error("  Erro na verifica\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o:",e)}console.log("  Screen:",`${screen.width}x${screen.height}`),console.log("  Viewport:",`${window.innerWidth}x${window.innerHeight}`),console.log("  Connection:",navigator.connection?`${navigator.connection.effectiveType} (${navigator.connection.downlink}Mbps)`:"N\xC3\u0192\xC2\xA3o dispon\xC3\u0192\xC2\xADvel"),Jo()},testMobileApi:async()=>{console.log("\xC3\xB0\xC5\xB8\xC2\xA7\xC2\xAA Testando APIs para mobile...");try{const e=M?`${q}?devices=366`:"#test",o={method:"GET",cache:"no-cache"};if(typeof AbortController!="undefined"){const n=new AbortController;setTimeout(()=>n.abort(),5e3),o.signal=n.signal}const t=await fetch(e,o);console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Fetch test:",t.status,t.statusText)}catch(e){console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Fetch test failed:",e)}}};function ke(){console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Buscando metadados do Denon AVR via Hubitat Cloud..."),fetch(`${q}?full=1`).then(async e=>{if(!e.ok){const o=await e.text().catch(()=>"<no body>");throw new Error(`HTTP error! status: ${e.status} - ${o}`)}try{return await e.json()}catch{const t=await e.text().catch(()=>"<non-readable body>");throw new Error(`Invalid JSON response from polling: ${t}`)}}).then(e=>{console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Resposta completa do Hubitat:",e);const o=Array.isArray(e)?e:e.devices||[],t="29";let n=o.find(a=>String(a.id)===t||a.id===parseInt(t,10));if(n||(n=o.find(a=>{const s=String(a.name||a.label||"").toLowerCase();return s.includes("denon")||s.includes("receiver")||s.includes("av")}),n&&console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC5\xBD Denon metadata device encontrado por name/label:",n)),n){console.log("Denon encontrado:",n);const a=Ee(n);a&&De(a),console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Atributos do Denon:",n.attributes);let s="Desconhecido",r="Sem t\xC3\u0192\xC2\xADtulo",i="\xC3\u0192\xC2\x81lbum desconhecido",l=null,d=null,h=null,p=null;if(Array.isArray(n.attributes)){const w=n.attributes.find(g=>g.name==="artist"||g.name==="trackArtist"),C=n.attributes.find(g=>g.name==="trackDescription"||g.name==="track"),u=n.attributes.find(g=>g.name==="albumName"||g.name==="album"),c=n.attributes.find(g=>g.name==="albumArtUrl"||g.name==="albumArtURI"),m=n.attributes.find(g=>{const S=String((g==null?void 0:g.name)||"").toLowerCase();return S==="status"||S==="playbackstatus"||S==="playerstatus"||S==="transportstate"}),f=n.attributes.find(g=>g.name==="trackData"||g.name==="trackdata");s=(w==null?void 0:w.currentValue)||(w==null?void 0:w.value)||s,r=(C==null?void 0:C.currentValue)||(C==null?void 0:C.value)||r,i=(u==null?void 0:u.currentValue)||(u==null?void 0:u.value)||i,l=(c==null?void 0:c.currentValue)||(c==null?void 0:c.value)||l,d=(m==null?void 0:m.currentValue)||(m==null?void 0:m.value)||d,h=(f==null?void 0:f.currentValue)||(f==null?void 0:f.value)||h}else if(n.attributes&&typeof n.attributes=="object"){if(s=n.attributes.artist||s,r=n.attributes.track||r,i=n.attributes.album||i,d=n.attributes.status||n.attributes.playbackStatus||n.attributes.playerStatus||n.attributes.transportState||d,h=n.attributes.trackData||h,n.attributes.albumArt&&typeof n.attributes.albumArt=="string"){const w=n.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);l=w?w[1]:null}if(!l&&n.attributes.trackData)try{const w=typeof n.attributes.trackData=="string"?JSON.parse(n.attributes.trackData):n.attributes.trackData;p=w,l=w.image_url||l}catch(w){console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Erro ao parsear trackData:",w)}}if(!p&&h)try{p=typeof h=="string"?JSON.parse(h):h}catch(w){console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Erro ao parsear trackData (raw):",w)}!l&&p&&typeof p.image_url=="string"&&(l=p.image_url);let y=je(d);if(y===null&&p){const w=p.play_state||p.player_state||p.state||p.status||p.transport_state;y=je(w)}y!==null&&(window.musicPlayerUI.currentPlaying=y,window.musicPlayerUI&&typeof window.musicPlayerUI.setPlaying=="function"&&window.musicPlayerUI.setPlaying(y)),console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Metadados extra\xC3\u0192\xC2\xADdos:",{artist:s,track:r,album:i,albumArt:l}),s=X(s),r=X(r),i=X(i),Qo(s,r,i,l)}else console.log("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Denon AVR (ID 29) (metadados) n\xC3\u0192\xC2\xA3o encontrado nos dados"),console.log("Dispositivos dispon\xC3\u0192\xC2\xADveis:",o.map(a=>({id:a.id,name:a.name||a.label})))}).catch(e=>{console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao buscar metadados do Denon:",e),fetch(`${q}?full=1`).then(o=>o.text()).then(o=>console.log("Raw polling response (debug):",o)).catch(o=>console.warn("N\xC3\u0192\xC2\xA3o foi poss\xC3\u0192\xC2\xADvel obter resposta bruta de /polling:",o))})}function Qo(e,o,t,n){e=X(e),o=X(o),t=X(t);const a=I("#music-artist"),s=I("#music-track"),r=I(".music-album-img"),i=document.querySelector(".page.active");a&&(a.textContent=e),i&&i.querySelectorAll(".music-artist-sync").forEach(l=>l.textContent=e),s&&(s.textContent=o),i&&i.querySelectorAll(".music-track-sync").forEach(l=>l.textContent=o),xe(),r&&(n&&n!=="null"&&n!==""?(r.src=n,r.onerror=function(){this.src="images/Images/photo-varanda.jpg"}):r.src="images/Images/photo-varanda.jpg"),console.log(`\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 UI atualizada: "${o}" por ${e} (${t})`)}let ue=null;function co(){Te(),console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Iniciando polling de metadados a cada 3 segundos"),ue=setInterval(()=>{Ae()?ke():Te()},3e3)}function Te(){ue&&(clearInterval(ue),ue=null,console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Polling de metadados parado"))}let We=!1;function xe(){et();const e=document.querySelector(".page.active");if(!e)return;e.querySelectorAll(".music-track-marquee__text:not(.music-track-marquee__text--clone)").forEach(t=>{const n=t.closest(".music-track-marquee");if(!n)return;const a=n.querySelector(".music-track-marquee__inner");if(!a)return;const s=n.querySelector(".music-track-marquee__text--clone");s&&(s.textContent=t.textContent||""),n.classList.remove("music-track-marquee--active"),n.style.removeProperty("--music-track-marquee-duration"),requestAnimationFrame(()=>{const r=n.clientWidth,i=a.scrollWidth,l=i>r+2;if(n.classList.toggle("music-track-marquee--active",l),l){const h=Math.min(24,Math.max(10,i/80));n.style.setProperty("--music-track-marquee-duration",`${h}s`)}})})}function et(){if(We)return;const e=()=>xe();window.addEventListener("resize",e),window.addEventListener("orientationchange",e),We=!0}function lo(){if(!Ae()){console.log(" N\xE3o est\xE1 em p\xE1gina de m\xFAsica, ignorando initMusicPlayerUI");return}const e=I("#music-play-toggle"),o=e?e.querySelector(".music-play-toggle__icon--play"):null,t=e?e.querySelector(".music-play-toggle__icon--pause"):null,n=I("#music-next"),a=I("#music-prev"),s=I("#music-mute"),r=I("#music-volume-slider"),i=I(".music-volume-section"),l=I(".volume-icon-unmuted"),d=I(".volume-icon-muted"),h=I("#music-master-on"),p=I("#music-master-off"),y=I(".music-player-inner");console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Inicializando player de m\xC3\u0192\xC2\xBAsica...",{playToggleBtn:e,masterOnBtn:h,masterOffBtn:p}),window.musicPlayerUI=window.musicPlayerUI||{};const w=typeof window.musicPlayerUI.currentPowerState=="string"?window.musicPlayerUI.currentPowerState:"on";if(!e||!n||!a){console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Bot\xC3\u0192\xC2\xB5es de controle n\xC3\u0192\xC2\xA3o encontrados");return}let C=!1,u=50,c=!1,m=!1,f=w==="on";function g(v){m=!!v,e.setAttribute("aria-pressed",m?"true":"false"),e.classList.toggle("is-playing",m),o&&(o.style.display=m?"none":"block"),t&&(t.style.display=m?"block":"none"),e.setAttribute("aria-label",m?"Pausar":"Tocar"),window.musicPlayerUI.currentPlaying=m}function S(v){C=v,s.setAttribute("aria-pressed",v?"true":"false"),i.setAttribute("data-muted",v?"true":"false"),l&&d&&(l.style.display=v?"none":"block",d.style.display=v?"block":"none"),v?(u=parseInt(r.value),r.value=0,console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\xA1 Volume mutado. Volume anterior:",u),typeof ce=="function"&&ce()):(r.value=u,console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC5\xA0 Volume desmutado. Volume restaurado:",u),typeof ce=="function"&&ce())}let T="15",D="29";try{const v=I(".music-player-card"),$=I("#music-mute")||I("#music-volume-slider")||I("#music-master-on")||I("#music-master-off");v&&v.dataset&&v.dataset.metadataDeviceId&&(D=String(v.dataset.metadataDeviceId)),$&&$.dataset&&$.dataset.deviceId&&(T=String($.dataset.deviceId))}catch(v){console.warn("N\xC3\u0192\xC2\xA3o foi poss\xC3\u0192\xC2\xADvel ler overrides de IDs de Denon via data-*:",v)}if(e.addEventListener("click",()=>{const v=m?"pause":"play";console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Toggle play/pause -> enviando comando",v,"para device",D),b(D,v).then(()=>{console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando "+v+" enviado com sucesso"),g(!m)}).catch($=>console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando "+v+":",$))}),n.addEventListener("click",()=>{console.log("\xC3\xA2\xC2\x8F\xC2\xAD\xC3\xAF\xC2\xB8\xC2\x8F Next clicked - enviando comando para device",D),b(D,"nextTrack").then(()=>console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando nextTrack enviado com sucesso")).catch(v=>console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando nextTrack:",v))}),a.addEventListener("click",()=>{console.log("\xC3\xA2\xC2\x8F\xC2\xAE\xC3\xAF\xC2\xB8\xC2\x8F Previous clicked - enviando comando para device",D),b(D,"previousTrack").then(()=>console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando previousTrack enviado com sucesso")).catch(v=>console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando previousTrack:",v))}),window.musicPlayerUI.setPlaying=g,window.musicPlayerUI.isPlaying=()=>m,s&&r){let v=function(){const O=parseInt(r.value),L=O/100*100;r.style.setProperty("--volume-percent",L+"%"),console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC5\xA0 Volume ajustado para:",O,"% -",L+"%")};var ce=v;s.addEventListener("click",()=>{const O=!C,L=O?"mute":"unmute";console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xE2\u20AC\xA1 Mute button clicked - enviando comando "${L}" para device ${T}`),b(T,L).then(()=>{console.log(`\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando ${L} enviado com sucesso`),S(O)}).catch(pe=>console.error(`\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando ${L}:`,pe))}),r.addEventListener("input",O=>{v()}),r.addEventListener("change",O=>{v();const L=O.target.value;console.log("\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC5\xA0 Volume finalizado em:",L)});const $=I("#music-volume-slider");$&&($.addEventListener("input",O=>{const L=parseInt(O.target.value);$.style.setProperty("--volume-percent",L/100*100+"%")}),$.addEventListener("change",O=>{const L=O.target.value;console.log(`\xC3\xB0\xC5\xB8\xE2\u20AC\x9D\xC5\xA0 Music slider changed -> sending setVolume ${L} to Denon (${T})`),_.set(T,Date.now()),b(T,"setVolume",L).then(()=>console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 setVolume sent to Denon via music slider")).catch(pe=>console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Error sending setVolume from music slider:",pe))})),r.style.pointerEvents="auto",v(),console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Slider de volume configurado:",r)}else console.warn("\xC3\xA2\xC5\xA1\xC2\xA0\xC3\xAF\xC2\xB8\xC2\x8F Bot\xC3\u0192\xC2\xA3o mute ou slider n\xC3\u0192\xC2\xA3o encontrados");function F(v){f=v,window.musicPlayerUI.currentPowerState=v?"on":"off",v?(h.classList.add("music-master-btn--active"),h.setAttribute("aria-pressed","true"),p.classList.remove("music-master-btn--active"),p.setAttribute("aria-pressed","false"),y.classList.remove("power-off"),console.log("\xC3\xA2\xC5\xA1\xC2\xA1 Player ligado"),S(c)):(p.classList.add("music-master-btn--active"),p.setAttribute("aria-pressed","true"),h.classList.remove("music-master-btn--active"),h.setAttribute("aria-pressed","false"),y.classList.add("power-off"),console.log("\xC3\xA2\xC5\xA1\xC2\xAB Player desligado"),c=C,S(!0))}h&&p&&y&&(h.addEventListener("click",()=>{f||(console.log(`Power ON clicked - enviando comando "on" para device ${T}`),_.set(T,Date.now()),b(T,"on").then(()=>{console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando on enviado com sucesso"),F(!0)}).catch(v=>console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando on:",v)))}),p.addEventListener("click",()=>{f&&(console.log(`Power OFF clicked - enviando comando "off" para device ${T}`),_.set(T,Date.now()),b(T,"off").then(()=>{console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 Comando off enviado com sucesso"),F(!1)}).catch(v=>console.error("\xC3\xA2\xC2\x9D\xC5\u2019 Erro ao enviar comando off:",v)))})),window.musicPlayerUI.setPower=v=>F(te(v)==="on"),window.musicPlayerUI.isPowerOn=()=>f,g(!!window.musicPlayerUI.currentPlaying),F(w==="on"),ke(),Ze(),co(),xe(),console.log("\xC3\xB0\xC5\xB8\xC5\xBD\xC2\xB5 Player de m\xC3\u0192\xC2\xBAsica inicializado")}document.addEventListener("DOMContentLoaded",()=>{setTimeout(lo,100)});function me(){try{var e=document.getElementById("global-loader");e&&(e.style.display="none",void 0);var o=0;P.forEach(function(a){try{var s=document.querySelectorAll('[data-device-id="'+a+'"]');s.forEach(function(r){if(r.classList.contains("room-control")){r.dataset.state="off";var i=r.querySelector(".room-control-icon");i&&(i.src="images/icons/icon-small-light-off.svg"),o++}})}catch(r){""+a+r.message}}),""+o;var t=document.querySelectorAll(".room-control"),n=document.querySelectorAll(".room-master-btn");return""+t.length+n.length,!0}catch(a){return""+a.message,!1}}window.onerror=function(e,o,t,n,a){return console.error("\xC3\xB0\xC5\xB8\xC5\xA1\xC2\xA8 ERRO GLOBAL DETECTADO:"),console.error("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\x8D Mensagem:",e),console.error("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\x8D Arquivo:",o),console.error("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\x8D Linha:",t),console.error("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\x8D Coluna:",n),console.error("\xC3\xB0\xC5\xB8\xE2\u20AC\u0153\xC2\x8D Erro:",a),setTimeout(function(){console.log("\xC3\xB0\xC5\xB8\xC5\xA1\xC2\xA8 Tentando recupera\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o autom\xC3\u0192\xC2\xA1tica...");try{me()}catch(s){console.error("\xC3\xB0\xC5\xB8\xE2\u20AC\u2122\xC2\xA5 Falha na recupera\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o:",s)}},1e3),!1};window.addEventListener("unhandledrejection",function(e){console.error("\xC3\xB0\xC5\xB8\xC5\xA1\xC2\xA8 PROMISE REJEITADA:",e.reason),console.error("\xC3\xB0\xC5\xB8\xC5\xA1\xC2\xA8 Promise:",e.promise)});console.log("Script carregado, configurando DOMContentLoaded...");function uo(){console.log("DASHBOARD ELETRIZE INICIALIZANDO"),console.log("Mobile detectado:",j),window.initializationStarted=!0;try{console.log("Iniciando carregamento (comportamento unificado)..."),ro();var e=500;console.log("Delay de inicializa\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o: "+e+"ms (universal)"),setTimeout(function(){console.log("Iniciando carregamento principal...");try{io().then(function(o){console.log("Carregamento global conclu\xC3\u0192\xC2\xADdo, success:",o);var t=800;setTimeout(function(){Q(),Zo();var n=100;if(setTimeout(()=>{console.log("\xC3\xB0\xC5\xB8\xC2\x8F\xC2\xA0 Inicializando controles de c\xC3\u0192\xC2\xB4modos na inicializa\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o..."),$o(),Ie(!0)},n),M){var a=3e3;console.log("\xC3\xA2\xC5\u201C\xE2\u20AC\xA6 INICIANDO POLLING em "+a/1e3+" segundos (universal)",{isProduction:M,hostname:location.hostname,isMobile:j}),setTimeout(so,a)}else console.log("\xC3\xA2\xC2\x9D\xC5\u2019 POLLING N\xC3\u0192\xC6\u2019O INICIADO - n\xC3\u0192\xC2\xA3o est\xC3\u0192\xC2\xA1 em produ\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o:",{isProduction:M,hostname:location.hostname,isMobile:j});console.log("Aplica\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o totalmente inicializada!"),window.appFullyInitialized=!0},t)}).catch(function(o){console.error("Erro no carregamento global:",o),""+o.message,Q(),setTimeout(function(){try{me()}catch(t){console.error("Falha total na recupera\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o:",t),E(100,"Erro cr\xC3\u0192\xC2\xADtico - recarregue a p\xC3\u0192\xC2\xA1gina"),setTimeout(function(){Q()},3e3)}},1e3)})}catch(o){console.error("Erro cr\xC3\u0192\xC2\xADtico na inicializa\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o:",o),""+o.message;try{me()}catch(t){console.error("Falha no modo de emerg\xC3\u0192\xC2\xAAncia:",t),E(100,"Erro cr\xC3\u0192\xC2\xADtico - recarregue a p\xC3\u0192\xC2\xA1gina"),setTimeout(Q,3e3)}}},e)}catch(o){console.error("ERRO CRITICO NA INICIALIZACAO PRINCIPAL:",o),""+o.message;try{me()}catch(t){console.error("FALHA TOTAL:",t),""+t.message}}}window.addEventListener("DOMContentLoaded",function(){console.log("DOMContentLoaded executado, chamando initializeApp..."),uo()});setTimeout(function(){window.initializationStarted||(console.log("Fallback: DOMContentLoaded n\xC3\u0192\xC2\xA3o executou, for\xC3\u0192\xC2\xA7ando inicializa\xC3\u0192\xC2\xA7\xC3\u0192\xC2\xA3o..."),uo())},2e3);window.addEventListener("beforeunload",Oe);window.testHubitatConnection=ao;window.showErrorMessage=z;function ot(){console.log("\u{1F3AC} Abrindo todas as cortinas...");const e=document.getElementById("master-curtains-open-btn");e&&e.classList.add("loading");const o=document.querySelectorAll(".curtain-tile__btn[data-device-id]"),t=new Set;o.forEach(n=>{const a=n.dataset.deviceId;a&&!t.has(a)&&(t.add(a),_e(n,"open"))}),setTimeout(()=>{e&&e.classList.remove("loading")},2e3),console.log(`\u2705 Comando de abertura enviado para ${t.size} cortinas`)}function tt(){console.log("\u{1F3AC} Fechando todas as cortinas...");const e=document.getElementById("master-curtains-close-btn");e&&e.classList.add("loading");const o=document.querySelectorAll(".curtain-tile__btn[data-device-id]"),t=new Set;o.forEach(n=>{const a=n.dataset.deviceId;a&&!t.has(a)&&(t.add(a),_e(n,"close"))}),setTimeout(()=>{e&&e.classList.remove("loading")},2e3),console.log(`\u2705 Comando de fechamento enviado para ${t.size} cortinas`)}window.toggleRoomControl=bo;window.togglePoolControl=So;window.fireTVMacro=Lo;window.htvMacroOn=To;window.htvMacroOff=Ao;window.tvMacroOn=Po;window.tvMacroOff=Do;window.tvCommand=Co;window.curtainAction=_e;window.spaNavigate=spaNavigate;window.handleMasterCurtainsOpen=ot;window.handleMasterCurtainsClose=tt;})();
+    `;
+
+  document.body.appendChild(errorModal);
+
+  // Remover automaticamente apÃƒÂ³s 10 segundos
+  setTimeout(() => {
+    if (errorModal.parentElement) {
+      errorModal.remove();
+    }
+  }, 10000);
+}
+
+// Fallback direto desativado por seguranÃƒÂ§a (CORS e exposiÃƒÂ§ÃƒÂ£o de token)
+async function loadAllDeviceStatesDirect(deviceIds) {
+  console.warn(
+    "Fallback direto desativado. Usando apenas estados locais armazenados."
+  );
+  if (!Array.isArray(deviceIds)) {
+    deviceIds =
+      typeof deviceIds === "string"
+        ? deviceIds.split(",").map((id) => id.trim())
+        : [];
+  }
+  const devices = {};
+  deviceIds.forEach((id) => {
+    const state = getStoredState(id) || "off";
+    updateDeviceUI(id, state, true);
+    devices[id] = { state, success: false, error: "Direct polling disabled" };
+  });
+  return {
+    timestamp: new Date().toISOString(),
+    devices,
+    fallback: true,
+    disabled: true,
+  };
+}
+
+// FunÃƒÂ§ÃƒÂ£o para testar configuraÃƒÂ§ÃƒÂµes do Hubitat
+async function testHubitatConnection() {
+  console.log("Ã°Å¸â€Â§ Testando conexÃƒÂ£o com Hubitat...");
+
+  try {
+    // Testar com um dispositivo conhecido (231)
+    const response = await fetch(`${POLLING_URL}?devices=231`);
+    console.log("Ã°Å¸â€Â§ Status da resposta:", response.status);
+    console.log(
+      "Ã°Å¸â€Â§ Headers da resposta:",
+      Object.fromEntries(response.headers.entries())
+    );
+
+    const responseText = await response.text();
+    console.log(
+      "Ã°Å¸â€Â§ ConteÃƒÂºdo da resposta:",
+      responseText.substring(0, 300)
+    );
+
+    if (response.ok) {
+      try {
+        const data = JSON.parse(responseText);
+        console.log("Ã¢Å“â€¦ ConexÃƒÂ£o OK - Dados:", data);
+        return true;
+      } catch (e) {
+        console.error("Ã¢ÂÅ’ Resposta nÃƒÂ£o ÃƒÂ© JSON vÃƒÂ¡lido:", e);
+        return false;
+      }
+    } else {
+      console.error("Ã¢ÂÅ’ Erro HTTP:", response.status, response.statusText);
+      return false;
+    }
+  } catch (error) {
+    console.error("Ã¢ÂÅ’ Erro na conexÃƒÂ£o:", error);
+    return false;
+  }
+}
+
+// Helpers de URL para endpoints comuns da API
+function urlDeviceInfo(deviceId) {
+  return `${HUBITAT_PROXY_URL}?device=${deviceId}`;
+}
+
+function urlSendCommand(deviceId, command, value) {
+  if (useHubitatCloud(deviceId)) {
+    let url = `${HUBITAT_CLOUD_DEVICES_BASE_URL}/${encodeURIComponent(
+      deviceId
+    )}`;
+
+    if (command) {
+      url += `/${encodeURIComponent(command)}`;
+
+      if (value !== undefined && value !== null && value !== "") {
+        url += `/${encodeURIComponent(value)}`;
+      }
+    }
+
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}access_token=${encodeURIComponent(
+      HUBITAT_CLOUD_ACCESS_TOKEN
+    )}`;
+  }
+
+  return `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(
+    command
+  )}${value !== undefined ? `&value=${encodeURIComponent(value)}` : ""}`;
+}
+
+async function sendHubitatCommand(deviceId, command, value) {
+  console.log(
+    `Enviando comando: ${command} para dispositivo ${deviceId}${
+      value !== undefined ? ` com valor ${value}` : ""
+    }`
+  );
+
+  try {
+    // Se estivermos em produÃƒÂ§ÃƒÂ£o, tenta usar o proxy primeiro
+    if (isProduction) {
+      const proxyUrl = `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(
+        command
+      )}${value !== undefined ? `&value=${encodeURIComponent(value)}` : ""}`;
+
+      try {
+        const response = await fetch(proxyUrl);
+        const text = await response.text();
+
+        // Verifica se a resposta ÃƒÂ© HTML (indica que a Function nÃƒÂ£o estÃƒÂ¡ funcionando)
+        if (text.trim().startsWith("<!DOCTYPE") || text.includes("<html")) {
+          throw new Error(
+            "Function retornou HTML - fazendo fallback para API direta"
+          );
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        console.log("Comando enviado com sucesso via proxy");
+
+        // Tenta parse JSON, mas aceita resposta vazia
+        try {
+          return JSON.parse(text);
+        } catch {
+          return null; // Comando executado mas sem resposta JSON
+        }
+      } catch (error) {
+        console.log("Proxy falhou, tentando API direta:", error.message);
+      }
+    }
+
+    throw new Error("Proxy indisponÃƒÂ­vel e acesso direto desativado");
+  } catch (error) {
+    console.error("Erro ao enviar comando para o Hubitat:", error);
+    throw error;
+  }
+}
+
+// --- Cortinas (abrir/parar/fechar) ---
+function sendCurtainCommand(deviceId, action, commandName) {
+  if (useHubitatCloud(deviceId)) {
+    const commandMap = {
+      open: "open",
+      stop: "stop",
+      close: "close",
+    };
+    const commandToSend = commandMap[action];
+    if (!commandToSend) throw new Error("Ação de cortina inválida");
+    return sendHubitatCommand(deviceId, commandToSend);
+  }
+
+  const cmd = commandName || "push";
+
+  // Correção específica para cortina interna (ID 39) - comandos invertidos
+  let map;
+  if (String(deviceId) === "39") {
+    // Cortina com comandos invertidos (exemplo: device ID 40)
+    map = { open: 3, stop: 2, close: 1 };
+    console.log(
+      `🪟 Cortina com comandos invertidos (ID ${deviceId}): comando ${action} mapeado para valor ${map[action]}`
+    );
+  } else {
+    // Padrão para todas as outras cortinas
+    map = { open: 1, stop: 2, close: 3 };
+  }
+
+  const value = map[action];
+  if (value === undefined) throw new Error("Ação de cortina inválida");
+  return sendHubitatCommand(deviceId, cmd, value);
+}
+
+function curtainAction(el, action) {
+  try {
+    const id =
+      el?.dataset?.deviceId ||
+      el.closest("[data-device-id]")?.dataset?.deviceId;
+    const cmd = el?.dataset?.cmd || "push";
+    if (!id) return;
+    sendCurtainCommand(id, action, cmd);
+  } catch (e) {
+    console.error("Falha ao acionar cortina:", e);
+  }
+}
+
+// Master on/off (Home quick toggle) removido completamente
+
+// --- Override para contornar CORS no browser ao chamar Hubitat ---
+// Envia comandos em modo no-cors (resposta opaca) e, em falha, faz um GET via Image.
+try {
+  if (typeof sendHubitatCommand === "function") {
+    const _corsBypassSend = function (deviceId, command, value) {
+      const baseUrl = urlSendCommand(deviceId, command, value);
+      // Adiciona cache-buster para evitar SW/cache do navegador
+      const url =
+        baseUrl + (baseUrl.includes("?") ? "&" : "?") + `_ts=${Date.now()}`;
+      console.log(`Enviando comando para o Hubitat (no-cors): ${url}`);
+      try {
+        return fetch(url, {
+          mode: "no-cors",
+          cache: "no-store",
+          credentials: "omit",
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          keepalive: true,
+        })
+          .then(() => null)
+          .catch((err) => {
+            try {
+              const beacon = new Image();
+              beacon.referrerPolicy = "no-referrer";
+              beacon.src = url;
+            } catch (_) {
+              /* ignore */
+            }
+            console.error("Erro ao enviar comando (CORS?):", err);
+            return null;
+          });
+      } catch (e) {
+        try {
+          const beacon = new Image();
+          beacon.referrerPolicy = "no-referrer";
+          beacon.src = url;
+        } catch (_) {
+          /* ignore */
+        }
+        return Promise.resolve(null);
+      }
+    };
+    // Sobrescreve funÃƒÂ§ÃƒÂ£o original
+    // eslint-disable-next-line no-global-assign
+    sendHubitatCommand = _corsBypassSend;
+  }
+} catch (_) {
+  /* ignore */
+}
+
+// --- Polling automÃƒÂ¡tico de estados ---
+
+const POLLING_INTERVAL_BASE_MS = 5000;
+const POLLING_INTERVAL_STEP_MS = 2000;
+const POLLING_INTERVAL_MAX_MS = 20000;
+let currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+let pollingTimerHandle = null;
+let pollingActive = false;
+let pollingFailureCount = 0;
+let pollingPausedForVisibility = false;
+
+// Sistema para evitar conflitos entre comandos manuais e polling
+const recentCommands = new Map(); // deviceId -> timestamp do ÃƒÂºltimo comando
+const COMMAND_PROTECTION_MS = 8000; // 8 segundos de proteÃƒÂ§ÃƒÂ£o apÃƒÂ³s comando manual
+
+// Sistema de loading para botÃƒÂµes master
+function setMasterButtonLoading(button, isLoading) {
+  console.log(
+    "Ã°Å¸â€â€ž setMasterButtonLoading chamada:",
+    button,
+    "loading:",
+    isLoading
+  );
+
+  if (isLoading) {
+    button.classList.add("loading");
+    button.dataset.loading = "true";
+    console.log("Ã¢Å“â€¦ Loading ativado - classes:", button.className);
+  } else {
+    button.classList.remove("loading");
+    button.dataset.loading = "false";
+    console.log("Ã¢ÂÅ’ Loading desativado - classes:", button.className);
+  }
+}
+
+function cleanupExpiredCommands() {
+  const now = Date.now();
+  for (const [deviceId, timestamp] of recentCommands.entries()) {
+    if (now - timestamp > COMMAND_PROTECTION_MS) {
+      recentCommands.delete(deviceId);
+    }
+  }
+}
+
+function scheduleNextPollingRun(delay) {
+  if (!pollingActive) return;
+
+  const safeDelay = Math.max(delay, 500);
+
+  if (pollingTimerHandle !== null) {
+    clearTimeout(pollingTimerHandle);
+  }
+
+  pollingTimerHandle = setTimeout(function () {
+    pollingTimerHandle = null;
+    updateDeviceStatesFromServer();
+  }, safeDelay);
+
+  debugLog(() => ["scheduleNextPollingRun", safeDelay]);
+}
+
+function startPolling() {
+  if (pollingActive) return;
+
+  if (!isProduction) {
+    debugLog(() => ["Polling desativado em ambiente de desenvolvimento"]);
+    return;
+  }
+
+  pollingActive = true;
+  pollingFailureCount = 0;
+  currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+
+  updateDeviceStatesFromServer();
+
+  console.log(
+    "Polling iniciado - intervalo base",
+    POLLING_INTERVAL_BASE_MS / 1000,
+    "segundos"
+  );
+}
+
+function stopPolling() {
+  if (!pollingActive) return;
+
+  pollingActive = false;
+  pollingFailureCount = 0;
+  currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+
+  if (pollingTimerHandle !== null) {
+    clearTimeout(pollingTimerHandle);
+    pollingTimerHandle = null;
+  }
+
+  console.log("Polling parado");
+}
+
+if (typeof document !== "undefined") {
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      if (pollingActive) {
+        pollingPausedForVisibility = true;
+        stopPolling();
+      }
+    } else if (pollingPausedForVisibility) {
+      pollingPausedForVisibility = false;
+      startPolling();
+    }
+  });
+}
+
+async function updateDeviceStatesFromServer(options = {}) {
+  const skipSchedule = Boolean(options && options.skipSchedule);
+  let hasStateChanges = false;
+  let encounteredError = false;
+
+  try {
+    cleanupExpiredCommands();
+
+    if (!isProduction) {
+      debugLog(() => ["Polling skipped (dev mode)"]);
+      return;
+    }
+
+    const deviceIds = ALL_LIGHT_IDS.join(",");
+    const pollingUrl = `${POLLING_URL}?devices=${deviceIds}`;
+
+    debugLog(() => [
+      "pollingRequest",
+      { interval: currentPollingInterval, url: pollingUrl },
+    ]);
+
+    const response = await fetch(pollingUrl, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Polling failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    let devicesMap = data.devices;
+
+    if (!devicesMap && Array.isArray(data.data)) {
+      devicesMap = {};
+      data.data.forEach((device) => {
+        if (!device || !device.id) {
+          return;
+        }
+
+        let state = "off";
+
+        if (Array.isArray(device.attributes)) {
+          const switchAttr = device.attributes.find(
+            (attribute) => attribute.name === "switch"
+          );
+          state = switchAttr?.currentValue || switchAttr?.value || "off";
+        } else if (device.attributes && typeof device.attributes === "object") {
+          if (device.attributes.switch !== undefined) {
+            state = device.attributes.switch;
+          } else {
+            debugLog(() => ["Polling skip device (no switch)", device.id]);
+            return;
+          }
+        }
+
+        devicesMap[device.id] = { state, success: true };
+
+        if (device.attributes && device.attributes.volume !== undefined) {
+          devicesMap[device.id].volume = device.attributes.volume;
+        }
+      });
+    }
+
+    if (!devicesMap) {
+      debugLog(() => ["Polling response sem devices", data]);
+      return;
+    }
+
+    Object.entries(devicesMap).forEach(([deviceId, deviceData]) => {
+      if (!deviceData) {
+        return;
+      }
+
+      if (deviceData.success) {
+        const previousState = getStoredState(deviceId);
+        const nextState = deviceData.state;
+
+        if (previousState !== nextState) {
+          hasStateChanges = true;
+        }
+
+        setStoredState(deviceId, nextState);
+        updateDeviceUI(deviceId, nextState);
+
+        if (String(deviceId) === "15" && deviceData.volume !== undefined) {
+          updateDenonVolumeUI(deviceData.volume);
+        }
+      } else {
+        console.warn(`Falha no device ${deviceId}:`, deviceData.error);
+      }
+    });
+
+    updateAllMasterButtons();
+    if (typeof updateMasterLightToggleState === "function") {
+      updateMasterLightToggleState();
+    }
+  } catch (error) {
+    encounteredError = true;
+    console.error("Erro no polling:", error);
+
+    if (
+      error.message.includes("JSON.parse") ||
+      error.message.includes("unexpected character")
+    ) {
+      console.error("PARANDO POLLING - Cloudflare Functions não funcionam");
+      stopPolling();
+      return;
+    }
+  } finally {
+    if (!skipSchedule && pollingActive) {
+      if (encounteredError) {
+        pollingFailureCount += 1;
+        currentPollingInterval = Math.min(
+          Math.round(currentPollingInterval * 1.5) || POLLING_INTERVAL_BASE_MS,
+          POLLING_INTERVAL_MAX_MS
+        );
+      } else if (hasStateChanges) {
+        pollingFailureCount = 0;
+        currentPollingInterval = POLLING_INTERVAL_BASE_MS;
+      } else {
+        pollingFailureCount = 0;
+        currentPollingInterval = Math.min(
+          currentPollingInterval + POLLING_INTERVAL_STEP_MS,
+          POLLING_INTERVAL_MAX_MS
+        );
+      }
+
+      debugLog(() => [
+        "pollingNextInterval",
+        {
+          encounteredError,
+          hasStateChanges,
+          nextInterval: currentPollingInterval,
+          failureCount: pollingFailureCount,
+        },
+      ]);
+
+      scheduleNextPollingRun(currentPollingInterval);
+    }
+  }
+}
+
+function updateDeviceUI(deviceId, state, forceUpdate = false) {
+  // Verificar se o DOM estÃƒÂ¡ pronto
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () =>
+      updateDeviceUI(deviceId, state, forceUpdate)
+    );
+    return;
+  }
+
+  // Verificar se hÃƒÂ¡ comando recente que deve ser respeitado
+  if (!forceUpdate) {
+    const lastCommand = recentCommands.get(deviceId);
+    if (lastCommand && Date.now() - lastCommand < COMMAND_PROTECTION_MS) {
+      return;
+    }
+  }
+
+  // Atualizar controles de cÃƒÂ´modo (room-control E control-card)
+  const roomControls = document.querySelectorAll(
+    `[data-device-id="${deviceId}"]`
+  );
+  console.log(
+    `Ã°Å¸â€Â§ updateDeviceUI(${deviceId}, ${state}) - Encontrados ${roomControls.length} controles`
+  );
+
+  roomControls.forEach((el, index) => {
+    console.log(
+      `Ã°Å¸â€Â§ Controle ${index + 1}: classes="${
+        el.className
+      }", currentState="${el.dataset.state}"`
+    );
+
+    // Suporta tanto .room-control quanto .control-card
+    if (
+      el.classList.contains("room-control") ||
+      el.classList.contains("control-card")
+    ) {
+      const currentState = el.dataset.state;
+      if (currentState !== state || forceUpdate) {
+        console.log(
+          `Ã°Å¸â€â€ž Atualizando controle ${deviceId}: "${currentState}" Ã¢â€ â€™ "${state}" (force=${forceUpdate})`
+        );
+        setRoomControlUI(el, state);
+        // Salvar o estado atualizado
+        setStoredState(deviceId, state);
+      } else {
+        console.log(
+          `Ã¢Å“â€œ Controle ${deviceId} jÃƒÂ¡ estÃƒÂ¡ no estado correto: "${state}"`
+        );
+      }
+    } else {
+      console.log(
+        `Ã¢Å¡Â Ã¯Â¸Â Elemento encontrado mas nÃƒÂ£o ÃƒÂ© room-control nem control-card: ${el.className}`
+      );
+    }
+  });
+
+  // Atualizar botÃƒÂµes master da home apÃƒÂ³s qualquer mudanÃƒÂ§a de dispositivo
+  if (String(deviceId) === "15") {
+    applyDenonPowerState(state);
+  }
+
+  updateAllMasterButtons();
+}
+
+function updateAllMasterButtons(forceUpdate = false) {
+  pruneStaleEntries();
+
+  masterButtonCache.forEach(function (btn) {
+    if (!btn.isConnected) {
+      masterButtonCache.delete(btn);
+      return;
+    }
+
+    const ids = (btn.dataset.deviceIds || "")
+      .split(",")
+      .map(function (id) {
+        return id.trim();
+      })
+      .filter(Boolean);
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    const masterState = anyOn(ids) ? "on" : "off";
+    setMasterIcon(btn, masterState, forceUpdate);
+  });
+}
+
+// FunÃƒÂ§ÃƒÂµes auxiliares para botÃƒÂµes master (movidas do HTML)
+function anyOn(deviceIds) {
+  return (deviceIds || []).some((id) => (getStoredState(id) || "off") === "on");
+}
+
+// FunÃƒÂ§ÃƒÂ£o auxiliar para verificar se alguma cortina estÃƒÂ¡ aberta
+function anyCurtainOpen(curtainIds) {
+  // Verifica se alguma cortina do grupo estÃƒÂ¡ aberta
+  return (curtainIds || []).some((id) => {
+    const state = getCurtainState(id);
+    console.log(`Ã°Å¸â€Â Cortina ${id}: estado = ${state}`);
+    return state === "open";
+  });
+}
+
+// FunÃƒÂ§ÃƒÂ£o para obter o estado atual da cortina
+function getCurtainState(curtainId) {
+  // Buscar no localStorage ou usar um estado padrÃƒÂ£o
+  const state = localStorage.getItem(`curtain_${curtainId}_state`) || "closed";
+  return state; // retorna 'open' ou 'closed'
+}
+
+// FunÃƒÂ§ÃƒÂ£o para obter o ÃƒÂºltimo comando de cortina
+function getLastCurtainCommand(curtainId) {
+  const state = getCurtainState(curtainId);
+  return state === "closed" ? "close" : "open"; // normalizar para comando
+}
+
+// FunÃƒÂ§ÃƒÂ£o para armazenar o estado da cortina
+function setCurtainState(curtainId, state) {
+  localStorage.setItem(`curtain_${curtainId}_state`, state);
+}
+
+// FunÃƒÂ§ÃƒÂ£o para obter estado da cortina
+function getCurtainState(curtainId) {
+  try {
+    return localStorage.getItem(`curtain_${curtainId}_state`) || "closed";
+  } catch (error) {
+    console.error("Ã¢ÂÅ’ Erro ao obter estado da cortina:", error);
+    return "closed";
+  }
+}
+
+function setMasterIcon(btn, state, forceUpdate = false) {
+  if (!forceUpdate && btn.dataset.pending === "true") {
+    debugLog(() => ["masterButtonPending", btn.dataset.deviceIds]);
+    return;
+  }
+
+  const img = btn.querySelector("img");
+  if (!img) return;
+
+  const nextIcon =
+    state === "on"
+      ? "images/icons/icon-small-light-on.svg"
+      : "images/icons/icon-small-light-off.svg";
+  const currentSrc = img.src || "";
+
+  if (!currentSrc.includes(nextIcon.split("/").pop())) {
+    img.src = nextIcon;
+    btn.dataset.state = state;
+    debugLog(() => ["masterIconUpdated", state, btn.dataset.deviceIds]);
+  }
+}
+
+function setCurtainMasterIcon(btn, state, forceUpdate = false) {
+  if (!forceUpdate && btn.dataset.pending === "true") {
+    debugLog(() => ["curtainMasterPending", btn.dataset.curtainIds]);
+    return;
+  }
+
+  const img = btn.querySelector("img");
+  if (!img) return;
+
+  const nextIcon =
+    state === "open"
+      ? "images/icons/curtain-open.svg"
+      : "images/icons/curtain-closed.svg";
+  const currentSrc = img.src || "";
+
+  if (!currentSrc.includes(nextIcon.split("/").pop())) {
+    img.src = nextIcon;
+    btn.dataset.state = state;
+    debugLog(() => ["curtainMasterIconUpdated", state, btn.dataset.curtainIds]);
+  }
+}
+
+// FunÃƒÂ§ÃƒÂ£o para definir o estado de loading do botÃƒÂ£o master de cortinas
+function setCurtainMasterButtonLoading(btn, loading) {
+  btn.dataset.loading = loading ? "true" : "false";
+  if (loading) {
+    btn.classList.add("loading");
+    btn.dataset.pending = "true";
+  } else {
+    btn.classList.remove("loading");
+    btn.dataset.pending = "false";
+  }
+}
+
+// FunÃƒÂ§ÃƒÂ£o para atualizar ÃƒÂ­cones das cortinas individuais
+function updateIndividualCurtainButtons(curtainIds, command) {
+  curtainIds.forEach((curtainId) => {
+    const button = document.querySelector(`[data-device-id="${curtainId}"]`);
+    if (button && button.querySelector(".device-icon")) {
+      const icon = button.querySelector(".device-icon");
+      icon.src =
+        command === "open"
+          ? "images/icons/curtain-open.svg"
+          : "images/icons/curtain-closed.svg";
+      icon.alt = command === "open" ? "Cortina Aberta" : "Cortina Fechada";
+    }
+  });
+}
+
+// FunÃƒÂ§ÃƒÂ£o chamada pelo onclick dos botÃƒÂµes master na home
+function onHomeMasterClick(event, button) {
+  console.log("Ã°Å¸â€“Â±Ã¯Â¸Â onHomeMasterClick chamada!", button);
+  event.preventDefault();
+  event.stopPropagation();
+
+  // Verificar se jÃƒÂ¡ estÃƒÂ¡ carregando
+  if (button.dataset.loading === "true") {
+    console.log(
+      "Ã¢ÂÂ¸Ã¯Â¸Â BotÃƒÂ£o jÃƒÂ¡ estÃƒÂ¡ carregando, ignorando clique"
+    );
+    return;
+  }
+
+  const deviceIds = (button.dataset.deviceIds || "").split(",").filter(Boolean);
+  console.log("Ã°Å¸â€Â Device IDs encontrados:", deviceIds);
+
+  if (deviceIds.length === 0) {
+    console.log("Ã¢ÂÅ’ Nenhum device ID encontrado");
+    return;
+  }
+
+  // Determinar comando baseado no estado atual
+  const currentState = anyOn(deviceIds) ? "on" : "off";
+  const newCommand = currentState === "on" ? "off" : "on";
+  console.log(
+    "Ã°Å¸Å½Â¯ Comando determinado:",
+    currentState,
+    "Ã¢â€ â€™",
+    newCommand
+  );
+
+  // Ativar loading visual
+  console.log("Ã°Å¸â€â€ž Ativando loading visual...");
+  setMasterButtonLoading(button, true);
+
+  // Atualizar UI imediatamente
+  setMasterIcon(button, newCommand);
+
+  // Enviar comandos para todos os dispositivos (master dos ambientes mantÃƒÂ©m comportamento original)
+  const promises = deviceIds.map((deviceId) => {
+    // Marcar comando recente
+    recentCommands.set(deviceId, Date.now());
+    setStoredState(deviceId, newCommand);
+    return sendHubitatCommand(deviceId, newCommand);
+  });
+
+  // Aguardar conclusÃƒÂ£o de todos os comandos
+  Promise.allSettled(promises).finally(() => {
+    // Remover loading apÃƒÂ³s comandos
+    setTimeout(() => {
+      setMasterButtonLoading(button, false);
+    }, 1000); // 1 segundo de delay para feedback visual
+  });
+}
+
+// FunÃƒÂ§ÃƒÂ£o chamada pelo onclick dos botÃƒÂµes master de cortinas na home
+function onHomeCurtainMasterClick(event, button) {
+  console.log("Ã°Å¸â€“Â±Ã¯Â¸Â onHomeCurtainMasterClick chamada!", button);
+  event.preventDefault();
+  event.stopPropagation();
+
+  // Verificar se jÃƒÂ¡ estÃƒÂ¡ carregando
+  if (button.dataset.loading === "true") {
+    console.log(
+      "Ã¢ÂÂ¸Ã¯Â¸Â BotÃƒÂ£o de cortina jÃƒÂ¡ estÃƒÂ¡ carregando, ignorando clique"
+    );
+    return;
+  }
+
+  const curtainIds = (button.dataset.curtainIds || "")
+    .split(",")
+    .filter(Boolean);
+  console.log("Ã°Å¸â€Â Curtain IDs encontrados:", curtainIds);
+
+  if (curtainIds.length === 0) {
+    console.log("Ã¢ÂÅ’ Nenhum curtain ID encontrado");
+    return;
+  }
+
+  // Determinar comando baseado no estado atual das cortinas
+  console.log(
+    "Ã°Å¸â€Â Verificando estados individuais das cortinas:",
+    curtainIds.map((id) => ({ id, state: getCurtainState(id) }))
+  );
+  const currentState = anyCurtainOpen(curtainIds) ? "open" : "closed";
+  const newCommand = currentState === "open" ? "close" : "open";
+  console.log(
+    "Ã°Å¸Å½Â¯ Comando de cortina determinado:",
+    currentState,
+    "Ã¢â€ â€™",
+    newCommand
+  );
+
+  // Atualizar UI imediatamente (antes do loading)
+  setCurtainMasterIcon(button, newCommand, true); // forÃƒÂ§ar atualizaÃƒÂ§ÃƒÂ£o
+
+  // Ativar loading visual
+  console.log("Ã°Å¸â€â€ž Ativando loading visual no botÃƒÂ£o de cortina...");
+  setCurtainMasterButtonLoading(button, true);
+
+  // Atualizar ÃƒÂ­cones dos botÃƒÂµes individuais imediatamente
+  updateIndividualCurtainButtons(curtainIds, newCommand);
+
+  // Enviar comandos para todas as cortinas
+  const promises = curtainIds.map((curtainId) => {
+    // Marcar comando recente
+    recentCommands.set(curtainId, Date.now());
+    // Armazenar o estado da cortina
+    setCurtainState(curtainId, newCommand);
+    return sendHubitatCommand(curtainId, newCommand);
+  });
+
+  // Aguardar conclusÃƒÂ£o de todos os comandos
+  Promise.allSettled(promises).finally(() => {
+    // Remover loading apÃƒÂ³s comandos
+    setTimeout(() => {
+      setCurtainMasterButtonLoading(button, false);
+    }, 1000); // 1 segundo de delay para feedback visual
+  });
+}
+
+// FunÃƒÂ§ÃƒÂ£o especial para atualizar estados apÃƒÂ³s comandos master
+function updateStatesAfterMasterCommand(deviceIds, command) {
+  console.log(
+    `Ã°Å¸Å½Â¯ Atualizando estados apÃƒÂ³s master ${command} para:`,
+    deviceIds
+  );
+
+  // Atualizar todos os dispositivos affected
+  deviceIds.forEach((deviceId) => {
+    updateDeviceUI(deviceId, command, true);
+  });
+
+  // ForÃƒÂ§ar atualizaÃƒÂ§ÃƒÂ£o de todos os masters
+  setTimeout(() => {
+    const masterButtons = document.querySelectorAll(".room-master-btn");
+    masterButtons.forEach((btn) => {
+      const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
+      if (ids.some((id) => deviceIds.includes(id))) {
+        const masterState = anyOn(ids) ? "on" : "off";
+        setMasterIcon(btn, masterState, true); // forÃƒÂ§ar atualizaÃƒÂ§ÃƒÂ£o
+      }
+    });
+  }, 100);
+}
+
+// === SISTEMA DE CARREGAMENTO GLOBAL ===
+
+// Controle da tela de loading
+function showLoader() {
+  try {
+    const loader = document.getElementById("global-loader");
+    if (loader) {
+      loader.classList.remove("hidden");
+      loader.style.display = "flex"; // ForÃƒÂ§ar display
+      updateProgress(0, "Iniciando carregamento...");
+      console.log("Ã°Å¸â€œÂ± Loader exibido");
+    } else {
+      console.warn("Ã¢Å¡Â Ã¯Â¸Â Elemento loader nÃƒÂ£o encontrado");
+    }
+  } catch (error) {
+    console.error("Ã¢ÂÅ’ Erro ao mostrar loader:", error);
+  }
+}
+
+function hideLoader() {
+  try {
+    const finalizeHide = () => {
+      const loader = document.getElementById("global-loader");
+      if (loader) {
+        const delay = 500;
+        setTimeout(() => {
+          loader.classList.add("hidden");
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 500);
+          console.log("Loader escondido");
+        }, delay);
+      }
+    };
+
+    if (!assetPreloadComplete && assetPreloadPromise) {
+      const pending = assetPreloadPromise;
+      assetPreloadPromise = null;
+      pending
+        .catch((error) =>
+          console.warn("Falha ao pré-carregar todos os assets", error)
+        )
+        .finally(finalizeHide);
+      return;
+    }
+
+    finalizeHide();
+  } catch (error) {
+    console.error("Erro ao esconder loader:", error);
+  }
+}
+
+
+function updateProgress(percentage, text) {
+  try {
+    const progressFill = document.getElementById("progress-fill");
+    const progressText = document.getElementById("progress-text");
+    const loaderText = document.querySelector(".loader-text");
+
+    if (progressFill) {
+      progressFill.style.width = percentage + "%";
+    }
+
+    if (progressText) {
+      progressText.textContent = Math.round(percentage) + "%";
+    }
+
+    if (loaderText && text) {
+      loaderText.textContent = text;
+    }
+
+    // Log para debug mobile
+    console.log(
+      `Ã°Å¸â€œÅ  Progresso: ${percentage}% - ${text || "Carregando..."}`
+    );
+  } catch (error) {
+    console.warn("Ã¢Å¡Â Ã¯Â¸Â Erro ao atualizar progresso:", error);
+  }
+}
+
+// Carregamento global de todos os estados dos dispositivos
+async function loadAllDeviceStatesGlobally() {
+  console.log("Ã°Å¸Å’Â Iniciando carregamento global de estados...");
+  console.log(
+    "Ã°Å¸Å’Â ALL_LIGHT_IDS disponÃƒÂ­vel:",
+    !!ALL_LIGHT_IDS,
+    "Length:",
+    ALL_LIGHT_IDS ? ALL_LIGHT_IDS.length : "undefined"
+  );
+  console.log("Ã°Å¸Å’Â DEBUG CARREGAMENTO:", {
+    isProduction: isProduction,
+    hostname: location.hostname,
+    isMobile: isMobile,
+    userAgent: navigator.userAgent.substring(0, 100),
+  });
+
+  // Mobile e desktop usam EXATAMENTE o mesmo carregamento
+  console.log("Ã°Å¸Å’Â Carregamento universal (desktop e mobile idÃƒÂªnticos)");
+
+  if (!isProduction) {
+    console.log(
+      "Ã°Å¸â€™Â» MODO DESENVOLVIMENTO ATIVO - carregando do localStorage"
+    );
+    console.log("Ã°Å¸â€™Â» ISSO PODE SER O PROBLEMA NO MOBILE!");
+    console.log("Ã°Å¸â€œâ€¹ Dispositivos a carregar:", ALL_LIGHT_IDS.length);
+    updateProgress(20, "Modo DEV - Estados salvos...");
+
+    // Simular carregamento para melhor UX (mobile-friendly)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } catch (e) {
+      // Fallback se Promise.resolve falhar
+      console.warn("Promise fallback ativo");
+    }
+
+    let loadedCount = 0;
+    ALL_LIGHT_IDS.forEach((deviceId, index) => {
+      let storedState = "off";
+      try {
+        storedState = getStoredState(deviceId) || "off";
+        updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+        loadedCount++;
+      } catch (e) {
+        console.warn(`Ã¢ÂÅ’ Erro ao processar ${deviceId}:`, e);
+      }
+
+      const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
+      updateProgress(
+        progress,
+        `Dispositivo ${index + 1}/${ALL_LIGHT_IDS.length}...`
+      );
+    });
+
+    console.log(
+      `Ã¢Å“â€¦ Carregamento completo: ${loadedCount}/${ALL_LIGHT_IDS.length} dispositivos`
+    );
+    updateProgress(100, "Carregamento concluÃƒÂ­do!");
+    return true;
+  }
+
+  try {
+    console.log("Ã°Å¸Å’Â MODO PRODUÃƒâ€¡ÃƒÆ’O ATIVO - buscando do servidor");
+    updateProgress(10, "Testando conectividade...");
+
+    // Teste rÃƒÂ¡pido de conectividade
+    try {
+      const healthController = new AbortController();
+      const healthTimeout = setTimeout(
+        () => healthController.abort(),
+        NETWORK_CONFIG.HEALTH_CHECK_TIMEOUT
+      );
+
+      const healthCheck = await fetch(POLLING_URL + "?health=1", {
+        method: "GET",
+        signal: healthController.signal,
+        mode: "cors",
+      });
+
+      clearTimeout(healthTimeout);
+      console.log("Ã°Å¸ÂÂ¥ Health check:", healthCheck.ok ? "OK" : "FAIL");
+    } catch (healthError) {
+      console.warn(
+        "Ã¢Å¡Â Ã¯Â¸Â Health check falhou, continuando mesmo assim:",
+        healthError.message
+      );
+    }
+
+    updateProgress(20, "Conectando com servidor...");
+
+    const deviceIds = ALL_LIGHT_IDS.join(",");
+    console.log(
+      `Ã°Å¸â€œÂ¡ Buscando estados de ${ALL_LIGHT_IDS.length} dispositivos no servidor...`
+    );
+    console.log(
+      "Ã°Å¸â€œÂ¡ URL serÃƒÂ¡:",
+      `${POLLING_URL}?devices=${deviceIds}`
+    );
+
+    updateProgress(30, "Enviando solicitaÃƒÂ§ÃƒÂ£o...");
+
+    // FunÃƒÂ§ÃƒÂ£o de retry com backoff exponencial
+    const fetchWithRetry = async (
+      url,
+      options,
+      maxRetries = NETWORK_CONFIG.MAX_RETRY_ATTEMPTS
+    ) => {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          console.log(
+            `Ã°Å¸â€œÂ¡ Tentativa ${attempt}/${maxRetries} para ${url}`
+          );
+          updateProgress(
+            30 + (attempt - 1) * 5,
+            `Tentativa ${attempt}/${maxRetries}...`
+          );
+
+          // Configurar timeout por tentativa
+          let controller, timeoutId;
+          const timeout = NETWORK_CONFIG.FETCH_TIMEOUT_PER_ATTEMPT;
+
+          if (typeof AbortController !== "undefined") {
+            controller = new AbortController();
+            timeoutId = setTimeout(() => {
+              console.warn(
+                `Ã¢ÂÂ° Timeout de ${
+                  timeout / 1000
+                }s atingido na tentativa ${attempt}`
+              );
+              controller.abort();
+            }, timeout);
+            options.signal = controller.signal;
+          }
+
+          const response = await fetch(url, options);
+          if (timeoutId) clearTimeout(timeoutId);
+
+          console.log(
+            `Ã°Å¸â€œÂ¡ Tentativa ${attempt} - Status: ${response.status}`
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          return response;
+        } catch (error) {
+          console.warn(`Ã¢ÂÅ’ Tentativa ${attempt} falhou:`, error.message);
+
+          if (attempt === maxRetries) {
+            throw new Error(
+              `Falha apÃƒÂ³s ${maxRetries} tentativas: ${error.message}`
+            );
+          }
+
+          // Aguardar antes do retry (backoff exponencial)
+          const delay = Math.min(
+            NETWORK_CONFIG.RETRY_DELAY_BASE * Math.pow(2, attempt - 1),
+            NETWORK_CONFIG.RETRY_DELAY_MAX
+          );
+          console.log(
+            `Ã¢ÂÂ³ Aguardando ${delay}ms antes da prÃƒÂ³xima tentativa...`
+          );
+          updateProgress(
+            30 + attempt * 5,
+            `Reagendando em ${delay / 1000}s...`
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+      }
+    };
+
+    // ConfiguraÃƒÂ§ÃƒÂµes otimizadas para mobile
+    const fetchOptions = {
+      method: "GET",
+      cache: "no-cache", // ForÃƒÂ§ar busca fresca
+      mode: "cors",
+    };
+
+    const requestUrl = `${POLLING_URL}?devices=${deviceIds}`;
+    console.log("Ã°Å¸â€œÂ¡ Fazendo fetch com retry para:", requestUrl);
+
+    const response = await fetchWithRetry(requestUrl, fetchOptions);
+
+    console.log("Ã°Å¸â€œÂ¡ Resposta recebida, status:", response.status);
+    updateProgress(50, "Recebendo dados...");
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    let data;
+    let responseText = "";
+    try {
+      console.log("Ã°Å¸â€œÂ¡ Parseando resposta JSON...");
+
+      // Debug: Capturar o texto da resposta primeiro
+      responseText = await response.text();
+      console.log(
+        "Ã°Å¸â€œÂ¡ Resposta recebida (texto):",
+        responseText.substring(0, 500)
+      ); // Primeiros 500 chars
+
+      if (!responseText) {
+        throw new Error("Resposta vazia do servidor");
+      }
+
+      // Verificar se ÃƒÂ© HTML (Functions nÃƒÂ£o estÃƒÂ£o funcionando)
+      if (
+        responseText.trim().startsWith("<!DOCTYPE html") ||
+        responseText.trim().startsWith("<html")
+      ) {
+        console.error(
+          "Ã¢ÂÅ’ CRÃƒÂTICO: Cloudflare Functions nÃƒÂ£o estÃƒÂ£o funcionando!"
+        );
+        console.error(
+          "Ã¢ÂÅ’ O servidor estÃƒÂ¡ retornando HTML em vez de executar as Functions."
+        );
+        console.error(
+          "Ã¢ÂÅ’ Implementando fallback automÃƒÂ¡tico para API direta do Hubitat..."
+        );
+
+        // FALLBACK AUTOMÃƒÂTICO: Usar API direta do Hubitat
+        console.log(
+          "Ã°Å¸â€â€ž Tentando API direta do Hubitat como fallback..."
+        );
+        updateProgress(60, "Usando API direta como fallback...");
+
+        try {
+          const fallbackData = await loadAllDeviceStatesDirect(ALL_LIGHT_IDS);
+          console.log("Ã¢Å“â€¦ Fallback bem-sucedido:", fallbackData);
+
+          // Processar dados do fallback
+          const deviceEntries = Object.entries(fallbackData.devices);
+          let processedCount = 0;
+
+          deviceEntries.forEach(([deviceId, deviceData]) => {
+            if (deviceData.success) {
+              setStoredState(deviceId, deviceData.state);
+              updateDeviceUI(deviceId, deviceData.state, true);
+              console.log(
+                `Ã¢Å“â€¦ Device ${deviceId}: ${deviceData.state} (direto)`
+              );
+            } else {
+              const storedState = getStoredState(deviceId) || "off";
+              updateDeviceUI(deviceId, storedState, true);
+              console.log(
+                `Ã¢Å¡Â Ã¯Â¸Â Device ${deviceId}: usando estado salvo "${storedState}"`
+              );
+            }
+
+            processedCount++;
+            const progress = 60 + (processedCount / deviceEntries.length) * 35;
+            updateProgress(
+              progress,
+              `Processando ${processedCount}/${deviceEntries.length}...`
+            );
+          });
+
+          updateProgress(100, "Carregamento via API direta concluÃƒÂ­do!");
+
+          // ForÃƒÂ§ar atualizaÃƒÂ§ÃƒÂ£o dos botÃƒÂµes master
+          setTimeout(() => {
+            updateAllMasterButtons();
+            console.log(
+              "Ã°Å¸â€â€ž BotÃƒÂµes master atualizados apÃƒÂ³s fallback"
+            );
+          }, 100);
+
+          console.log(
+            "Ã¢Å“â€¦ Fallback automÃƒÂ¡tico concluÃƒÂ­do com sucesso"
+          );
+          return true;
+        } catch (fallbackError) {
+          console.error("Ã¢ÂÅ’ Fallback tambÃƒÂ©m falhou:", fallbackError);
+
+          // ÃƒÅ¡ltimo recurso: usar estados salvos
+          console.log(
+            "Ã°Å¸â€œÂ¦ Usando estados salvos como ÃƒÂºltimo recurso..."
+          );
+          ALL_LIGHT_IDS.forEach((deviceId) => {
+            const storedState = getStoredState(deviceId) || "off";
+            updateDeviceUI(deviceId, storedState, true);
+          });
+
+          throw new Error(
+            "Functions nÃƒÂ£o funcionam e API direta tambÃƒÂ©m falhou - usando estados salvos"
+          );
+        }
+      }
+
+      // Tentar parsear o JSON
+      data = JSON.parse(responseText);
+      console.log("Ã°Å¸â€œÂ¡ JSON parseado com sucesso");
+    } catch (jsonError) {
+      console.error("Ã¢ÂÅ’ Erro ao parsear JSON:", jsonError);
+      console.error(
+        "Ã¢ÂÅ’ ConteÃƒÂºdo da resposta que falhou:",
+        responseText?.substring(0, 200)
+      );
+      throw new Error(`Resposta invÃƒÂ¡lida do servidor: ${jsonError.message}`);
+    }
+    console.log("Ã°Å¸â€œÂ¡ Estados recebidos:", data);
+
+    // NormalizaÃƒÂ§ÃƒÂ£o do formato de resposta:
+    // Formato antigo esperado: { devices: { id: { state, success } } }
+    // Novo formato (Cloudflare Function refatorada): { success:true, data:[ { id, attributes:[{name:'switch', currentValue:'on'}] } ] }
+    if (!data.devices) {
+      try {
+        if (Array.isArray(data.data)) {
+          console.log(
+            "Ã°Å¸â€â€ž Normalizando",
+            data.data.length,
+            "dispositivos do formato novo..."
+          );
+          const mapped = {};
+          data.data.forEach((d, index) => {
+            if (!d || !d.id) {
+              console.warn(`Ã¢Å¡Â Ã¯Â¸Â Dispositivo ${index} invÃƒÂ¡lido:`, d);
+              return;
+            }
+
+            let state = "off";
+
+            if (Array.isArray(d.attributes)) {
+              // Formato antigo: attributes ÃƒÂ© array de objetos
+              const sw = d.attributes.find((a) => a.name === "switch");
+              if (sw) {
+                state = sw?.currentValue || sw?.value || "off";
+              }
+            } else if (d.attributes && typeof d.attributes === "object") {
+              // Formato atual: attributes ÃƒÂ© objeto direto com propriedades
+              if (d.attributes.switch !== undefined) {
+                state = d.attributes.switch;
+                console.log(`Ã°Å¸â€œâ€¹ Device ${d.id}: switch=${state}`);
+              } else {
+                console.log(
+                  `Ã°Å¸â€Ëœ Device ${d.id}: nÃƒÂ£o ÃƒÂ© lÃƒÂ¢mpada (sem atributo 'switch'), pulando...`
+                );
+                return; // Pular dispositivos sem switch (botÃƒÂµes, sensores, etc.)
+              }
+            } else {
+              console.warn(
+                `Ã¢Å¡Â Ã¯Â¸Â Device ${d.id}: attributes invÃƒÂ¡lido:`,
+                d.attributes
+              );
+            }
+
+            mapped[d.id] = { state, success: true };
+          });
+          data.devices = mapped;
+          console.log(
+            "Ã°Å¸â€â€ž Resposta normalizada para formato devices (",
+            Object.keys(mapped).length,
+            "dispositivos )"
+          );
+          console.log("Ã°Å¸â€Â Estados finais mapeados:", mapped);
+        } else {
+          throw new Error(
+            "Formato de resposta inesperado: falta campo devices e data[]"
+          );
+        }
+      } catch (normError) {
+        console.error("Ã¢ÂÅ’ Falha ao normalizar resposta:", normError);
+        throw normError;
+      }
+    }
+
+    updateProgress(70, "Processando estados...");
+
+    // Processar dispositivos com progresso
+    const deviceEntries = Object.entries(data.devices || {});
+    console.log(`Processando ${deviceEntries.length} dispositivos...`);
+    let processedCount = 0;
+
+    await processDeviceEntries(deviceEntries);
+
+    function handleDeviceEntry(deviceId, deviceData) {
+      if (deviceData.success) {
+        setStoredState(deviceId, deviceData.state);
+        updateDeviceUI(deviceId, deviceData.state, true); // forceUpdate = true
+      } else {
+        console.warn(`Falha no device ${deviceId}:`, deviceData.error);
+        const storedState = getStoredState(deviceId) || "off";
+        updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+      }
+
+      processedCount++;
+      const progress = 70 + (processedCount / deviceEntries.length) * 25;
+      updateProgress(
+        progress,
+        `Aplicando estado ${processedCount}/${deviceEntries.length}...`
+      );
+    }
+
+    function scheduleChunk(callback) {
+      if (
+        typeof window !== "undefined" &&
+        typeof window.requestIdleCallback === "function"
+      ) {
+        window.requestIdleCallback(callback, { timeout: 120 });
+      } else {
+        setTimeout(callback, 16);
+      }
+    }
+
+    function processDeviceEntries(entries) {
+      return new Promise((resolve) => {
+        let index = 0;
+        const CHUNK_SIZE = 20;
+
+        const runChunk = (deadline) => {
+          const hasDeadline =
+            deadline && typeof deadline.timeRemaining === "function";
+          let processedInChunk = 0;
+
+          while (index < entries.length) {
+            const current = entries[index++];
+            handleDeviceEntry(current[0], current[1]);
+            processedInChunk += 1;
+
+            if (processedInChunk >= CHUNK_SIZE) {
+              break;
+            }
+
+            if (hasDeadline && deadline.timeRemaining() <= 4) {
+              break;
+            }
+          }
+
+          if (index < entries.length) {
+            scheduleChunk(runChunk);
+          } else {
+            resolve();
+          }
+        };
+
+        runChunk();
+      });
+    }
+
+    updateProgress(95, "Finalizando sincronizaÃƒÂ§ÃƒÂ£o...");
+
+    // ForÃƒÂ§ar atualizaÃƒÂ§ÃƒÂ£o de todos os botÃƒÂµes master apÃƒÂ³s carregamento
+    setTimeout(() => {
+      updateAllMasterButtons();
+      console.log(
+        "Ã°Å¸â€â€ž BotÃƒÂµes master atualizados apÃƒÂ³s carregamento global"
+      );
+    }, 100);
+
+    updateProgress(100, "Estados carregados com sucesso!");
+    console.log("Ã¢Å“â€¦ Carregamento global concluÃƒÂ­do com sucesso");
+    return true;
+  } catch (error) {
+    console.error("Ã¢ÂÅ’ Erro no carregamento global:", error);
+
+    // Tentar diagnÃƒÂ³stico automÃƒÂ¡tico da conexÃƒÂ£o
+    try {
+      console.log("Ã°Å¸â€Â§ Executando diagnÃƒÂ³stico da conexÃƒÂ£o...");
+      const connectionTest = await testHubitatConnection();
+      if (!connectionTest) {
+        showErrorMessage(
+          "Falha na conexÃƒÂ£o com Hubitat. Verifique se as configuraÃƒÂ§ÃƒÂµes foram alteradas no painel do Cloudflare."
+        );
+      }
+    } catch (diagError) {
+      console.error("Erro no diagnÃƒÂ³stico:", diagError);
+    }
+
+    // Tratamento inteligente de erro com retry automÃƒÂ¡tico
+    if (error.name === "AbortError") {
+      console.warn("Ã¢ÂÂ±Ã¯Â¸Â Timeout apÃƒÂ³s mÃƒÂºltiplas tentativas");
+      updateProgress(60, "Timeout - usando backup...");
+      showErrorMessage(
+        "Timeout na conexÃƒÂ£o. Verifique sua internet e tente novamente."
+      );
+    } else if (error.message.includes("Falha apÃƒÂ³s")) {
+      console.warn("Ã°Å¸â€â€ž MÃƒÂºltiplas tentativas falharam");
+      updateProgress(60, "Falhas mÃƒÂºltiplas - modo backup...");
+      showErrorMessage(
+        "Servidor temporariamente indisponÃƒÂ­vel. Usando dados salvos."
+      );
+    } else if (error.name === "TypeError" && error.message.includes("fetch")) {
+      console.warn("Ã°Å¸Å’Â Problema de conectividade de rede");
+      updateProgress(60, "Sem rede - modo offline...");
+      showErrorMessage("Sem conexÃƒÂ£o com a internet. Modo offline ativado.");
+    } else if (error.message.includes("HTTP 5")) {
+      console.warn("Ã°Å¸â€Â¥ Erro no servidor (5xx)");
+      updateProgress(60, "Erro servidor - backup...");
+      showErrorMessage(
+        "Problema no servidor. Usando ÃƒÂºltimos dados conhecidos."
+      );
+    } else {
+      console.warn("Ã¢ÂÅ’ Erro desconhecido no carregamento:", error.message);
+      updateProgress(60, "Erro geral - usando backup...");
+      showErrorMessage("Erro no carregamento. Usando dados salvos localmente.");
+    }
+
+    // Fallback para localStorage
+    ALL_LIGHT_IDS.forEach((deviceId, index) => {
+      const storedState = getStoredState(deviceId) || "off";
+      updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
+
+      const progress = 60 + ((index + 1) / ALL_LIGHT_IDS.length) * 35;
+      updateProgress(
+        progress,
+        `Carregando backup ${index + 1}/${ALL_LIGHT_IDS.length}...`
+      );
+    });
+
+    const offlineMsg = "Carregamento concluÃƒÂ­do (modo offline)";
+    updateProgress(100, offlineMsg);
+    return false;
+  }
+}
+
+// Verificar compatibilidade com mobile
+function checkMobileCompatibility() {
+  const issues = [];
+  const warnings = [];
+
+  // APIs crÃƒÂ­ticas (falha total se nÃƒÂ£o existirem)
+  if (typeof fetch === "undefined") {
+    issues.push("Fetch API nÃƒÂ£o suportada");
+  }
+
+  if (typeof Promise === "undefined") {
+    issues.push("Promises nÃƒÂ£o suportadas");
+  }
+
+  // APIs opcionais (warnings apenas)
+  if (typeof MutationObserver === "undefined") {
+    warnings.push("MutationObserver nÃƒÂ£o suportado (usar fallback)");
+  }
+
+  if (typeof AbortController === "undefined") {
+    warnings.push("AbortController nÃƒÂ£o suportado (sem timeout)");
+  }
+
+  if (typeof localStorage === "undefined") {
+    warnings.push("LocalStorage nÃƒÂ£o suportado (sem persistÃƒÂªncia)");
+  }
+
+  // Testar localStorage funcionamento
+  try {
+    const testKey = "__test_ls__";
+    localStorage.setItem(testKey, "test");
+    localStorage.removeItem(testKey);
+  } catch (e) {
+    warnings.push("LocalStorage bloqueado (modo privado?)");
+  }
+
+  if (warnings.length > 0) {
+    console.warn("Ã¢Å¡Â Ã¯Â¸Â Avisos de compatibilidade:", warnings);
+  }
+
+  if (issues.length > 0) {
+    console.error("Ã¢ÂÅ’ Problemas crÃƒÂ­ticos detectados:", issues);
+    return false;
+  }
+
+  console.log("Ã¢Å“â€¦ Compatibilidade mobile verificada");
+  return true;
+}
+
+// Observador para sincronizar novos elementos no DOM
+function setupDomObserver() {
+  const root = document.getElementById("spa-root") || document.body;
+
+  primeControlCaches({ root: root, force: true });
+  pruneStaleEntries();
+  scheduleControlSync(true);
+
+  if (typeof MutationObserver === "undefined") {
+    console.warn(
+      "MutationObserver indisponivel - usando fallback de sincronizacao periodica"
+    );
+    if (fallbackSyncTimer) {
+      clearInterval(fallbackSyncTimer);
+    }
+    fallbackSyncTimer = setInterval(function () {
+      syncAllVisibleControls();
+    }, 8000);
+    return;
+  }
+
+  try {
+    if (fallbackSyncTimer) {
+      clearInterval(fallbackSyncTimer);
+      fallbackSyncTimer = null;
+    }
+
+    if (domObserverInstance) {
+      domObserverInstance.disconnect();
+    }
+
+    domObserverInstance = new MutationObserver(function (mutations) {
+      let changed = false;
+
+      mutations.forEach(function (mutation) {
+        mutation.removedNodes.forEach(function (node) {
+          if (removeControlsFromNode(node)) {
+            changed = true;
+          }
+        });
+
+        mutation.addedNodes.forEach(function (node) {
+          if (collectControlsFromNode(node)) {
+            changed = true;
+          }
+        });
+      });
+
+      if (changed) {
+        scheduleControlSync(true);
+      }
+    });
+
+    domObserverInstance.observe(root, {
+      childList: true,
+      subtree: true,
+    });
+  } catch (error) {
+    console.error("Erro ao configurar MutationObserver:", error);
+    console.warn("Usando fallback de sincronizacao periodica.");
+    if (fallbackSyncTimer) {
+      clearInterval(fallbackSyncTimer);
+    }
+    fallbackSyncTimer = setInterval(function () {
+      syncAllVisibleControls();
+    }, 8000);
+  }
+}
+
+// Sincronizar todos os controles visÃƒÂ­veis com estados salvos
+function syncAllVisibleControls(forceMasterUpdate = false) {
+  pruneStaleEntries();
+
+  debugLog(() => [
+    "syncAllVisibleControls",
+    { devices: deviceControlCache.size, force: forceMasterUpdate },
+  ]);
+
+  let updatedControls = 0;
+
+  deviceControlCache.forEach(function (registry, deviceId) {
+    if (!registry || registry.size === 0) {
+      deviceControlCache.delete(deviceId);
+      return;
+    }
+
+    const savedState = getStoredState(deviceId);
+    const hasState = savedState !== null && savedState !== undefined;
+
+    if (!hasState) {
+      return;
+    }
+
+    registry.forEach(function (el) {
+      if (!el.isConnected) {
+        registry.delete(el);
+        return;
+      }
+
+      const currentState = el.dataset.state;
+      if (currentState !== savedState || forceMasterUpdate) {
+        setRoomControlUI(el, savedState);
+        updatedControls += 1;
+      }
+    });
+
+    if (registry.size === 0) {
+      deviceControlCache.delete(deviceId);
+    }
+  });
+
+  masterButtonCache.forEach(function (btn) {
+    if (!btn.isConnected) {
+      masterButtonCache.delete(btn);
+      return;
+    }
+
+    const ids = (btn.dataset.deviceIds || "")
+      .split(",")
+      .map(function (id) {
+        return id.trim();
+      })
+      .filter(Boolean);
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    const masterState = anyOn(ids) ? "on" : "off";
+    setMasterIcon(btn, masterState, forceMasterUpdate);
+  });
+
+  debugLog(() => ["syncAllVisibleControls:updated", updatedControls]);
+}
+
+// Comandos de debug globais
+window.debugEletrize = {
+  forcePolling: updateDeviceStatesFromServer,
+  reloadStates: loadAllDeviceStatesGlobally,
+  syncControls: syncAllVisibleControls,
+  showLoader: showLoader,
+  hideLoader: hideLoader,
+  checkDevice: (deviceId) => {
+    const stored = getStoredState(deviceId);
+    console.log(`Device ${deviceId}: stored=${stored}`);
+  },
+  checkAllDevices: () => {
+    console.log("Ã°Å¸â€œâ€¹ Estados de todos os dispositivos:");
+    ALL_LIGHT_IDS.forEach((deviceId) => {
+      const stored = getStoredState(deviceId);
+      console.log(`  ${deviceId}: ${stored}`);
+    });
+  },
+  testSetState: (deviceId, state) => {
+    console.log(`Ã°Å¸Â§Âª Testando setState(${deviceId}, ${state})`);
+    setStoredState(deviceId, state);
+    updateDeviceUI(deviceId, state, true);
+    console.log(`Ã¢Å“â€¦ Teste completo`);
+  },
+  clearAllStates: () => {
+    console.log("Limpando todos os estados salvos...");
+    ALL_LIGHT_IDS.forEach((deviceId) => {
+      deviceStateMemory.delete(deviceId);
+      try {
+        localStorage.removeItem(deviceStateKey(deviceId));
+      } catch (e) {
+        debugLog(() => ["Falha ao limpar estado local", deviceId, e]);
+      }
+    });
+    console.log("Estados limpos");
+  },
+  checkProtectedCommands: () => {
+    console.log("Ã°Å¸â€ºÂ¡Ã¯Â¸Â Comandos protegidos:");
+    if (recentCommands.size === 0) {
+      console.log("  Ã¢Å“â€¦ Nenhum comando protegido");
+      return;
+    }
+    const now = Date.now();
+    recentCommands.forEach((timestamp, deviceId) => {
+      const remaining = Math.max(0, COMMAND_PROTECTION_MS - (now - timestamp));
+      const status = remaining > 0 ? "Ã°Å¸â€â€™ ATIVO" : "Ã°Å¸â€â€œ EXPIRADO";
+      console.log(
+        `  ${status} ${deviceId}: ${Math.ceil(remaining / 1000)}s restantes`
+      );
+    });
+  },
+  testMasterLoading: () => {
+    console.log("Ã°Å¸â€â€ž Testando loading nos botÃƒÂµes master...");
+    const masters = document.querySelectorAll(".room-master-btn");
+    const scenes = document.querySelectorAll(".scene-control-card");
+
+    console.log("BotÃƒÂµes master encontrados:", masters.length);
+    console.log("BotÃƒÂµes de cenÃƒÂ¡rio encontrados:", scenes.length);
+
+    // Testar botÃƒÂµes master da home
+    masters.forEach((btn, index) => {
+      console.log(`Testando botÃƒÂ£o master ${index + 1}:`, btn);
+      setTimeout(() => {
+        setMasterButtonLoading(btn, true);
+        setTimeout(() => {
+          setMasterButtonLoading(btn, false);
+        }, 3000);
+      }, index * 200);
+    });
+
+    // Testar botÃƒÂ£o de cenÃƒÂ¡rios tambÃƒÂ©m
+    scenes.forEach((btn, index) => {
+      setTimeout(() => {
+        setMasterButtonLoading(btn, true);
+        setTimeout(() => {
+          setMasterButtonLoading(btn, false);
+        }, 3000);
+      }, (masters.length + index) * 200);
+    });
+  },
+  checkMasterButtons: () => {
+    console.log("Ã°Å¸ÂÂ  Status dos botÃƒÂµes master:");
+    document.querySelectorAll(".room-master-btn").forEach((btn, index) => {
+      const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
+      const route = btn.dataset.route || "unknown";
+      const pending = btn.dataset.pending === "true";
+      const currentState = btn.dataset.state || "unknown";
+      const calculatedState = anyOn(ids) ? "on" : "off";
+      const consistent = currentState === calculatedState;
+
+      console.log(
+        `  ${index + 1}. ${route}: ${currentState} (calc: ${calculatedState}) ${
+          consistent ? "Ã¢Å“â€¦" : "Ã¢ÂÅ’"
+        } ${pending ? "Ã¢ÂÂ³" : "Ã°Å¸â€â€œ"}`
+      );
+    });
+  },
+  fixMasterButtons: () => {
+    console.log("Ã°Å¸â€Â§ Corrigindo todos os botÃƒÂµes master...");
+    document.querySelectorAll(".room-master-btn").forEach((btn) => {
+      btn.dataset.pending = "false";
+      const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
+      const state = anyOn(ids) ? "on" : "off";
+      setMasterIcon(btn, state, true);
+    });
+    console.log("Ã¢Å“â€¦ BotÃƒÂµes master corrigidos!");
+  },
+  mobileInfo: () => {
+    console.log("Ã°Å¸â€œÂ± InformaÃƒÂ§ÃƒÂµes do dispositivo mÃƒÂ³vel:");
+    console.log("  isMobile:", isMobile);
+    console.log("  isIOS:", isIOS);
+    console.log("  isProduction:", isProduction);
+    console.log("  User Agent:", navigator.userAgent);
+    console.log("  App Version:", APP_VERSION);
+    try {
+      console.log(
+        "  ÃƒÅ¡ltima carga:",
+        new Date(parseInt(localStorage.getItem("last_mobile_load") || "0"))
+      );
+      console.log("  VersÃƒÂ£o cache:", localStorage.getItem("app_version"));
+    } catch (e) {
+      console.log("  localStorage indisponÃƒÂ­vel");
+    }
+  },
+  clearMobileCache: () => {
+    console.log("Ã°Å¸Â§Â¹ Limpando cache mobile...");
+    try {
+      localStorage.removeItem("app_version");
+      localStorage.removeItem("last_mobile_load");
+      localStorage.removeItem("app_cache_version");
+      sessionStorage.clear();
+      console.log("Ã¢Å“â€¦ Cache mobile limpo! Recarregue a pÃƒÂ¡gina.");
+    } catch (e) {
+      console.error("Ã¢ÂÅ’ Erro ao limpar cache:", e);
+    }
+  },
+  forceMobileReload: () => {
+    console.log("Ã°Å¸â€â€ž ForÃƒÂ§ando recarga mobile com limpeza de cache...");
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (e) {}
+    setTimeout(() => {
+      window.location.reload(true);
+    }, 1000);
+  },
+  checkMobileCache: () => {
+    console.log("Ã°Å¸â€Â Status do cache mobile:");
+    try {
+      const version = localStorage.getItem("app_version");
+      const lastLoad = localStorage.getItem("last_mobile_load");
+      const now = new Date().getTime();
+
+      console.log("  App Version atual:", APP_VERSION);
+      console.log("  VersÃƒÂ£o em cache:", version);
+      console.log("  Cache vÃƒÂ¡lido:", version === APP_VERSION);
+
+      if (lastLoad) {
+        const age = Math.floor((now - parseInt(lastLoad)) / 60000); // minutos
+        console.log("  Idade do cache:", age, "minutos");
+        console.log("  Cache expirado:", age > 60);
+      } else {
+        console.log("  Primeira carga detectada");
+      }
+    } catch (e) {
+      console.error("  Erro na verificaÃƒÂ§ÃƒÂ£o:", e);
+    }
+    console.log("  Screen:", `${screen.width}x${screen.height}`);
+    console.log("  Viewport:", `${window.innerWidth}x${window.innerHeight}`);
+    console.log(
+      "  Connection:",
+      navigator.connection
+        ? `${navigator.connection.effectiveType} (${navigator.connection.downlink}Mbps)`
+        : "NÃƒÂ£o disponÃƒÂ­vel"
+    );
+    checkMobileCompatibility();
+  },
+  testMobileApi: async () => {
+    console.log("Ã°Å¸Â§Âª Testando APIs para mobile...");
+    try {
+      const testUrl = isProduction ? `${POLLING_URL}?devices=366` : "#test";
+      // Configurar timeout compatÃƒÂ­vel
+      const fetchConfig = {
+        method: "GET",
+        cache: "no-cache",
+      };
+
+      // Adicionar timeout se AbortController for suportado
+      if (typeof AbortController !== "undefined") {
+        const testController = new AbortController();
+        setTimeout(() => testController.abort(), 5000);
+        fetchConfig.signal = testController.signal;
+      }
+
+      const response = await fetch(testUrl, fetchConfig);
+      console.log("Ã¢Å“â€¦ Fetch test:", response.status, response.statusText);
+    } catch (error) {
+      console.error("Ã¢ÂÅ’ Fetch test failed:", error);
+    }
+  },
+};
+
+/* --- Music player metadata update functions --- */
+
+// FunÃƒÂ§ÃƒÂ£o para atualizar metadados do Denon
+function updateDenonMetadata() {
+  console.log("Ã°Å¸Å½Âµ Buscando metadados do Denon AVR via Hubitat Cloud...");
+
+  // Pedir ao Cloudflare function para retornar o JSON completo do Hubitat
+  // (a function usa a variÃƒÂ¡vel HUBITAT_FULL_URL do ambiente quando configurada)
+  fetch(`${POLLING_URL}?full=1`)
+    .then(async (response) => {
+      if (!response.ok) {
+        const text = await response.text().catch(() => "<no body>");
+        throw new Error(`HTTP error! status: ${response.status} - ${text}`);
+      }
+      // Tentar analisar JSON, mas capturar e mostrar texto cru se falhar
+      try {
+        return await response.json();
+      } catch (err) {
+        const rawText = await response
+          .text()
+          .catch(() => "<non-readable body>");
+        throw new Error(`Invalid JSON response from polling: ${rawText}`);
+      }
+    })
+    .then((data) => {
+      console.log("Ã°Å¸Å½Âµ Resposta completa do Hubitat:", data);
+
+      // Procurar o Denon AVR pelos metadados (ID 29) nos dados
+      // O formato pode ser um array direto ou um objeto com propriedade devices
+      const devices = Array.isArray(data) ? data : data.devices || [];
+      // O ID do dispositivo que fornece metadados do Denon ÃƒÂ© 29
+      const DENON_METADATA_DEVICE_ID = "29";
+      let denonDevice = devices.find(
+        (device) =>
+          String(device.id) === DENON_METADATA_DEVICE_ID ||
+          device.id === parseInt(DENON_METADATA_DEVICE_ID, 10)
+      );
+      // Fallback: procurar por dispositivos cujo nome/label contenha 'denon', 'receiver' ou 'av'
+      if (!denonDevice) {
+        denonDevice = devices.find((device) => {
+          const name = String(device.name || device.label || "").toLowerCase();
+          return (
+            name.includes("denon") ||
+            name.includes("receiver") ||
+            name.includes("av")
+          );
+        });
+        if (denonDevice)
+          console.log(
+            "Ã°Å¸â€Å½ Denon metadata device encontrado por name/label:",
+            denonDevice
+          );
+      }
+
+      if (denonDevice) {
+        console.log("Denon encontrado:", denonDevice);
+        const metadataPowerState = getDenonPowerStateFromDevice(denonDevice);
+        if (metadataPowerState) {
+          applyDenonPowerState(metadataPowerState);
+        }
+        console.log("Ã°Å¸Å½Âµ Atributos do Denon:", denonDevice.attributes);
+
+        // Extrair metadados - o formato pode variar
+        let artist = "Desconhecido";
+        let track = "Sem tÃƒÂ­tulo";
+        let album = "ÃƒÂlbum desconhecido";
+        let albumArt = null;
+        let playbackStatus = null;
+        let trackDataRaw = null;
+        let trackDataObj = null;
+
+        // Tentar extrair de diferentes formatos possÃƒÂ­veis
+        if (Array.isArray(denonDevice.attributes)) {
+          // Formato array: [{name: "artist", currentValue: "..."}, ...]
+          const artistAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "artist" || attr.name === "trackArtist"
+          );
+          const trackAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "trackDescription" || attr.name === "track"
+          );
+          const albumAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "albumName" || attr.name === "album"
+          );
+          const albumArtAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "albumArtUrl" || attr.name === "albumArtURI"
+          );
+          const statusAttr = denonDevice.attributes.find((attr) => {
+            const attrName = String(attr?.name || "").toLowerCase();
+            return (
+              attrName === "status" ||
+              attrName === "playbackstatus" ||
+              attrName === "playerstatus" ||
+              attrName === "transportstate"
+            );
+          });
+          const trackDataAttr = denonDevice.attributes.find(
+            (attr) => attr.name === "trackData" || attr.name === "trackdata"
+          );
+
+          artist = artistAttr?.currentValue || artistAttr?.value || artist;
+          track = trackAttr?.currentValue || trackAttr?.value || track;
+          album = albumAttr?.currentValue || albumAttr?.value || album;
+          albumArt =
+            albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
+          playbackStatus =
+            statusAttr?.currentValue || statusAttr?.value || playbackStatus;
+          trackDataRaw =
+            trackDataAttr?.currentValue || trackDataAttr?.value || trackDataRaw;
+        } else if (
+          denonDevice.attributes &&
+          typeof denonDevice.attributes === "object"
+        ) {
+          // Formato objeto: {artist: "...", trackDescription: "...", track: "...", album: "...", ...}
+          artist = denonDevice.attributes.artist || artist;
+          track = denonDevice.attributes.track || track;
+          album = denonDevice.attributes.album || album;
+          playbackStatus =
+            denonDevice.attributes.status ||
+            denonDevice.attributes.playbackStatus ||
+            denonDevice.attributes.playerStatus ||
+            denonDevice.attributes.transportState ||
+            playbackStatus;
+          trackDataRaw = denonDevice.attributes.trackData || trackDataRaw;
+
+          // Para albumArt, verificar se existe albumArt com tag HTML ou extrair do trackData JSON
+          if (
+            denonDevice.attributes.albumArt &&
+            typeof denonDevice.attributes.albumArt === "string"
+          ) {
+            const imgMatch =
+              denonDevice.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);
+            albumArt = imgMatch ? imgMatch[1] : null;
+          }
+
+          // Se nÃƒÂ£o encontrou albumArt, tentar extrair do trackData JSON
+          if (!albumArt && denonDevice.attributes.trackData) {
+            try {
+              const trackData =
+                typeof denonDevice.attributes.trackData === "string"
+                  ? JSON.parse(denonDevice.attributes.trackData)
+                  : denonDevice.attributes.trackData;
+              trackDataObj = trackData;
+              albumArt = trackData.image_url || albumArt;
+            } catch (e) {
+              console.warn("Ã¢Å¡Â Ã¯Â¸Â Erro ao parsear trackData:", e);
+            }
+          }
+        }
+
+        if (!trackDataObj && trackDataRaw) {
+          try {
+            trackDataObj =
+              typeof trackDataRaw === "string"
+                ? JSON.parse(trackDataRaw)
+                : trackDataRaw;
+          } catch (e) {
+            console.warn("Ã¢Å¡Â Ã¯Â¸Â Erro ao parsear trackData (raw):", e);
+          }
+        }
+
+        if (
+          !albumArt &&
+          trackDataObj &&
+          typeof trackDataObj.image_url === "string"
+        ) {
+          albumArt = trackDataObj.image_url;
+        }
+
+        let derivedPlaybackStatus = interpretPlaybackStatus(playbackStatus);
+        if (derivedPlaybackStatus === null && trackDataObj) {
+          const trackDataStatus =
+            trackDataObj.play_state ||
+            trackDataObj.player_state ||
+            trackDataObj.state ||
+            trackDataObj.status ||
+            trackDataObj.transport_state;
+          derivedPlaybackStatus = interpretPlaybackStatus(trackDataStatus);
+        }
+
+        if (derivedPlaybackStatus !== null) {
+          window.musicPlayerUI.currentPlaying = derivedPlaybackStatus;
+          if (
+            window.musicPlayerUI &&
+            typeof window.musicPlayerUI.setPlaying === "function"
+          ) {
+            window.musicPlayerUI.setPlaying(derivedPlaybackStatus);
+          }
+        }
+
+        console.log("Ã°Å¸Å½Âµ Metadados extraÃƒÂ­dos:", {
+          artist,
+          track,
+          album,
+          albumArt,
+        });
+        artist = normalizePortugueseText(artist);
+        track = normalizePortugueseText(track);
+        album = normalizePortugueseText(album);
+
+        // Atualizar UI
+        updateMusicPlayerUI(artist, track, album, albumArt);
+      } else {
+        console.log(
+          "Ã¢Å¡Â Ã¯Â¸Â Denon AVR (ID 29) (metadados) nÃƒÂ£o encontrado nos dados"
+        );
+        console.log(
+          "Dispositivos disponÃƒÂ­veis:",
+          devices.map((d) => ({ id: d.id, name: d.name || d.label }))
+        );
+      }
+    })
+    .catch((error) => {
+      console.error("Ã¢ÂÅ’ Erro ao buscar metadados do Denon:", error);
+      // Tentar logar a resposta bruta para debug adicional via endpoint de polling
+      fetch(`${POLLING_URL}?full=1`)
+        .then((res) => res.text())
+        .then((t) => console.log("Raw polling response (debug):", t))
+        .catch((e) =>
+          console.warn(
+            "NÃƒÂ£o foi possÃƒÂ­vel obter resposta bruta de /polling:",
+            e
+          )
+        );
+    });
+}
+
+// FunÃƒÂ§ÃƒÂ£o para atualizar a UI do player com os metadados
+function updateMusicPlayerUI(artist, track, album, albumArt) {
+  artist = normalizePortugueseText(artist);
+  track = normalizePortugueseText(track);
+  album = normalizePortugueseText(album);
+
+  // Obter elementos do DOM
+  const artistElement = queryActiveMusic("#music-artist");
+  const trackElement = queryActiveMusic("#music-track");
+  const albumImgElement = queryActiveMusic(".music-album-img");
+  const activePage = document.querySelector(".page.active");
+
+  // Atualizar texto se os elementos existirem
+  if (artistElement) artistElement.textContent = artist;
+  if (activePage) {
+    activePage
+      .querySelectorAll(".music-artist-sync")
+      .forEach((el) => (el.textContent = artist));
+  }
+
+  if (trackElement) trackElement.textContent = track;
+  if (activePage) {
+    activePage
+      .querySelectorAll(".music-track-sync")
+      .forEach((el) => (el.textContent = track));
+  }
+
+  syncMusicTrackMarquee();
+
+  // Atualizar imagem do ÃƒÂ¡lbum
+  if (albumImgElement) {
+    if (albumArt && albumArt !== "null" && albumArt !== "") {
+      albumImgElement.src = albumArt;
+      albumImgElement.onerror = function () {
+        // Se a imagem falhar, use placeholder
+        this.src = "images/Images/photo-varanda.jpg";
+      };
+    } else {
+      // Usar placeholder se nÃƒÂ£o houver capa
+      albumImgElement.src = "images/Images/photo-varanda.jpg";
+    }
+  }
+
+  console.log(`Ã°Å¸Å½Âµ UI atualizada: "${track}" por ${artist} (${album})`);
+}
+
+// VariÃƒÂ¡vel global para o intervalo de polling de metadados
+let musicMetadataInterval = null;
+
+// FunÃƒÂ§ÃƒÂ£o para iniciar polling especÃƒÂ­fico de metadados do player
+function startMusicMetadataPolling() {
+  // Parar polling anterior se existir
+  stopMusicMetadataPolling();
+
+  console.log("Ã°Å¸Å½Âµ Iniciando polling de metadados a cada 3 segundos");
+
+  // Iniciar novo polling a cada 3 segundos
+  musicMetadataInterval = setInterval(() => {
+    if (isMusicPageActive()) {
+      updateDenonMetadata();
+    } else {
+      // Se saÃƒÂ­mos da pÃƒÂ¡gina, parar o polling
+      stopMusicMetadataPolling();
+    }
+  }, 3000);
+}
+
+// FunÃƒÂ§ÃƒÂ£o para parar o polling de metadados
+function stopMusicMetadataPolling() {
+  if (musicMetadataInterval) {
+    clearInterval(musicMetadataInterval);
+    musicMetadataInterval = null;
+    console.log("Ã°Å¸Å½Âµ Polling de metadados parado");
+  }
+}
+
+/* --- Music player UI handlers (simple local behavior for now) --- */
+
+let musicTrackMarqueeListenersAttached = false;
+
+function syncMusicTrackMarquee() {
+  ensureMusicTrackMarqueeListeners();
+
+  const activePage = document.querySelector(".page.active");
+  if (!activePage) {
+    return;
+  }
+
+  const trackElements = activePage.querySelectorAll(
+    ".music-track-marquee__text:not(.music-track-marquee__text--clone)"
+  );
+
+  trackElements.forEach((trackElement) => {
+    const marqueeContainer = trackElement.closest(".music-track-marquee");
+    if (!marqueeContainer) {
+      return;
+    }
+
+    const marqueeInner = marqueeContainer.querySelector(
+      ".music-track-marquee__inner"
+    );
+    if (!marqueeInner) {
+      return;
+    }
+
+    const cloneElement = marqueeContainer.querySelector(
+      ".music-track-marquee__text--clone"
+    );
+    if (cloneElement) {
+      cloneElement.textContent = trackElement.textContent || "";
+    }
+
+    marqueeContainer.classList.remove("music-track-marquee--active");
+    marqueeContainer.style.removeProperty("--music-track-marquee-duration");
+
+    requestAnimationFrame(() => {
+      const containerWidth = marqueeContainer.clientWidth;
+      const contentWidth = marqueeInner.scrollWidth;
+      const shouldMarquee = contentWidth > containerWidth + 2;
+
+      marqueeContainer.classList.toggle(
+        "music-track-marquee--active",
+        shouldMarquee
+      );
+
+      if (shouldMarquee) {
+        const pixelsPerSecond = 80;
+        const duration = Math.min(
+          24,
+          Math.max(10, contentWidth / pixelsPerSecond)
+        );
+        marqueeContainer.style.setProperty(
+          "--music-track-marquee-duration",
+          `${duration}s`
+        );
+      }
+    });
+  });
+}
+
+function ensureMusicTrackMarqueeListeners() {
+  if (musicTrackMarqueeListenersAttached) {
+    return;
+  }
+
+  const handleResize = () => syncMusicTrackMarquee();
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("orientationchange", handleResize);
+
+  musicTrackMarqueeListenersAttached = true;
+}
+
+function initMusicPlayerUI() {
+  // Guard clause: verificar se estamos em uma página de música
+  if (!isMusicPageActive()) {
+    console.log(" Não está em página de música, ignorando initMusicPlayerUI");
+    return;
+  }
+
+  const playToggleBtn = queryActiveMusic("#music-play-toggle");
+  const playTogglePlayIcon = playToggleBtn
+    ? playToggleBtn.querySelector(".music-play-toggle__icon--play")
+    : null;
+  const playTogglePauseIcon = playToggleBtn
+    ? playToggleBtn.querySelector(".music-play-toggle__icon--pause")
+    : null;
+  const nextBtn = queryActiveMusic("#music-next");
+  const prevBtn = queryActiveMusic("#music-prev");
+  const muteBtn = queryActiveMusic("#music-mute");
+  const volumeSlider = queryActiveMusic("#music-volume-slider");
+  const volumeSection = queryActiveMusic(".music-volume-section");
+  const volumeIconUnmuted = queryActiveMusic(".volume-icon-unmuted");
+  const volumeIconMuted = queryActiveMusic(".volume-icon-muted");
+  const masterOnBtn = queryActiveMusic("#music-master-on");
+  const masterOffBtn = queryActiveMusic("#music-master-off");
+  const playerInner = queryActiveMusic(".music-player-inner");
+
+  console.log("Ã°Å¸Å½Âµ Inicializando player de mÃƒÂºsica...", {
+    playToggleBtn,
+    masterOnBtn,
+    masterOffBtn,
+  });
+
+  window.musicPlayerUI = window.musicPlayerUI || {};
+  const initialPowerState =
+    typeof window.musicPlayerUI.currentPowerState === "string"
+      ? window.musicPlayerUI.currentPowerState
+      : "on";
+
+  if (!playToggleBtn || !nextBtn || !prevBtn) {
+    console.warn("Ã¢Å¡Â Ã¯Â¸Â BotÃƒÂµes de controle nÃƒÂ£o encontrados");
+    return;
+  }
+
+  // Estado do volume
+  let isMuted = false;
+  let volumeBeforeMute = 50;
+  // Guardar estado anterior de mute quando o master for desligado
+  let previousMutedState = false;
+  let isPlaying = false;
+
+  // Estado master power
+  let isPowerOn = initialPowerState === "on";
+
+  function setPlaying(isPlayingValue) {
+    isPlaying = !!isPlayingValue;
+    playToggleBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+    playToggleBtn.classList.toggle("is-playing", isPlaying);
+
+    if (playTogglePlayIcon) {
+      playTogglePlayIcon.style.display = isPlaying ? "none" : "block";
+    }
+
+    if (playTogglePauseIcon) {
+      playTogglePauseIcon.style.display = isPlaying ? "block" : "none";
+    }
+
+    playToggleBtn.setAttribute("aria-label", isPlaying ? "Pausar" : "Tocar");
+    window.musicPlayerUI.currentPlaying = isPlaying;
+  }
+
+  function setMuted(muted) {
+    isMuted = muted;
+    muteBtn.setAttribute("aria-pressed", muted ? "true" : "false");
+    volumeSection.setAttribute("data-muted", muted ? "true" : "false");
+
+    if (volumeIconUnmuted && volumeIconMuted) {
+      volumeIconUnmuted.style.display = muted ? "none" : "block";
+      volumeIconMuted.style.display = muted ? "block" : "none";
+    }
+
+    if (muted) {
+      volumeBeforeMute = parseInt(volumeSlider.value);
+      volumeSlider.value = 0;
+      console.log(
+        "Ã°Å¸â€â€¡ Volume mutado. Volume anterior:",
+        volumeBeforeMute
+      );
+      // Atualiza a barra visual para 0% quando mutado
+      if (typeof updateVolumeBar === "function") updateVolumeBar();
+    } else {
+      volumeSlider.value = volumeBeforeMute;
+      console.log(
+        "Ã°Å¸â€Å  Volume desmutado. Volume restaurado:",
+        volumeBeforeMute
+      );
+      // Atualiza a barra visual para o valor restaurado
+      if (typeof updateVolumeBar === "function") updateVolumeBar();
+    }
+  }
+
+  // Device IDs (default) Ã¢â‚¬â€ podem ser sobrescritos por data-* no HTML da pÃƒÂ¡gina ativa
+  let DENON_CMD_DEVICE_ID = "15"; // Denon AVR - comandos (volume/mute/power)
+  let DENON_MUSIC_DEVICE_ID = "29"; // Denon HEOS - metadados/transport (play/pause/next/prev)
+
+  // Tentar detectar overrides a partir dos atributos data-*
+  try {
+    const metadataContainer = queryActiveMusic(".music-player-card");
+    const ctrlFromEl =
+      queryActiveMusic("#music-mute") ||
+      queryActiveMusic("#music-volume-slider") ||
+      queryActiveMusic("#music-master-on") ||
+      queryActiveMusic("#music-master-off");
+
+    if (
+      metadataContainer &&
+      metadataContainer.dataset &&
+      metadataContainer.dataset.metadataDeviceId
+    ) {
+      DENON_MUSIC_DEVICE_ID = String(
+        metadataContainer.dataset.metadataDeviceId
+      );
+    }
+
+    if (ctrlFromEl && ctrlFromEl.dataset && ctrlFromEl.dataset.deviceId) {
+      DENON_CMD_DEVICE_ID = String(ctrlFromEl.dataset.deviceId);
+    }
+  } catch (e) {
+    console.warn(
+      "NÃƒÂ£o foi possÃƒÂ­vel ler overrides de IDs de Denon via data-*:",
+      e
+    );
+  }
+
+  playToggleBtn.addEventListener("click", () => {
+    const action = isPlaying ? "pause" : "play";
+    console.log(
+      "Ã°Å¸Å½Âµ Toggle play/pause -> enviando comando",
+      action,
+      "para device",
+      DENON_MUSIC_DEVICE_ID
+    );
+
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, action)
+      .then(() => {
+        console.log("Ã¢Å“â€¦ Comando " + action + " enviado com sucesso");
+        setPlaying(!isPlaying);
+      })
+      .catch((err) =>
+        console.error("Ã¢ÂÅ’ Erro ao enviar comando " + action + ":", err)
+      );
+  });
+
+  nextBtn.addEventListener("click", () => {
+    console.log(
+      "Ã¢ÂÂ­Ã¯Â¸Â Next clicked - enviando comando para device",
+      DENON_MUSIC_DEVICE_ID
+    );
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "nextTrack")
+      .then(() => console.log("Ã¢Å“â€¦ Comando nextTrack enviado com sucesso"))
+      .catch((err) =>
+        console.error("Ã¢ÂÅ’ Erro ao enviar comando nextTrack:", err)
+      );
+  });
+
+  prevBtn.addEventListener("click", () => {
+    console.log(
+      "Ã¢ÂÂ®Ã¯Â¸Â Previous clicked - enviando comando para device",
+      DENON_MUSIC_DEVICE_ID
+    );
+    sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "previousTrack")
+      .then(() =>
+        console.log("Ã¢Å“â€¦ Comando previousTrack enviado com sucesso")
+      )
+      .catch((err) =>
+        console.error("Ã¢ÂÅ’ Erro ao enviar comando previousTrack:", err)
+      );
+  });
+
+  window.musicPlayerUI.setPlaying = setPlaying;
+  window.musicPlayerUI.isPlaying = () => isPlaying;
+
+  // Controle de volume
+  if (muteBtn && volumeSlider) {
+    muteBtn.addEventListener("click", () => {
+      const newMutedState = !isMuted;
+      const command = newMutedState ? "mute" : "unmute";
+      console.log(
+        `Ã°Å¸â€â€¡ Mute button clicked - enviando comando "${command}" para device ${DENON_CMD_DEVICE_ID}`
+      );
+
+      sendHubitatCommand(DENON_CMD_DEVICE_ID, command)
+        .then(() => {
+          console.log(`Ã¢Å“â€¦ Comando ${command} enviado com sucesso`);
+          setMuted(newMutedState);
+        })
+        .catch((err) =>
+          console.error(`Ã¢ÂÅ’ Erro ao enviar comando ${command}:`, err)
+        );
+    });
+
+    // FunÃƒÂ§ÃƒÂ£o para atualizar a barra de volume
+    function updateVolumeBar() {
+      const value = parseInt(volumeSlider.value);
+      const percent = (value / 100) * 100;
+      volumeSlider.style.setProperty("--volume-percent", percent + "%");
+      console.log(
+        "Ã°Å¸â€Å  Volume ajustado para:",
+        value,
+        "% -",
+        percent + "%"
+      );
+    }
+
+    // Event listener para input (arrastar o slider)
+    volumeSlider.addEventListener("input", (e) => {
+      updateVolumeBar();
+    });
+
+    // Event listener para change (quando solta o slider)
+    volumeSlider.addEventListener("change", (e) => {
+      updateVolumeBar();
+      const value = e.target.value;
+      console.log("Ã°Å¸â€Å  Volume finalizado em:", value);
+    });
+
+    // If there's a separate music slider, wire it to send commands to Denon (device 15)
+    const musicSlider = queryActiveMusic("#music-volume-slider");
+    if (musicSlider) {
+      musicSlider.addEventListener("input", (e) => {
+        // update visual bar for music slider
+        const v = parseInt(e.target.value);
+        musicSlider.style.setProperty(
+          "--volume-percent",
+          (v / 100) * 100 + "%"
+        );
+      });
+
+      musicSlider.addEventListener("change", (e) => {
+        const value = e.target.value;
+        console.log(
+          `Ã°Å¸â€Å  Music slider changed -> sending setVolume ${value} to Denon (${DENON_CMD_DEVICE_ID})`
+        );
+        // Mark recent command to prevent polling overwrite
+        recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
+        // Send command
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, "setVolume", value)
+          .then(() =>
+            console.log("Ã¢Å“â€¦ setVolume sent to Denon via music slider")
+          )
+          .catch((err) =>
+            console.error(
+              "Ã¢ÂÅ’ Error sending setVolume from music slider:",
+              err
+            )
+          );
+      });
+    }
+
+    // Garantir que o slider seja interativo
+    volumeSlider.style.pointerEvents = "auto";
+
+    // Inicializar a barra com o valor padrÃƒÂ£o
+    updateVolumeBar();
+
+    console.log("Ã°Å¸Å½Âµ Slider de volume configurado:", volumeSlider);
+  } else {
+    console.warn("Ã¢Å¡Â Ã¯Â¸Â BotÃƒÂ£o mute ou slider nÃƒÂ£o encontrados");
+  }
+
+  // Controle master On/Off
+  function setMasterPower(powerOn) {
+    isPowerOn = powerOn;
+    window.musicPlayerUI.currentPowerState = powerOn ? "on" : "off";
+
+    if (powerOn) {
+      masterOnBtn.classList.add("music-master-btn--active");
+      masterOnBtn.setAttribute("aria-pressed", "true");
+      masterOffBtn.classList.remove("music-master-btn--active");
+      masterOffBtn.setAttribute("aria-pressed", "false");
+      playerInner.classList.remove("power-off");
+      console.log("Ã¢Å¡Â¡ Player ligado");
+      // Restaurar estado de mute que havia antes do power-off
+      setMuted(previousMutedState);
+    } else {
+      masterOffBtn.classList.add("music-master-btn--active");
+      masterOffBtn.setAttribute("aria-pressed", "true");
+      masterOnBtn.classList.remove("music-master-btn--active");
+      masterOnBtn.setAttribute("aria-pressed", "false");
+      playerInner.classList.add("power-off");
+      console.log("Ã¢Å¡Â« Player desligado");
+      // Salvar estado atual de mute e forÃƒÂ§ar mute enquanto estiver desligado
+      previousMutedState = isMuted;
+      setMuted(true);
+    }
+  }
+
+  if (masterOnBtn && masterOffBtn && playerInner) {
+    masterOnBtn.addEventListener("click", () => {
+      if (!isPowerOn) {
+        console.log(
+          `Power ON clicked - enviando comando "on" para device ${DENON_CMD_DEVICE_ID}`
+        );
+        recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, "on")
+          .then(() => {
+            console.log("Ã¢Å“â€¦ Comando on enviado com sucesso");
+            setMasterPower(true);
+          })
+          .catch((err) =>
+            console.error("Ã¢ÂÅ’ Erro ao enviar comando on:", err)
+          );
+      }
+    });
+
+    masterOffBtn.addEventListener("click", () => {
+      if (isPowerOn) {
+        console.log(
+          `Power OFF clicked - enviando comando "off" para device ${DENON_CMD_DEVICE_ID}`
+        );
+        recentCommands.set(DENON_CMD_DEVICE_ID, Date.now());
+        sendHubitatCommand(DENON_CMD_DEVICE_ID, "off")
+          .then(() => {
+            console.log("Ã¢Å“â€¦ Comando off enviado com sucesso");
+            setMasterPower(false);
+          })
+          .catch((err) =>
+            console.error("Ã¢ÂÅ’ Erro ao enviar comando off:", err)
+          );
+      }
+    });
+  }
+
+  window.musicPlayerUI.setPower = (powerOnValue) =>
+    setMasterPower(normalizeDenonPowerState(powerOnValue) === "on");
+  window.musicPlayerUI.isPowerOn = () => isPowerOn;
+
+  // initialize
+  setPlaying(Boolean(window.musicPlayerUI.currentPlaying));
+  setMasterPower(initialPowerState === "on");
+
+  // Buscar metadados iniciais do Denon
+  updateDenonMetadata();
+  updateDenonVolumeFromServer();
+
+  // Iniciar polling de metadados
+  startMusicMetadataPolling();
+
+  syncMusicTrackMarquee();
+
+  console.log("Ã°Å¸Å½Âµ Player de mÃƒÂºsica inicializado");
+}
+
+// Initialize when SPA navigation might insert the music page
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(initMusicPlayerUI, 100);
+});
+
+// VersÃƒÂ£o ultra-bÃƒÂ¡sica para browsers problemÃƒÂ¡ticos
+function initUltraBasicMode() {
+  try {
+    showMobileDebug("Ã°Å¸Å¡Â¨ Inicializando modo ultra-bÃƒÂ¡sico...", "info");
+
+    // Esconder loader de forma mais segura
+    var loader = document.getElementById("global-loader");
+    if (loader) {
+      loader.style.display = "none";
+      showMobileDebug("Ã¢Å“â€¦ Loader escondido em modo bÃƒÂ¡sico", "success");
+    }
+
+    // Definir estados bÃƒÂ¡sicos sem usar localStorage (pode falhar no mobile)
+    var processedDevices = 0;
+    ALL_LIGHT_IDS.forEach(function (deviceId) {
+      try {
+        var controls = document.querySelectorAll(
+          '[data-device-id="' + deviceId + '"]'
+        );
+        controls.forEach(function (control) {
+          if (control.classList.contains("room-control")) {
+            control.dataset.state = "off";
+            var img = control.querySelector(".room-control-icon");
+            if (img) {
+              img.src = "images/icons/icon-small-light-off.svg";
+            }
+            processedDevices++;
+          }
+        });
+      } catch (e) {
+        showMobileDebug(
+          "Erro no dispositivo " + deviceId + ": " + e.message,
+          "error"
+        );
+      }
+    });
+
+    showMobileDebug(
+      "Ã¢Å“â€¦ Modo ultra-bÃƒÂ¡sico ativo - " +
+        processedDevices +
+        " dispositivos processados",
+      "success"
+    );
+
+    // Verificar elementos bÃƒÂ¡sicos
+    var controls = document.querySelectorAll(".room-control");
+    var masters = document.querySelectorAll(".room-master-btn");
+    showMobileDebug(
+      "Ã°Å¸â€Â Encontrados " +
+        controls.length +
+        " controles e " +
+        masters.length +
+        " masters",
+      "info"
+    );
+
+    return true; // Sucesso
+  } catch (error) {
+    showMobileDebug(
+      "Ã¢ÂÅ’ ERRO CRÃƒÂTICO no modo ultra-bÃƒÂ¡sico: " + error.message,
+      "error"
+    );
+    return false; // Falha
+  }
+}
+
+// FunÃƒÂ§ÃƒÂ£o de inicializaÃƒÂ§ÃƒÂ£o simplificada para mobile COM POLLING ATIVO
+function initSimpleMode() {
+  console.log("Ã°Å¸â€œÂ± Inicializando modo simples com polling...");
+
+  try {
+    console.log("Ã°Å¸â€œÂ± Tentando mostrar loader...");
+    showLoader();
+
+    console.log("Ã°Å¸â€œÂ± Atualizando progresso...");
+    updateProgress(10, "Modo simples com polling ativo...");
+
+    console.log(
+      "Ã°Å¸â€œÂ± Processando",
+      ALL_LIGHT_IDS.length,
+      "dispositivos..."
+    );
+
+    // Carregar estados bÃƒÂ¡sicos
+    for (var i = 0; i < ALL_LIGHT_IDS.length; i++) {
+      var deviceId = ALL_LIGHT_IDS[i];
+      var progress = 10 + ((i + 1) / ALL_LIGHT_IDS.length) * 70; // Deixar 20% para polling
+
+      console.log(
+        "Ã°Å¸â€œÂ± Processando device",
+        deviceId,
+        "- progresso:",
+        progress + "%"
+      );
+      updateProgress(
+        progress,
+        "Carregando " + (i + 1) + "/" + ALL_LIGHT_IDS.length + "..."
+      );
+
+      try {
+        updateDeviceUI(deviceId, "off", true);
+      } catch (e) {
+        console.error("Ã¢ÂÅ’ Erro no device", deviceId + ":", e);
+      }
+    }
+
+    console.log("Ã°Å¸â€œÂ± Configurando polling para modo simples...");
+    updateProgress(85, "Ativando sincronizaÃƒÂ§ÃƒÂ£o...");
+
+    // Configurar observador DOM simplificado
+    try {
+      setupDomObserver();
+      console.log("Ã¢Å“â€¦ Observador DOM configurado no modo simples");
+    } catch (e) {
+      console.warn("Ã¢Å¡Â Ã¯Â¸Â Observador DOM falhou no modo simples:", e);
+    }
+
+    // Sincronizar controles visÃƒÂ­veis
+    updateProgress(90, "Sincronizando controles...");
+    setTimeout(function () {
+      try {
+        scheduleControlSync(true);
+        console.log("Ã¢Å“â€¦ Controles sincronizados no modo simples");
+      } catch (e) {
+        console.warn("Ã¢Å¡Â Ã¯Â¸Â SincronizaÃƒÂ§ÃƒÂ£o falhou:", e);
+      }
+    }, 300);
+
+    // IMPLEMENTAR POLLING NO MODO SIMPLES
+    updateProgress(95, "Iniciando polling...");
+    setTimeout(function () {
+      if (isProduction) {
+        console.log("Ã°Å¸â€â€ž Iniciando polling em modo simples...");
+        try {
+          startPolling(); // Ativar polling completo mesmo no modo simples
+          console.log("Ã¢Å“â€¦ Polling ativo no modo simples");
+        } catch (e) {
+          console.error("Ã¢ÂÅ’ Erro ao iniciar polling no modo simples:", e);
+        }
+      } else {
+        console.log(
+          "Ã°Å¸â€™Â» Modo desenvolvimento - polling nÃƒÂ£o iniciado no modo simples"
+        );
+      }
+
+      updateProgress(100, "Modo simples com polling ativo!");
+
+      setTimeout(function () {
+        console.log("Ã°Å¸â€œÂ± Escondendo loader...");
+        hideLoader();
+        console.log("Ã¢Å“â€¦ Modo simples com polling completo ativo");
+      }, 1000);
+    }, 2000); // Aguardar 2s para estabilizar antes do polling
+  } catch (error) {
+    console.error("Ã¢ÂÅ’ ERRO CRÃƒÂTICO no modo simples:", error);
+    console.error("Ã¢ÂÅ’ Erro stack:", error.stack);
+    console.error("Ã¢ÂÅ’ Erro linha:", error.lineNumber || "desconhecida");
+
+    // Ativar modo ultra-bÃƒÂ¡sico como fallback
+    console.log("Ã°Å¸Å¡Â¨ Ativando modo ultra-bÃƒÂ¡sico...");
+    initUltraBasicMode();
+  }
+}
+
+// Tratamento de erros globais para debug mobile
+window.onerror = function (message, source, lineno, colno, error) {
+  console.error("Ã°Å¸Å¡Â¨ ERRO GLOBAL DETECTADO:");
+  console.error("Ã°Å¸â€œÂ Mensagem:", message);
+  console.error("Ã°Å¸â€œÂ Arquivo:", source);
+  console.error("Ã°Å¸â€œÂ Linha:", lineno);
+  console.error("Ã°Å¸â€œÂ Coluna:", colno);
+  console.error("Ã°Å¸â€œÂ Erro:", error);
+
+  // Tentar ativar modo ultra-bÃƒÂ¡sico
+  setTimeout(function () {
+    console.log("Ã°Å¸Å¡Â¨ Tentando recuperaÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica...");
+    try {
+      initUltraBasicMode();
+    } catch (e) {
+      console.error("Ã°Å¸â€™Â¥ Falha na recuperaÃƒÂ§ÃƒÂ£o:", e);
+    }
+  }, 1000);
+
+  return false; // NÃƒÂ£o impedir outros handlers
+};
+
+// Capturar promises rejeitadas
+window.addEventListener("unhandledrejection", function (event) {
+  console.error("Ã°Å¸Å¡Â¨ PROMISE REJEITADA:", event.reason);
+  console.error("Ã°Å¸Å¡Â¨ Promise:", event.promise);
+});
+
+console.log("Script carregado, configurando DOMContentLoaded...");
+
+// FunÃƒÂ§ÃƒÂ£o de inicializaÃƒÂ§ÃƒÂ£o unificada (mobile e desktop idÃƒÂªnticos)
+// FunÃƒÂ§ÃƒÂ£o de inicializaÃƒÂ§ÃƒÂ£o unificada (mobile e desktop idÃƒÂªnticos)
+function initializeApp() {
+  console.log("DASHBOARD ELETRIZE INICIALIZANDO");
+  console.log("Mobile detectado:", isMobile);
+
+  // Marcar que a inicializaÃƒÂ§ÃƒÂ£o foi iniciada
+  window.initializationStarted = true;
+
+  // Debug visual para mobile
+  showMobileDebug("DASHBOARD ELETRIZE INICIALIZANDO", "info");
+
+  // Envolver tudo em try-catch para capturar qualquer erro
+  try {
+    console.log("Iniciando carregamento (comportamento unificado)...");
+    showLoader();
+
+    // Timeout padrÃƒÂ£o para desktop e mobile (comportamento idÃƒÂªntico)
+    var initDelay = 500;
+    console.log(
+      "Delay de inicializaÃƒÂ§ÃƒÂ£o: " + initDelay + "ms (universal)"
+    );
+
+    // Aguardar um pouco para UI carregar e entÃƒÂ£o iniciar carregamento
+    setTimeout(function () {
+      console.log("Iniciando carregamento principal...");
+
+      try {
+        // Carregamento global de todos os estados (usando Promise)
+        loadAllDeviceStatesGlobally()
+          .then(function (success) {
+            console.log("Carregamento global concluÃƒÂ­do, success:", success);
+
+            // Delay final padrÃƒÂ£o para desktop e mobile
+            var finalDelay = 800;
+            setTimeout(function () {
+              // Esconder loader
+              hideLoader();
+
+              // Configurar observador DOM
+              setupDomObserver();
+
+              // Inicializar pÃƒÂ¡gina de cÃƒÂ´modo e sincronizar controles jÃƒÂ¡ existentes
+              var syncDelay = 100;
+              setTimeout(() => {
+                console.log(
+                  "Ã°Å¸ÂÂ  Inicializando controles de cÃƒÂ´modos na inicializaÃƒÂ§ÃƒÂ£o..."
+                );
+                initRoomPage(); // Inicializar pagina de comodo
+                scheduleControlSync(true); // Sincronizar todos os controles
+              }, syncDelay);
+
+              // Iniciar polling se estiver em produÃƒÂ§ÃƒÂ£o
+              if (isProduction) {
+                var pollingDelay = 3000;
+                console.log(
+                  "Ã¢Å“â€¦ INICIANDO POLLING em " +
+                    pollingDelay / 1000 +
+                    " segundos (universal)",
+                  {
+                    isProduction: isProduction,
+                    hostname: location.hostname,
+                    isMobile: isMobile,
+                  }
+                );
+                setTimeout(startPolling, pollingDelay);
+              } else {
+                console.log(
+                  "Ã¢ÂÅ’ POLLING NÃƒÆ’O INICIADO - nÃƒÂ£o estÃƒÂ¡ em produÃƒÂ§ÃƒÂ£o:",
+                  {
+                    isProduction: isProduction,
+                    hostname: location.hostname,
+                    isMobile: isMobile,
+                  }
+                );
+              }
+
+              console.log("AplicaÃƒÂ§ÃƒÂ£o totalmente inicializada!");
+              showMobileDebug("App totalmente inicializada!", "success");
+
+              // Marcar que a inicializaÃƒÂ§ÃƒÂ£o foi concluÃƒÂ­da
+              window.appFullyInitialized = true;
+            }, finalDelay);
+          })
+          .catch(function (error) {
+            console.error("Erro no carregamento global:", error);
+            showMobileDebug("Erro no carregamento: " + error.message, "error");
+            hideLoader();
+
+            // Fallback para modo bÃƒÂ¡sico
+            setTimeout(function () {
+              try {
+                initUltraBasicMode();
+              } catch (ultraError) {
+                console.error("Falha total na recuperaÃƒÂ§ÃƒÂ£o:", ultraError);
+                updateProgress(100, "Erro crÃƒÂ­tico - recarregue a pÃƒÂ¡gina");
+                setTimeout(function () {
+                  hideLoader();
+                }, 3000);
+              }
+            }, 1000);
+          });
+      } catch (loadError) {
+        console.error("Erro crÃƒÂ­tico na inicializaÃƒÂ§ÃƒÂ£o:", loadError);
+        showMobileDebug("ERRO CRÃƒÂTICO: " + loadError.message, "error");
+
+        // Modo de emergÃƒÂªncia
+        try {
+          initUltraBasicMode();
+        } catch (emergencyError) {
+          console.error("Falha no modo de emergÃƒÂªncia:", emergencyError);
+          updateProgress(100, "Erro crÃƒÂ­tico - recarregue a pÃƒÂ¡gina");
+          setTimeout(hideLoader, 3000);
+        }
+      }
+    }, initDelay);
+  } catch (mainError) {
+    console.error("ERRO CRITICO NA INICIALIZACAO PRINCIPAL:", mainError);
+    showMobileDebug("ERRO PRINCIPAL: " + mainError.message, "error");
+
+    // ÃƒÅ¡ltimo recurso - modo ultra-bÃƒÂ¡sico
+    try {
+      initUltraBasicMode();
+    } catch (finalError) {
+      console.error("FALHA TOTAL:", finalError);
+      showMobileDebug("FALHA TOTAL: " + finalError.message, "error");
+    }
+  }
+}
+
+// InicializaÃƒÂ§ÃƒÂ£o global da aplicaÃƒÂ§ÃƒÂ£o
+window.addEventListener("DOMContentLoaded", function () {
+  console.log("DOMContentLoaded executado, chamando initializeApp...");
+  initializeApp();
+});
+
+// Fallback se DOMContentLoaded nÃƒÂ£o funcionar
+setTimeout(function () {
+  if (!window.initializationStarted) {
+    console.log(
+      "Fallback: DOMContentLoaded nÃƒÂ£o executou, forÃƒÂ§ando inicializaÃƒÂ§ÃƒÂ£o..."
+    );
+    initializeApp();
+  }
+}, 2000);
+
+// Parar polling quando a pÃƒÂ¡gina ÃƒÂ© fechada
+window.addEventListener("beforeunload", stopPolling);
+
+// FunÃƒÂ§ÃƒÂµes de debug disponÃƒÂ­veis globalmente
+window.testHubitatConnection = testHubitatConnection;
+window.showErrorMessage = showErrorMessage;
+
+// Funções master de cortinas (abrir/fechar todas)
+function handleMasterCurtainsOpen() {
+  console.log("🎬 Abrindo todas as cortinas...");
+  const btn = document.getElementById("master-curtains-open-btn");
+  if (btn) {
+    btn.classList.add("loading");
+  }
+  
+  // Encontrar todas as cortinas
+  const curtainButtons = document.querySelectorAll('.curtain-tile__btn[data-device-id]');
+  const curtainIds = new Set();
+  
+  curtainButtons.forEach(button => {
+    const id = button.dataset.deviceId;
+    if (id && !curtainIds.has(id)) {
+      curtainIds.add(id);
+      curtainAction(button, 'open');
+    }
+  });
+  
+  setTimeout(() => {
+    if (btn) {
+      btn.classList.remove("loading");
+    }
+  }, 2000);
+  
+  console.log(`✅ Comando de abertura enviado para ${curtainIds.size} cortinas`);
+}
+
+function handleMasterCurtainsClose() {
+  console.log("🎬 Fechando todas as cortinas...");
+  const btn = document.getElementById("master-curtains-close-btn");
+  if (btn) {
+    btn.classList.add("loading");
+  }
+  
+  // Encontrar todas as cortinas
+  const curtainButtons = document.querySelectorAll('.curtain-tile__btn[data-device-id]');
+  const curtainIds = new Set();
+  
+  curtainButtons.forEach(button => {
+    const id = button.dataset.deviceId;
+    if (id && !curtainIds.has(id)) {
+      curtainIds.add(id);
+      curtainAction(button, 'close');
+    }
+  });
+  
+  setTimeout(() => {
+    if (btn) {
+      btn.classList.remove("loading");
+    }
+  }, 2000);
+  
+  console.log(`✅ Comando de fechamento enviado para ${curtainIds.size} cortinas`);
+}
+
+// Exportar funções usadas em onclick="" no HTML (necessário para IIFE)
+window.toggleRoomControl = toggleRoomControl;
+window.togglePoolControl = togglePoolControl;
+window.fireTVMacro = fireTVMacro;
+window.htvMacroOn = htvMacroOn;
+window.htvMacroOff = htvMacroOff;
+window.tvMacroOn = tvMacroOn;
+window.tvMacroOff = tvMacroOff;
+window.tvCommand = tvCommand;
+window.curtainAction = curtainAction;
+window.spaNavigate = spaNavigate;
+window.handleMasterCurtainsOpen = handleMasterCurtainsOpen;
+window.handleMasterCurtainsClose = handleMasterCurtainsClose;

@@ -6,8 +6,7 @@
     "scripts":  {
                     "dev":  "wrangler pages dev .",
                     "deploy":  "wrangler pages deploy .",
-                    "preview":  "wrangler pages dev . --port 8080",
-                    "build:assets":  "node scripts/build-assets.js"
+                    "preview":  "wrangler pages dev . --port 8080"
                 },
     "repository":  {
                        "type":  "git",
