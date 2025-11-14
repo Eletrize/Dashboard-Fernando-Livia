@@ -5745,6 +5745,63 @@ window.addEventListener("beforeunload", stopPolling);
 window.testHubitatConnection = testHubitatConnection;
 window.showErrorMessage = showErrorMessage;
 
+// Funções master de cortinas (abrir/fechar todas)
+function handleMasterCurtainsOpen() {
+  console.log("🎬 Abrindo todas as cortinas...");
+  const btn = document.getElementById("master-curtains-open-btn");
+  if (btn) {
+    btn.classList.add("loading");
+  }
+  
+  // Encontrar todas as cortinas
+  const curtainButtons = document.querySelectorAll('.curtain-tile__btn[data-device-id]');
+  const curtainIds = new Set();
+  
+  curtainButtons.forEach(button => {
+    const id = button.dataset.deviceId;
+    if (id && !curtainIds.has(id)) {
+      curtainIds.add(id);
+      curtainAction(button, 'open');
+    }
+  });
+  
+  setTimeout(() => {
+    if (btn) {
+      btn.classList.remove("loading");
+    }
+  }, 2000);
+  
+  console.log(`✅ Comando de abertura enviado para ${curtainIds.size} cortinas`);
+}
+
+function handleMasterCurtainsClose() {
+  console.log("🎬 Fechando todas as cortinas...");
+  const btn = document.getElementById("master-curtains-close-btn");
+  if (btn) {
+    btn.classList.add("loading");
+  }
+  
+  // Encontrar todas as cortinas
+  const curtainButtons = document.querySelectorAll('.curtain-tile__btn[data-device-id]');
+  const curtainIds = new Set();
+  
+  curtainButtons.forEach(button => {
+    const id = button.dataset.deviceId;
+    if (id && !curtainIds.has(id)) {
+      curtainIds.add(id);
+      curtainAction(button, 'close');
+    }
+  });
+  
+  setTimeout(() => {
+    if (btn) {
+      btn.classList.remove("loading");
+    }
+  }, 2000);
+  
+  console.log(`✅ Comando de fechamento enviado para ${curtainIds.size} cortinas`);
+}
+
 // Exportar funções usadas em onclick="" no HTML (necessário para IIFE)
 window.toggleRoomControl = toggleRoomControl;
 window.togglePoolControl = togglePoolControl;
