@@ -16,18 +16,33 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
 
 /* AC Controls - Telas grandes: botões com mesma altura, ocupando tela completa */
 @media (width >= 1000px) {
-    .ac-controls-wrapper {
-        display: grid !important;
-        grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
-        gap: 12px !important;
-        height: 100% !important;
-        flex: 1 !important;
-        min-height: 0 !important;
+    /* Container principal do AC precisa ocupar altura total disponível */
+    .ac-page-wrapper {
+        align-items: stretch !important;
     }
     
+    .ac-container {
+        min-height: calc(100vh - 103px - 90px - 20px) !important;
+        height: 100% !important;
+    }
+    
+    /* Wrapper dos controles precisa ocupar 40% e ter altura total */
+    .ac-controls-wrapper {
+        width: 40% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        flex-shrink: 0 !important;
+        gap: 0 !important;
+        padding: 0 15px !important;
+        min-height: 100% !important;
+    }
+    
+    /* Cada seção ocupa 1/3 do espaço vertical */
     .ac-modes,
     .ac-aleta-section,
     .ac-commands-section {
+        flex: 1 !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: flex-start !important;
@@ -42,15 +57,14 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         margin: 0 0 12px 0 !important;
     }
     
+    /* Grids ocupam todo espaço restante */
     .ac-modes-grid,
     .ac-aleta-grid,
     .ac-commands-grid {
         flex: 1 !important;
         display: grid !important;
-        gap: 12px !important;
-        height: 100% !important;
-        grid-auto-rows: 1fr !important;
         align-content: stretch !important;
+        gap: 12px !important;
         min-height: 0 !important;
     }
     
@@ -58,13 +72,13 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         grid-template-columns: 1fr !important;
     }
     
+    /* Botões preenchem 100% da altura do grid */
     .ac-mode-btn,
     .ac-aleta-btn,
     .ac-command-btn {
         min-height: 0 !important;
         height: 100% !important;
         flex: none !important;
-        width: 100% !important;
     }
     
     .ac-mode-btn--selection {
