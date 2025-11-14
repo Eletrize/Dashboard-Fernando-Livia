@@ -5744,3 +5744,17 @@ window.addEventListener("beforeunload", stopPolling);
 // FunÃƒÂ§ÃƒÂµes de debug disponÃƒÂ­veis globalmente
 window.testHubitatConnection = testHubitatConnection;
 window.showErrorMessage = showErrorMessage;
+
+// Exportar funções usadas em onclick="" no HTML (necessário para IIFE)
+window.toggleRoomControl = toggleRoomControl;
+window.togglePoolControl = togglePoolControl;
+window.fireTVMacro = fireTVMacro;
+window.htvMacroOn = htvMacroOn;
+window.htvMacroOff = htvMacroOff;
+window.tvMacroOn = tvMacroOn;
+window.tvMacroOff = tvMacroOff;
+window.tvCommand = tvCommand;
+window.curtainAction = curtainAction;
+window.spaNavigate = spaNavigate;
+window.handleMasterCurtainsOpen = handleMasterCurtainsOpen;
+window.handleMasterCurtainsClose = handleMasterCurtainsClose;
