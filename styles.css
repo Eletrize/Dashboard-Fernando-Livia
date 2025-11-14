@@ -16,14 +16,16 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
 
 /* AC Controls - Telas grandes: botões com mesma altura, ocupando tela completa */
 @media (width >= 1000px) {
-    /* Container principal do AC precisa ocupar altura total disponível */
+    /* Container principal do AC - ajustado para não exceder a tela */
     .ac-page-wrapper {
         align-items: stretch !important;
+        padding: 10px !important;
     }
     
     .ac-container {
-        min-height: calc(100vh - 103px - 90px - 20px) !important;
-        height: 100% !important;
+        max-height: calc(100vh - 103px - 90px - 20px) !important;
+        height: calc(100vh - 103px - 90px - 20px) !important;
+        overflow: hidden !important;
     }
     
     /* Wrapper dos controles precisa ocupar 40% e ter altura total */
@@ -33,12 +35,12 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         flex-direction: column !important;
         justify-content: space-between !important;
         flex-shrink: 0 !important;
-        gap: 0 !important;
+        gap: 24px !important;
         padding: 0 15px !important;
-        min-height: 100% !important;
+        height: 100% !important;
     }
     
-    /* Cada seção ocupa 1/3 do espaço vertical */
+    /* Cada seção ocupa 1/3 do espaço vertical com gap maior */
     .ac-modes,
     .ac-aleta-section,
     .ac-commands-section {
@@ -46,7 +48,7 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         display: flex !important;
         flex-direction: column !important;
         justify-content: flex-start !important;
-        gap: 12px !important;
+        gap: 16px !important;
         margin: 0 !important;
         padding: 0 !important;
         min-height: 0 !important;
@@ -54,7 +56,7 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     
     .ac-section-title {
         flex-shrink: 0 !important;
-        margin: 0 0 12px 0 !important;
+        margin: 0 0 16px 0 !important;
     }
     
     /* Grids ocupam todo espaço restante */
