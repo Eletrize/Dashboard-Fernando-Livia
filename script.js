@@ -814,23 +814,33 @@ function htvMacroOn() {
 
   console.log("🎬 Macro HTV: Ligando TV e Receiver, depois setando input SAT/CBL...");
 
-  // Liga TV
+  // Liga TV (ou confirma que está ligada)
   sendHubitatCommand(TV_ID, "on")
     .then(() => {
       console.log("✅ TV ligada");
-      // Liga Receiver
+      // Liga Receiver (ou confirma que está ligado)
       return sendHubitatCommand(RECEIVER_ID, "on");
     })
     .then(() => {
       console.log("✅ Receiver ligado");
-      // Setar input SAT/CBL
-      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL");
+      console.log("⏳ Aguardando 4 segundos antes de setar input SAT/CBL...");
+      // Aguardar 4 segundos antes de setar input SAT/CBL
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL"));
+        }, 4000);
+      });
     })
     .then(() => {
       console.log("✅ Input SAT/CBL selecionado no Receiver");
     })
     .catch((error) => {
       console.error("❌ Erro na macro HTV:", error);
+      // Mesmo com erro, tentar setar o input (caso TV já esteja ligada)
+      console.log("🔄 Tentando setar input SAT/CBL mesmo com erro anterior...");
+      sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL")
+        .then(() => console.log("✅ Input SAT/CBL selecionado no Receiver (recuperação)"))
+        .catch((err) => console.error("❌ Erro ao setar input:", err));
     });
 }
 
