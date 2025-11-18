@@ -781,17 +781,12 @@ function htvMacroOn() {
   const TV_ID = "111";
   const RECEIVER_ID = "15";
 
-  console.log("🎬 Macro HTV: Ligando TV e Receiver, depois setando input SAT/CBL...");
+  console.log("🎬 Macro HTV: Ligando TV, depois setando input SAT/CBL...");
 
   // Liga TV (ou confirma que está ligada)
   sendHubitatCommand(TV_ID, "on")
     .then(() => {
       console.log("✅ TV ligada");
-      // Liga Receiver (ou confirma que está ligado)
-      return sendHubitatCommand(RECEIVER_ID, "on");
-    })
-    .then(() => {
-      console.log("✅ Receiver ligado");
       console.log("⏳ Aguardando 4 segundos antes de setar input SAT/CBL...");
       // Aguardar 4 segundos antes de setar input SAT/CBL
       return new Promise((resolve) => {
@@ -839,17 +834,12 @@ function tvMacroOn() {
   const TV_ID = "111";
   const RECEIVER_ID = "15";
 
-  console.log("🎬 Macro TV: Ligando TV e Receiver, depois setando input TV...");
+  console.log("🎬 Macro TV: Ligando TV, depois setando input TV...");
 
   // Liga TV
   sendHubitatCommand(TV_ID, "on")
     .then(() => {
       console.log("✅ TV ligada");
-      // Liga Receiver
-      return sendHubitatCommand(RECEIVER_ID, "on");
-    })
-    .then(() => {
-      console.log("✅ Receiver ligado");
       console.log("⏳ Aguardando 4 segundos antes de setar input TV...");
       // Aguardar 4 segundos antes de setar input TV
       return new Promise((resolve) => {
