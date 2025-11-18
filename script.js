@@ -5802,6 +5802,108 @@ function handleMasterCurtainsClose() {
   console.log(`✅ Comando de fechamento enviado para ${curtainIds.size} cortinas`);
 }
 
+// Função master de luzes do Living (ambiente2)
+function handleAmbiente2MasterLights(btn) {
+  console.log("💡 Master Living: verificando estado das luzes...");
+  
+  // Marcar botão como pendente para evitar cliques múltiplos
+  if (btn.dataset.pending === "true") {
+    console.log("🚫 Comando master já em andamento");
+    return;
+  }
+  
+  // Obter IDs dos dispositivos
+  const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
+  if (!ids.length) {
+    console.error("❌ Nenhum dispositivo configurado para o master button");
+    return;
+  }
+  
+  // Verificar estado atual: se alguma luz está acesa, desligar todas; senão, ligar todas
+  const shouldTurnOn = !anyOn(ids);
+  const cmd = shouldTurnOn ? "on" : "off";
+  
+  console.log(`💡 Master Living ${cmd} para ${ids.length} dispositivos:`, ids);
+  
+  // Marcar botão como pendente e adicionar loading
+  btn.dataset.pending = "true";
+  btn.classList.add("loading");
+  
+  // Atualizar visual imediatamente (otimista)
+  const img = btn.querySelector("img");
+  if (img) {
+    img.src = shouldTurnOn
+      ? "images/icons/icon-small-light-on.svg"
+      : "images/icons/icon-small-light-off.svg";
+    btn.dataset.state = cmd;
+  }
+  
+  // Proteger todos os dispositivos individuais para evitar conflitos
+  ids.forEach((deviceId) => {
+    if (typeof protectDevice === "function") {
+      protectDevice(deviceId, 10000); // 10s de proteção
+    }
+  });
+  
+  // Atualizar estados salvos imediatamente
+  ids.forEach((id) => {
+    setStoredState(id, cmd);
+  });
+  
+  // Atualizar UI de todos os controles individuais imediatamente
+  ids.forEach((id) => {
+    updateDeviceUI(id, cmd, true);
+  });
+  
+  // Enviar comandos para todos os dispositivos
+  const promises = ids.map((id) => sendHubitatCommand(id, cmd));
+  
+  Promise.allSettled(promises)
+    .then((results) => {
+      const successes = results.filter((r) => r.status === "fulfilled").length;
+      const failures = results.filter((r) => r.status === "rejected").length;
+      
+      console.log(`✅ Master Living ${cmd}: ${successes} sucessos, ${failures} falhas`);
+      
+      // Segunda sincronização após comandos completos
+      setTimeout(() => {
+        ids.forEach((id) => {
+          updateDeviceUI(id, cmd, true);
+        });
+        
+        // Atualizar visual do botão master novamente baseado no estado real
+        const currentState = anyOn(ids) ? "on" : "off";
+        if (img) {
+          img.src = currentState === "on"
+            ? "images/icons/icon-small-light-on.svg"
+            : "images/icons/icon-small-light-off.svg";
+          btn.dataset.state = currentState;
+        }
+      }, 300);
+      
+      // Remover loading e proteção após delay
+      setTimeout(() => {
+        btn.classList.remove("loading");
+        btn.dataset.pending = "false";
+        console.log(`🔓 Master Living button liberado`);
+      }, 2000);
+    })
+    .catch((error) => {
+      console.error("❌ Erro no comando master Living:", error);
+      btn.classList.remove("loading");
+      btn.dataset.pending = "false";
+      
+      // Reverter visual em caso de erro total
+      const revertState = cmd === "on" ? "off" : "on";
+      if (img) {
+        img.src = revertState === "on"
+          ? "images/icons/icon-small-light-on.svg"
+          : "images/icons/icon-small-light-off.svg";
+        btn.dataset.state = revertState;
+      }
+    });
+}
+
 // Exportar funções usadas em onclick="" no HTML (necessário para IIFE)
 window.toggleRoomControl = toggleRoomControl;
 window.togglePoolControl = togglePoolControl;
@@ -5815,3 +5917,4 @@ window.curtainAction = curtainAction;
 window.spaNavigate = spaNavigate;
 window.handleMasterCurtainsOpen = handleMasterCurtainsOpen;
 window.handleMasterCurtainsClose = handleMasterCurtainsClose;
+window.handleAmbiente2MasterLights = handleAmbiente2MasterLights;
