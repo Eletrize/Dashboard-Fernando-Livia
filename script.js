@@ -3426,6 +3426,44 @@ function anyOn(deviceIds) {
   return (deviceIds || []).some((id) => (getStoredState(id) || "off") === "on");
 }
 
+// FunÃƒÂ§ÃƒÂ£o para inicializar e sincronizar estados dos botÃƒÂµes master na home
+function initHomeMasters() {
+  console.log("🏠 Inicializando botões master da home...");
+  
+  // Aguardar um pouco para garantir que o DOM está pronto
+  setTimeout(() => {
+    const masterButtons = document.querySelectorAll(".room-master-btn");
+    
+    if (masterButtons.length === 0) {
+      console.log("⚠️ Nenhum botão master encontrado");
+      return;
+    }
+    
+    console.log(`✅ Encontrados ${masterButtons.length} botões master`);
+    
+    masterButtons.forEach((btn) => {
+      // Limpar estado de pending
+      btn.dataset.pending = "false";
+      
+      // Obter IDs dos dispositivos
+      const ids = (btn.dataset.deviceIds || "").split(",").filter(Boolean);
+      
+      if (ids.length === 0) return;
+      
+      // Calcular estado baseado nos dispositivos
+      const state = anyOn(ids) ? "on" : "off";
+      
+      // Atualizar ícone do botão
+      setMasterIcon(btn, state, true);
+      
+      const route = btn.dataset.route || "unknown";
+      console.log(`  ${route}: ${ids.length} luzes, estado = ${state}`);
+    });
+    
+    console.log("✅ Botões master sincronizados!");
+  }, 100);
+}
+
 // FunÃƒÂ§ÃƒÂ£o auxiliar para verificar se alguma cortina estÃƒÂ¡ aberta
 function anyCurtainOpen(curtainIds) {
   // Verifica se alguma cortina do grupo estÃƒÂ¡ aberta
