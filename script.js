@@ -658,51 +658,20 @@ function toggleRoomControl(el) {
 
 function togglePoolControl(el, action) {
   const deviceId = el.dataset.deviceId;
-  if (!action || !deviceId) return;
-
-  // Obter os dois botÃƒÂµes (ON e OFF)
-  const tileElement = el.closest(".piscina-control-tile");
-  if (!tileElement) return;
-
-  const onBtn = tileElement.querySelector(".piscina-control-btn--on");
-  const offBtn = tileElement.querySelector(".piscina-control-btn--off");
-
-  // Remover classe active de ambos
-  if (onBtn) onBtn.classList.remove("active");
-  if (offBtn) offBtn.classList.remove("active");
-
-  // Adicionar classe active ao botÃƒÂ£o clicado
-  if (action === "on" && onBtn) {
-    onBtn.classList.add("active");
-  } else if (action === "off" && offBtn) {
-    offBtn.classList.add("active");
+  if (!action || !deviceId) {
+    console.error(" togglePoolControl: action ou deviceId ausente");
+    return;
   }
 
-  // Marcar comando recente
-  recentCommands.set(deviceId, Date.now());
+  console.log(` Enviando comando "${action}" para dispositivo piscina ${deviceId}`);
 
-  console.log(
-    `Enviando comando ${action} para dispositivo piscina ${deviceId}`
-  );
-
-  // Send to Hubitat
+  // Enviar comando para Hubitat
   sendHubitatCommand(deviceId, action)
     .then(() => {
-      console.log(
-        `Ã¢Å“â€¦ Comando ${action} enviado com sucesso para dispositivo ${deviceId}`
-      );
+      console.log(` Comando "${action}" enviado com sucesso para dispositivo ${deviceId}`);
     })
     .catch((error) => {
-      console.error(
-        `Ã¢ÂÅ’ Erro ao enviar comando para dispositivo ${deviceId}:`,
-        error
-      );
-      // Em caso de erro, remover a classe active
-      if (action === "on" && onBtn) {
-        onBtn.classList.remove("active");
-      } else if (action === "off" && offBtn) {
-        offBtn.classList.remove("active");
-      }
+      console.error(` Erro ao enviar comando para dispositivo ${deviceId}:`, error);
     });
 }
 // ========================================
