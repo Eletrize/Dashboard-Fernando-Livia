@@ -871,8 +871,13 @@ function tvMacroOn() {
     })
     .then(() => {
       console.log("✅ Receiver ligado");
-      // Setar input TV
-      return sendHubitatCommand(RECEIVER_ID, "setInputSource", "TV");
+      console.log("⏳ Aguardando 4 segundos antes de setar input TV...");
+      // Aguardar 4 segundos antes de setar input TV
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(sendHubitatCommand(RECEIVER_ID, "setInputSource", "TV"));
+        }, 4000);
+      });
     })
     .then(() => {
       console.log("✅ Input TV selecionado no Receiver");

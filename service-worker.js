@@ -1,10 +1,10 @@
-﻿const CACHE_VERSION = "v1.1.1";
+﻿const CACHE_VERSION = "v1.1.2";
 const CACHE_NAME = `eletrize-${CACHE_VERSION}`;
 const PRECACHE_ASSETS = [
   "/",
   "/index.html",
-  "/styles.css?v=1.1.1",
-  "/script.js?v=1.1.1",
+  "/styles.css?v=1.1.2",
+  "/script.js?v=1.1.2",
   "/fonts-raleway.css",
   "/manifest.json",
   "/images/pwa/app-icon-192.png",
