@@ -781,12 +781,17 @@ function htvMacroOn() {
   const TV_ID = "111";
   const RECEIVER_ID = "15";
 
-  console.log("🎬 Macro HTV: Ligando TV, depois setando input SAT/CBL...");
+  console.log("🎬 Macro HTV: Ligando TV, setando HDMI 2 e input SAT/CBL...");
 
   // Liga TV (ou confirma que está ligada)
   sendHubitatCommand(TV_ID, "on")
     .then(() => {
       console.log("✅ TV ligada");
+      // Seta HDMI 2 na TV
+      return sendHubitatCommand(TV_ID, "hdmi2");
+    })
+    .then(() => {
+      console.log("✅ HDMI 2 selecionado na TV");
       console.log("⏳ Aguardando 4 segundos antes de setar input SAT/CBL...");
       // Aguardar 4 segundos antes de setar input SAT/CBL
       return new Promise((resolve) => {
@@ -805,6 +810,26 @@ function htvMacroOn() {
       sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL")
         .then(() => console.log("✅ Input SAT/CBL selecionado no Receiver (recuperação)"))
         .catch((err) => console.error("❌ Erro ao setar input:", err));
+    });
+}
+
+// Macro para ligar Telão da Piscina
+function telaoMacroOn() {
+  const TELAO_ID = "157";
+  const RECEIVER_ID = "16";
+
+  console.log("🎬 Macro Telão: Ligando Telão e setando input SAT/CBL...");
+
+  // Liga Telão e seta input SAT/CBL no receiver
+  Promise.all([
+    sendHubitatCommand(TELAO_ID, "on"),
+    sendHubitatCommand(RECEIVER_ID, "setInputSource", "SAT/CBL")
+  ])
+    .then(() => {
+      console.log("✅ Telão ligado e input SAT/CBL selecionado");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro Telão:", error);
     });
 }
 
