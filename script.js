@@ -41,7 +41,7 @@ const deviceControlCache = new Map();
 const masterButtonCache = new Set();
 const deviceStateMemory = new Map();
 const DEVICE_STATE_STORAGE_PREFIX = "deviceState:";
-const DEVICE_STATE_MAX_QUOTA_ERRORS = 3;
+const DEVICE_STATE_MAX_QUOTA_ERRORS = 1;
 let deviceStateStorageDisabled = false;
 let deviceStateCleanupInProgress = false;
 let deviceStateQuotaErrors = 0;
@@ -1358,17 +1358,26 @@ function handleDeviceStateQuotaError(deviceId, key, state, error) {
 
   console.warn(`Persistencia de estados sem espaco para ${deviceId}. Tentando limpeza...`, error);
 
+  let removedEntries = 0;
   if (!deviceStateCleanupInProgress) {
     deviceStateCleanupInProgress = true;
     try {
       const excluded = new Set([key]);
-      const removed = purgeDeviceStateEntries(excluded);
-      if (removed > 0) {
-        console.info(`Estados antigos removidos do localStorage: ${removed}`);
+      removedEntries = purgeDeviceStateEntries(excluded);
+      if (removedEntries > 0) {
+        console.info(`Estados antigos removidos do localStorage: ${removedEntries}`);
       }
     } finally {
       deviceStateCleanupInProgress = false;
     }
+  }
+
+  if (removedEntries === 0) {
+    disableDeviceStatePersistence(
+      "Sem espaco restante no localStorage e nenhum estado para remover",
+      error
+    );
+    return;
   }
 
   try {
