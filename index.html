@@ -33,8 +33,8 @@
         src: url("fonts/raleway/Raleway-latin-700.woff2") format("woff2");
       }
     </style>
-    <link rel="preload" href="styles.css?v=1.0.3" as="style" />
-    <link rel="stylesheet" href="styles.css?v=1.0.3" />
+    <link rel="preload" href="styles.css?v=1.0.4" as="style" />
+    <link rel="stylesheet" href="styles.css?v=1.0.4" />
     <link rel="icon" href="images/pwa/app-icon-192.png" type="image/png" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#1C1C1C" />
@@ -330,7 +330,7 @@
         setConsoleState(window.__DASHBOARD_DEBUG__);
       })();
     </script>
-    <script src="script.js?v=1.0.3" defer></script>
+    <script src="script.js?v=1.0.4" defer></script>
     <script>
       // PWA: registra service worker (desativado em localhost para evitar cache no desenvolvimento)
 
@@ -552,7 +552,7 @@
         if (scenesScriptPromise) return scenesScriptPromise;
         scenesScriptPromise = new Promise((resolve, reject) => {
           const script = document.createElement("script");
-          script.src = "scenes.js?v=1.0.3";
+          script.src = "scenes.js?v=1.0.4";
           script.async = true;
           script.onload = resolve;
           script.onerror = () =>

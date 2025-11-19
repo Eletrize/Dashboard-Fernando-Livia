@@ -45,6 +45,7 @@ const DEVICE_STATE_MAX_QUOTA_ERRORS = 1;
 let deviceStateStorageDisabled = false;
 let deviceStateCleanupInProgress = false;
 let deviceStateQuotaErrors = 0;
+let deviceStateQuotaWarningShown = false;
 let controlCachePrimed = false;
 let domObserverInstance = null;
 let fallbackSyncTimer = null;
@@ -1356,7 +1357,18 @@ function handleDeviceStateQuotaError(deviceId, key, state, error) {
     return;
   }
 
-  console.warn(`Persistencia de estados sem espaco para ${deviceId}. Tentando limpeza...`, error);
+  if (!deviceStateQuotaWarningShown) {
+    console.warn(
+      `Persistencia de estados sem espaco para ${deviceId}. Tentando limpeza...`,
+      error
+    );
+    deviceStateQuotaWarningShown = true;
+  } else {
+    debugLog(() => [
+      "QuotaExceeded repetido",
+      { deviceId, message: error?.message }
+    ]);
+  }
 
   let removedEntries = 0;
   if (!deviceStateCleanupInProgress) {
