@@ -40,6 +40,11 @@ const MASTER_BUTTON_SELECTOR = ".room-master-btn[data-device-ids]";
 const deviceControlCache = new Map();
 const masterButtonCache = new Set();
 const deviceStateMemory = new Map();
+const DEVICE_STATE_STORAGE_PREFIX = "deviceState:";
+const DEVICE_STATE_MAX_QUOTA_ERRORS = 3;
+let deviceStateStorageDisabled = false;
+let deviceStateCleanupInProgress = false;
+let deviceStateQuotaErrors = 0;
 let controlCachePrimed = false;
 let domObserverInstance = null;
 let fallbackSyncTimer = null;
@@ -1288,12 +1293,16 @@ function setRoomControlUI(el, state) {
 }
 
 function deviceStateKey(deviceId) {
-  return `deviceState:${deviceId}`;
+  return `${DEVICE_STATE_STORAGE_PREFIX}${deviceId}`;
 }
 
 function getStoredState(deviceId) {
   if (deviceStateMemory.has(deviceId)) {
     return deviceStateMemory.get(deviceId);
+  }
+
+  if (deviceStateStorageDisabled) {
+    return null;
   }
 
   try {
@@ -1314,12 +1323,116 @@ function getStoredState(deviceId) {
 function setStoredState(deviceId, state) {
   deviceStateMemory.set(deviceId, state);
 
-  try {
-    const key = deviceStateKey(deviceId);
-    localStorage.setItem(key, state);
-  } catch (error) {
-    console.warn(`Erro ao salvar estado ${deviceId}:`, error);
+  if (deviceStateStorageDisabled) {
+    return;
   }
+
+  const key = deviceStateKey(deviceId);
+
+  try {
+    localStorage.setItem(key, state);
+    deviceStateQuotaErrors = 0;
+  } catch (error) {
+    if (isQuotaExceededError(error)) {
+      handleDeviceStateQuotaError(deviceId, key, state, error);
+    } else {
+      console.warn(`Erro ao salvar estado ${deviceId}:`, error);
+    }
+  }
+}
+
+function isQuotaExceededError(error) {
+  if (!error) return false;
+  return (
+    error.name === "QuotaExceededError" ||
+    error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+    error.code === 22 ||
+    error.code === 1014
+  );
+}
+
+function handleDeviceStateQuotaError(deviceId, key, state, error) {
+  if (deviceStateStorageDisabled) {
+    return;
+  }
+
+  console.warn(`Persistencia de estados sem espaco para ${deviceId}. Tentando limpeza...`, error);
+
+  if (!deviceStateCleanupInProgress) {
+    deviceStateCleanupInProgress = true;
+    try {
+      const excluded = new Set([key]);
+      const removed = purgeDeviceStateEntries(excluded);
+      if (removed > 0) {
+        console.info(`Estados antigos removidos do localStorage: ${removed}`);
+      }
+    } finally {
+      deviceStateCleanupInProgress = false;
+    }
+  }
+
+  try {
+    localStorage.setItem(key, state);
+    deviceStateQuotaErrors = 0;
+  } catch (retryError) {
+    deviceStateQuotaErrors += 1;
+    const attempt = Math.min(
+      deviceStateQuotaErrors,
+      DEVICE_STATE_MAX_QUOTA_ERRORS
+    );
+
+    if (attempt >= DEVICE_STATE_MAX_QUOTA_ERRORS) {
+      disableDeviceStatePersistence(
+        "localStorage sem espaco suficiente para estados",
+        retryError
+      );
+    } else {
+      console.warn(
+        `Persistencia de estados ainda sem espaco (tentativa ${attempt}/${DEVICE_STATE_MAX_QUOTA_ERRORS})`,
+        retryError
+      );
+    }
+  }
+}
+
+function purgeDeviceStateEntries(excludeKeys = new Set()) {
+  if (typeof localStorage === "undefined") return 0;
+
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const currentKey = localStorage.key(i);
+    if (
+      currentKey &&
+      currentKey.startsWith(DEVICE_STATE_STORAGE_PREFIX) &&
+      !excludeKeys.has(currentKey)
+    ) {
+      keysToRemove.push(currentKey);
+    }
+  }
+
+  keysToRemove.forEach((keyName) => {
+    try {
+      localStorage.removeItem(keyName);
+    } catch (removeError) {
+      console.warn("Erro ao remover estado persistido:", keyName, removeError);
+    }
+
+    const deviceId = keyName.substring(DEVICE_STATE_STORAGE_PREFIX.length);
+    if (deviceId) {
+      deviceStateMemory.delete(deviceId);
+    }
+  });
+
+  return keysToRemove.length;
+}
+
+function disableDeviceStatePersistence(reason, error) {
+  if (deviceStateStorageDisabled) {
+    return;
+  }
+
+  deviceStateStorageDisabled = true;
+  console.warn(`Persistencia de estados desativada: ${reason}`, error);
 }
 
 function registerControlElement(el) {
