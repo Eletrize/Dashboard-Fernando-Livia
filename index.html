@@ -1748,6 +1748,12 @@
     </div>
 
     <div class="ambiente2-luzes-wrapper ambiente-grid">
+        <!-- Master On/Off Button -->
+        <div class="control-card control-card--full-width large scene-control-card room-master-btn" id="ambiente2-master-lights-btn" data-device-ids="57,61,75,76,49,58,20" onclick="handleAmbiente2MasterLights(this)">
+            <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Master On/Off">
+            <div class="control-label">Todas as Luzes</div>
+        </div>
+
         <!-- Spots Hall -->
         <div class="control-card" data-state="off" data-device-id="57" onclick="toggleRoomControl(this)">
             <img class="control-icon" src="images/icons/icon-small-light-off.svg" alt="Spots Hall">
