@@ -39,20 +39,20 @@ def fix_utf8_encoding(text):
         'orientação': 'orientação',
         'localização': 'localização',
         'inicialização': 'inicialização',
-        'solicitaÃƒÂ§ÃƒÂ£o': 'solicitação',
-        'nÃƒÂ£o': 'não',
-        'sÃƒÂ£o': 'são',
-        'estÃƒÂ¡': 'está',
-        'pÃƒÂ¡gina': 'página',
-        'especÃƒÂ­ficos': 'específicos',
-        'serÃƒÂ¡': 'será',
-        'disponÃƒÂ­vel': 'disponível',
-        'idÃƒÂªnticos': 'idênticos',
-        'priorÃƒÂ¡ria': 'prioritária',
+        'solicitação': 'solicitação',
+        'não': 'não',
+        'são': 'são',
+        'está': 'está',
+        'página': 'página',
+        'específicos': 'específicos',
+        'será': 'será',
+        'disponível': 'disponível',
+        'idênticos': 'idênticos',
+        'prioritária': 'prioritária',
         
         # Siglas e palavras em caps
-        'PRODUÃƒâ€¡ÃƒÆ'O': 'PRODUÇÃO',
-        'FORÃƒâ€¡ADO': 'FORÇADO',
+        'PRODUÇÃO'O': 'PRODUÇÃO',
+        'FORÇADO': 'FORÇADO',
     }
     
     # Aplicar substituições

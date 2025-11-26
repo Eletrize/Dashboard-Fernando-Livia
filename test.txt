@@ -83,7 +83,7 @@ function detectIPadMini6() {
   if (isIPadMini6) {
     document.documentElement.dataset.device = "ipad-mini-6";
     console.log(
-      "Ã°Å¸ÂÅ½ iPad Mini 6 detectado - aplicando fixes especÃƒÂ­ficos",
+      "Ã°Å¸ÂÅ½ iPad Mini 6 detectado - aplicando fixes específicos",
       `Screen: ${screenWidth}x${screenHeight}`,
       `Inner: ${window.innerWidth}x${window.innerHeight}`,
       `DPR: ${window.devicePixelRatio}`
@@ -94,7 +94,7 @@ function detectIPadMini6() {
   return false;
 }
 
-// Detectar se ÃƒÂ© um celular (nÃƒÂ£o tablet)
+// Detectar se ÃƒÂ© um celular (não tablet)
 function isMobilePhone() {
   const userAgent = navigator.userAgent.toLowerCase();
 
@@ -105,7 +105,7 @@ function isMobilePhone() {
   const isAndroid = /android/.test(userAgent);
   const isSmallScreen = window.innerWidth < 768;
 
-  // iPad e tablets maiores nÃƒÂ£o sÃƒÂ£o celulares
+  // iPad e tablets maiores não são celulares
   const isTablet = /ipad|galaxy tab|sm-t/.test(userAgent);
 
   return (isIPhone || (isAndroid && isSmallScreen)) && !isTablet;
@@ -128,7 +128,7 @@ function detectDevice() {
 
 }
 
-// Função para detectar se estÃƒÂ¡ na pÃƒÂ¡gina de controle remoto da TV
+// Função para detectar se está na página de controle remoto da TV
 function isOnTVControlPage() {
   return (
     window.location.pathname.includes("ambiente1-tv") ||
@@ -151,7 +151,7 @@ function showOrientationOverlay() {
     `;
     document.body.appendChild(overlay);
 
-    // Adicionar estilos dinamicamente se nÃƒÂ£o existirem
+    // Adicionar estilos dinamicamente se não existirem
     if (!document.getElementById("orientation-overlay-styles")) {
       const style = document.createElement("style");
       style.id = "orientation-overlay-styles";
