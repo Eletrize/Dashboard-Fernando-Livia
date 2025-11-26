@@ -328,7 +328,9 @@ const MUSIC_PAGE_ROUTES = [
 ];
 
 function isMusicPageActive(hash = window.location.hash) {
-  return MUSIC_PAGE_ROUTES.some((route) => hash.includes(route));
+  const isActive = MUSIC_PAGE_ROUTES.some((route) => hash.includes(route));
+  console.log("🎵 isMusicPageActive check:", { hash, isActive });
+  return isActive;
 }
 
 function queryActiveMusic(selector) {
@@ -1317,10 +1319,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 100);
   });
 
-  // Listener especÃƒÂ­fico para página de mÃƒÂºsica
+  // Listener específico para página de música
   window.addEventListener("hashchange", () => {
-    if (isMusicPageActive()) {
+    console.log("🎵 [hashchange] Hash mudou para:", window.location.hash);
+    const isMusicActive = isMusicPageActive();
+    console.log("🎵 [hashchange] isMusicPageActive:", isMusicActive);
+    
+    if (isMusicActive) {
+      console.log("🎵 [hashchange] Iniciando player de música em 300ms...");
       setTimeout(() => {
+        console.log("🎵 [hashchange] Executando initMusicPlayerUI...");
         initMusicPlayerUI();
         updateDenonMetadata();
         startMusicMetadataPolling();
@@ -4915,7 +4923,7 @@ window.debugEletrize = {
 
 // Função para atualizar metadados do Denon
 function updateDenonMetadata() {
-  console.log("Ã°Å¸Å½Âµ Buscando metadados do Denon AVR via Hubitat Cloud...");
+  console.log("🎵 [updateDenonMetadata] INICIANDO - Hash atual:", window.location.hash);
 
   // Pedir ao Cloudflare function para retornar o JSON completo do Hubitat
   // (a function usa a variÃƒÂ¡vel HUBITAT_FULL_URL do ambiente quando configurada)
@@ -5026,8 +5034,24 @@ function updateDenonMetadata() {
           artist = artistAttr?.currentValue || artistAttr?.value || artist;
           track = trackAttr?.currentValue || trackAttr?.value || track;
           album = albumAttr?.currentValue || albumAttr?.value || album;
-          albumArt =
-            albumArtAttr?.currentValue || albumArtAttr?.value || albumArt;
+          
+          // Extrair albumArt e processar (pode ser URL direta ou HTML)
+          const rawAlbumArt = albumArtAttr?.currentValue || albumArtAttr?.value;
+          if (rawAlbumArt && typeof rawAlbumArt === "string") {
+            const albumArtValue = rawAlbumArt.trim();
+            if (albumArtValue.startsWith('http://') || albumArtValue.startsWith('https://')) {
+              albumArt = albumArtValue;
+              console.log("🎵 [array] albumArt é URL direta:", albumArt);
+            } else if (albumArtValue.includes('<img') || albumArtValue.includes('src=')) {
+              const imgMatch = albumArtValue.match(/src=['"]([^'"]+)['"]/);
+              albumArt = imgMatch ? imgMatch[1] : null;
+              console.log("🎵 [array] albumArt extraído de HTML:", albumArt);
+            } else {
+              albumArt = albumArtValue;
+              console.log("🎵 [array] albumArt valor direto:", albumArt);
+            }
+          }
+          
           playbackStatus =
             statusAttr?.currentValue || statusAttr?.value || playbackStatus;
           trackDataRaw =
@@ -5048,14 +5072,29 @@ function updateDenonMetadata() {
             playbackStatus;
           trackDataRaw = denonDevice.attributes.trackData || trackDataRaw;
 
-          // Para albumArt, verificar se existe albumArt com tag HTML ou extrair do trackData JSON
+          // Para albumArt, verificar se já é uma URL ou se precisa extrair de tag HTML
           if (
             denonDevice.attributes.albumArt &&
             typeof denonDevice.attributes.albumArt === "string"
           ) {
-            const imgMatch =
-              denonDevice.attributes.albumArt.match(/src=['"]([^'"]+)['"]/);
-            albumArt = imgMatch ? imgMatch[1] : null;
+            const albumArtValue = denonDevice.attributes.albumArt.trim();
+            
+            // Se já começa com http/https, é uma URL direta
+            if (albumArtValue.startsWith('http://') || albumArtValue.startsWith('https://')) {
+              albumArt = albumArtValue;
+              console.log("🎵 albumArt é URL direta:", albumArt);
+            } 
+            // Senão, tentar extrair de tag HTML <img src="...">
+            else if (albumArtValue.includes('<img') || albumArtValue.includes('src=')) {
+              const imgMatch = albumArtValue.match(/src=['"]([^'"]+)['"]/);
+              albumArt = imgMatch ? imgMatch[1] : null;
+              console.log("🎵 albumArt extraído de HTML:", albumArt);
+            }
+            // Pode ser um caminho relativo ou outro formato
+            else {
+              albumArt = albumArtValue;
+              console.log("🎵 albumArt valor direto:", albumArt);
+            }
           }
 
           // Se não encontrou albumArt, tentar extrair do trackData JSON
