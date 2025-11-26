@@ -2882,7 +2882,7 @@ const HUBITAT_CLOUD_APP_BASE_URL =
   "https://cloud.hubitat.com/api/e45cb756-9028-44c2-8a00-e6fb3651856c/apps/15";
 const HUBITAT_CLOUD_ACCESS_TOKEN = "1d9b367b-e4cd-4042-b726-718b759a82ef";
 const HUBITAT_CLOUD_DEVICES_BASE_URL = `${HUBITAT_CLOUD_APP_BASE_URL}/devices`;
-const HUBITAT_CLOUD_DEVICE_IDS = new Set(["109", "115", "116"]);
+const HUBITAT_CLOUD_DEVICE_IDS = new Set(["109", "115", "116", "119"]);
 
 function useHubitatCloud(deviceId) {
   return (
