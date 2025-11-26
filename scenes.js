@@ -5,6 +5,7 @@
 const VARANDA_LUZES = ["44", "95", "96", "41", "45", "40", "31"];
 const VARANDA_CORTINAS = ["109", "115", "116"];
 const VARANDA_AC = "110";
+const VARANDA_TV = "111";
 
 // Dispositivos do Living (Ambiente 2)
 const LIVING_LUZES = ["57", "61", "75", "76", "49", "58", "20"];
@@ -207,7 +208,7 @@ function executeMasterCurtainsAction(action) {
 
 function handleCenarioDormir() {
   showPopup(
-    "Executar cenário Dormir? Isso irá desligar luzes, ar condicionado, receiver e fechar cortinas da Varanda e Living.",
+    "Executar cenário Dormir? Isso irá desligar luzes, TV, ar condicionado, receiver e fechar cortinas da Varanda e Living.",
     executeCenarioDormir
   );
 }
@@ -255,6 +256,10 @@ function executeCenarioDormir() {
 
   console.log(`❄️ Desligando AC Living ${LIVING_AC}`);
   promises.push(sendHubitatCommand(LIVING_AC, "off"));
+
+  // === DESLIGAR TV ===
+  console.log(`📺 Desligando TV Varanda ${VARANDA_TV}`);
+  promises.push(sendHubitatCommand(VARANDA_TV, "off"));
 
   // === DESLIGAR RECEIVER ===
   console.log(`🎵 Desligando Receiver ${RECEIVER}`);
