@@ -4995,7 +4995,20 @@ function updateDenonMetadata() {
             (attr) => attr.name === "albumName" || attr.name === "album"
           );
           const albumArtAttr = denonDevice.attributes.find(
-            (attr) => attr.name === "albumArtUrl" || attr.name === "albumArtURI"
+            (attr) => {
+              const name = attr.name?.toLowerCase();
+              return (
+                name === "albumarturl" ||
+                name === "albumarturi" ||
+                name === "currentalbumarturl" ||
+                name === "currentalbumarturi" ||
+                name === "enqueuedmetadataalbumarturl" ||
+                name === "enqueuedmetadataalbumarturi" ||
+                name === "albumart" ||
+                name === "artworkurl" ||
+                name === "imageurl"
+              );
+            }
           );
           const statusAttr = denonDevice.attributes.find((attr) => {
             const attrName = String(attr?.name || "").toLowerCase();
@@ -5100,12 +5113,33 @@ function updateDenonMetadata() {
           }
         }
 
-        console.log("Ã°Å¸Å½Âµ Metadados extraÃƒÂ­dos:", {
+        console.log("🎵 Metadados extraídos:", {
           artist,
           track,
           album,
           albumArt,
         });
+        
+        // Debug: se albumArt não foi encontrado, listar todos os atributos disponíveis
+        if (!albumArt) {
+          console.log("⚠️ Album art não encontrado. Atributos disponíveis no dispositivo 29:");
+          if (Array.isArray(denonDevice.attributes)) {
+            denonDevice.attributes.forEach(attr => {
+              const name = attr.name?.toLowerCase() || '';
+              if (name.includes('art') || name.includes('image') || name.includes('url') || name.includes('uri') || name.includes('album')) {
+                console.log(`   - ${attr.name}: ${attr.currentValue || attr.value}`);
+              }
+            });
+          } else if (denonDevice.attributes) {
+            Object.keys(denonDevice.attributes).forEach(key => {
+              const keyLower = key.toLowerCase();
+              if (keyLower.includes('art') || keyLower.includes('image') || keyLower.includes('url') || keyLower.includes('uri') || keyLower.includes('album')) {
+                console.log(`   - ${key}: ${denonDevice.attributes[key]}`);
+              }
+            });
+          }
+        }
+        
         artist = normalizePortugueseText(artist);
         track = normalizePortugueseText(track);
         album = normalizePortugueseText(album);
