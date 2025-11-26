@@ -3146,23 +3146,27 @@ function urlSendCommand(deviceId, command, value) {
 
 async function sendHubitatCommand(deviceId, command, value) {
   console.log(
-    `Enviando comando: ${command} para dispositivo ${deviceId}${
+    `📡 [sendHubitatCommand] Enviando comando: ${command} para dispositivo ${deviceId}${
       value !== undefined ? ` com valor ${value}` : ""
     }`
   );
 
   try {
-    // Se estivermos em produÃƒÂ§ÃƒÂ£o, tenta usar o proxy primeiro
+    // Se estivermos em produção, tenta usar o proxy primeiro
     if (isProduction) {
       const proxyUrl = `${HUBITAT_PROXY_URL}?device=${deviceId}&command=${encodeURIComponent(
         command
       )}${value !== undefined ? `&value=${encodeURIComponent(value)}` : ""}`;
 
+      console.log(`📡 [sendHubitatCommand] URL do proxy: ${proxyUrl}`);
+
       try {
         const response = await fetch(proxyUrl);
         const text = await response.text();
 
-        // Verifica se a resposta ÃƒÂ© HTML (indica que a Function não está funcionando)
+        console.log(`📡 [sendHubitatCommand] Resposta do proxy (status ${response.status}):`, text.substring(0, 200));
+
+        // Verifica se a resposta é HTML (indica que a Function não está funcionando)
         if (text.trim().startsWith("<!DOCTYPE") || text.includes("<html")) {
           throw new Error(
             "Function retornou HTML - fazendo fallback para API direta"
@@ -3173,7 +3177,7 @@ async function sendHubitatCommand(deviceId, command, value) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log("Comando enviado com sucesso via proxy");
+        console.log("📡 [sendHubitatCommand] Comando enviado com sucesso via proxy");
 
         // Tenta parse JSON, mas aceita resposta vazia
         try {
@@ -3182,13 +3186,13 @@ async function sendHubitatCommand(deviceId, command, value) {
           return null; // Comando executado mas sem resposta JSON
         }
       } catch (error) {
-        console.log("Proxy falhou, tentando API direta:", error.message);
+        console.log("📡 [sendHubitatCommand] Proxy falhou:", error.message);
       }
     }
 
     throw new Error("Proxy indisponível e acesso direto desativado");
   } catch (error) {
-    console.error("Erro ao enviar comando para o Hubitat:", error);
+    console.error("📡 [sendHubitatCommand] Erro ao enviar comando:", error);
     throw error;
   }
 }
@@ -3231,12 +3235,24 @@ function curtainAction(el, action) {
     const id =
       el?.dataset?.deviceId ||
       el.closest("[data-device-id]")?.dataset?.deviceId;
-    if (!id) return;
+    
+    console.log(`🪟 curtainAction chamada: action=${action}, id=${id}, el=`, el);
+    
+    if (!id) {
+      console.error("🪟 ERRO: ID do dispositivo não encontrado!");
+      return;
+    }
     
     // Suporte a comandos diretos push1, push2, push3, push4
     if (action.startsWith('push')) {
       console.log(`🪟 Cortina (ID ${id}): enviando comando direto ${action}`);
-      return sendHubitatCommand(id, action);
+      return sendHubitatCommand(id, action)
+        .then(result => {
+          console.log(`🪟 Comando ${action} enviado com sucesso para ID ${id}:`, result);
+        })
+        .catch(err => {
+          console.error(`🪟 ERRO ao enviar comando ${action} para ID ${id}:`, err);
+        });
     }
     
     const cmd = el?.dataset?.cmd || "push";
