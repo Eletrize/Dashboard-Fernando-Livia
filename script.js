@@ -548,6 +548,7 @@ const ALL_LIGHT_IDS = [
 // Mapeamento de IDs de Ar Condicionado por ambiente
 const AC_DEVICE_IDS = {
   "ambiente1": "110",  // Varanda
+  "ambiente2": "167",  // Living
   "ambiente7": "182",  // Suíte I
   "ambiente8": "188",  // Suíte II
   "ambiente9": "180",  // Suíte Master
