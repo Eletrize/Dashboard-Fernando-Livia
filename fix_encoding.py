@@ -34,11 +34,11 @@ def fix_utf8_encoding(text):
         'ÃƒÂ': 'Ã',
         
         # Palavras compostas comuns
-        'FunÃƒÂ§ÃƒÂ£o': 'Função',
-        'detecÃƒÂ§ÃƒÂ£o': 'detecção',
-        'orientaÃƒÂ§ÃƒÂ£o': 'orientação',
-        'localizaÃƒÂ§ÃƒÂ£o': 'localização',
-        'inicializaÃƒÂ§ÃƒÂ£o': 'inicialização',
+        'Função': 'Função',
+        'detecção': 'detecção',
+        'orientação': 'orientação',
+        'localização': 'localização',
+        'inicialização': 'inicialização',
         'solicitaÃƒÂ§ÃƒÂ£o': 'solicitação',
         'nÃƒÂ£o': 'não',
         'sÃƒÂ£o': 'são',

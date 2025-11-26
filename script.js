@@ -401,7 +401,7 @@ function detectDevice() {
   }
 }
 
-// FunÃƒÂ§ÃƒÂ£o para detectar se estÃƒÂ¡ na pÃƒÂ¡gina de controle remoto da TV
+// Função para detectar se estÃƒÂ¡ na pÃƒÂ¡gina de controle remoto da TV
 function isOnTVControlPage() {
   return (
     window.location.pathname.includes("ambiente1-tv") ||
@@ -411,7 +411,7 @@ function isOnTVControlPage() {
   );
 }
 
-// FunÃƒÂ§ÃƒÂ£o para criar/mostrar overlay de orientaÃƒÂ§ÃƒÂ£o
+// Função para criar/mostrar overlay de orientação
 function showOrientationOverlay() {
   let overlay = document.getElementById("orientation-overlay");
 
@@ -494,7 +494,7 @@ function showOrientationOverlay() {
   return overlay;
 }
 
-// FunÃƒÂ§ÃƒÂ£o para aplicar estilos baseado em orientaÃƒÂ§ÃƒÂ£o e localizaÃƒÂ§ÃƒÂ£o
+// Função para aplicar estilos baseado em orientação e localização
 function updateDeviceStyles() {
   const isMobile = isMobilePhone();
   const isLandscape = window.innerWidth > window.innerHeight;
@@ -515,12 +515,12 @@ function updateDeviceStyles() {
   }
 }
 
-// Executar detecÃƒÂ§ÃƒÂ£o ao carregar
+// Executar detecção ao carregar
 detectIPadMini6();
 detectDevice();
 updateDeviceStyles();
 
-// Monitorar mudanÃƒÂ§as de orientaÃƒÂ§ÃƒÂ£o
+// Monitorar mudanÃƒÂ§as de orientação
 window.addEventListener("orientationchange", updateDeviceStyles);
 window.addEventListener("resize", updateDeviceStyles);
 
@@ -1033,7 +1033,7 @@ function initVolumeSlider() {
   console.log("Ã¢Å“â€¦ Slider de volume do Denon AVR inicializado com sucesso");
 }
 
-// FunÃƒÂ§ÃƒÂ£o para atualizar o volume do Denon a partir do servidor
+// Função para atualizar o volume do Denon a partir do servidor
 async function updateDenonVolumeFromServer() {
   const DENON_DEVICE_ID = "15";
   const tvSlider = document.getElementById("tv-volume-slider");
@@ -1129,7 +1129,7 @@ async function updateDenonVolumeFromServer() {
   }
 }
 
-// FunÃƒÂ§ÃƒÂ£o para atualizar a UI do volume do Denon (chamada pelo polling)
+// Função para atualizar a UI do volume do Denon (chamada pelo polling)
 function updateDenonVolumeUI(volume) {
   const tvSlider = document.getElementById("tv-volume-slider");
   const tvDisplay = document.getElementById("tv-volume-display");
@@ -1729,7 +1729,7 @@ function initRoomPage() {
 
 // === CONTROLADOR DE AR CONDICIONADO ===
 
-// FunÃƒÂ§ÃƒÂ£o para inicializar o controle de AR quando a pÃƒÂ¡gina de conforto for carregada
+// Função para inicializar o controle de AR quando a pÃƒÂ¡gina de conforto for carregada
 function initAirConditionerControl() {
   const fanLevels = ["low", "medium", "high"];
   const temperatures = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
@@ -2728,7 +2728,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 // SOLUÃƒâ€¡ÃƒÆ’O: Desabilitar console.log em mobile para evitar travamentos
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
-// Sistema de detecÃƒÂ§ÃƒÂ£o de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
+// Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
 const APP_VERSION = "1.0.0"; // Ã°Å¸Å½â€° MARCO v1.0 - SISTEMA TOTALMENTE FUNCIONAL
 (function () {
   if (false && isMobile) {
@@ -2782,7 +2782,7 @@ const APP_VERSION = "1.0.0"; // Ã°Å¸Å½â€° MARCO v1.0 - SISTEMA TOTALME
             );
             window.location.reload(true);
           }, 2000);
-          return; // NÃƒÂ£o continuar inicializaÃƒÂ§ÃƒÂ£o
+          return; // NÃƒÂ£o continuar inicialização
         }
       } else {
         // Primeira vez ou mesma versÃƒÂ£o - continuar normalmente
@@ -2799,7 +2799,7 @@ const APP_VERSION = "1.0.0"; // Ã°Å¸Å½â€° MARCO v1.0 - SISTEMA TOTALME
   }
 })();
 
-// FunÃƒÂ§ÃƒÂ£o de log segura para mobile
+// Função de log segura para mobile
 function safeLog() {
   if (ENABLE_DEBUG_LOGS && typeof console !== "undefined" && console.log) {
     try {
@@ -2973,7 +2973,7 @@ if (typeof window.musicPlayerUI.currentPlaying !== "boolean") {
 }
 // (Removido: HUBITAT_DIRECT_URL / HUBITAT_ACCESS_TOKEN do frontend por seguranÃƒÂ§a)
 
-// FunÃƒÂ§ÃƒÂ£o para mostrar erro ao usuÃƒÂ¡rio
+// Função para mostrar erro ao usuÃƒÂ¡rio
 function showErrorMessage(message) {
   // Criar modal de erro
   const errorModal = document.createElement("div");
@@ -3041,7 +3041,7 @@ async function loadAllDeviceStatesDirect(deviceIds) {
   };
 }
 
-// FunÃƒÂ§ÃƒÂ£o para testar configuraÃƒÂ§ÃƒÂµes do Hubitat
+// Função para testar configuraÃƒÂ§ÃƒÂµes do Hubitat
 async function testHubitatConnection() {
   console.log("Ã°Å¸â€Â§ Testando conexÃƒÂ£o com Hubitat...");
 
@@ -3196,8 +3196,15 @@ function curtainAction(el, action) {
     const id =
       el?.dataset?.deviceId ||
       el.closest("[data-device-id]")?.dataset?.deviceId;
-    const cmd = el?.dataset?.cmd || "push";
     if (!id) return;
+    
+    // Suporte a comandos diretos push1, push2, push3, push4
+    if (action.startsWith('push')) {
+      console.log(`🪟 Cortina (ID ${id}): enviando comando direto ${action}`);
+      return sendHubitatCommand(id, action);
+    }
+    
+    const cmd = el?.dataset?.cmd || "push";
     sendCurtainCommand(id, action, cmd);
   } catch (e) {
     console.error("Falha ao acionar cortina:", e);
@@ -3248,7 +3255,7 @@ try {
         return Promise.resolve(null);
       }
     };
-    // Sobrescreve funÃƒÂ§ÃƒÂ£o original
+    // Sobrescreve Função original
     // eslint-disable-next-line no-global-assign
     sendHubitatCommand = _corsBypassSend;
   }
@@ -3601,7 +3608,7 @@ function anyOn(deviceIds) {
   return (deviceIds || []).some((id) => (getStoredState(id) || "off") === "on");
 }
 
-// FunÃƒÂ§ÃƒÂ£o para inicializar e sincronizar estados dos botÃƒÂµes master na home
+// Função para inicializar e sincronizar estados dos botÃƒÂµes master na home
 function initHomeMasters() {
   console.log("🏠 Inicializando botões master da home...");
   
@@ -3639,7 +3646,7 @@ function initHomeMasters() {
   }, 100);
 }
 
-// FunÃƒÂ§ÃƒÂ£o auxiliar para verificar se alguma cortina estÃƒÂ¡ aberta
+// Função auxiliar para verificar se alguma cortina estÃƒÂ¡ aberta
 function anyCurtainOpen(curtainIds) {
   // Verifica se alguma cortina do grupo estÃƒÂ¡ aberta
   return (curtainIds || []).some((id) => {
@@ -3649,25 +3656,25 @@ function anyCurtainOpen(curtainIds) {
   });
 }
 
-// FunÃƒÂ§ÃƒÂ£o para obter o estado atual da cortina
+// Função para obter o estado atual da cortina
 function getCurtainState(curtainId) {
   // Buscar no localStorage ou usar um estado padrÃƒÂ£o
   const state = localStorage.getItem(`curtain_${curtainId}_state`) || "closed";
   return state; // retorna 'open' ou 'closed'
 }
 
-// FunÃƒÂ§ÃƒÂ£o para obter o ÃƒÂºltimo comando de cortina
+// Função para obter o ÃƒÂºltimo comando de cortina
 function getLastCurtainCommand(curtainId) {
   const state = getCurtainState(curtainId);
   return state === "closed" ? "close" : "open"; // normalizar para comando
 }
 
-// FunÃƒÂ§ÃƒÂ£o para armazenar o estado da cortina
+// Função para armazenar o estado da cortina
 function setCurtainState(curtainId, state) {
   localStorage.setItem(`curtain_${curtainId}_state`, state);
 }
 
-// FunÃƒÂ§ÃƒÂ£o para obter estado da cortina
+// Função para obter estado da cortina
 function getCurtainState(curtainId) {
   try {
     return localStorage.getItem(`curtain_${curtainId}_state`) || "closed";
@@ -3721,7 +3728,7 @@ function setCurtainMasterIcon(btn, state, forceUpdate = false) {
   }
 }
 
-// FunÃƒÂ§ÃƒÂ£o para definir o estado de loading do botÃƒÂ£o master de cortinas
+// Função para definir o estado de loading do botÃƒÂ£o master de cortinas
 function setCurtainMasterButtonLoading(btn, loading) {
   btn.dataset.loading = loading ? "true" : "false";
   if (loading) {
@@ -3733,7 +3740,7 @@ function setCurtainMasterButtonLoading(btn, loading) {
   }
 }
 
-// FunÃƒÂ§ÃƒÂ£o para atualizar ÃƒÂ­cones das cortinas individuais
+// Função para atualizar ÃƒÂ­cones das cortinas individuais
 function updateIndividualCurtainButtons(curtainIds, command) {
   curtainIds.forEach((curtainId) => {
     const button = document.querySelector(`[data-device-id="${curtainId}"]`);
@@ -3748,7 +3755,7 @@ function updateIndividualCurtainButtons(curtainIds, command) {
   });
 }
 
-// FunÃƒÂ§ÃƒÂ£o chamada pelo onclick dos botÃƒÂµes master na home
+// Função chamada pelo onclick dos botÃƒÂµes master na home
 function onHomeMasterClick(event, button) {
   console.log("Ã°Å¸â€“Â±Ã¯Â¸Â onHomeMasterClick chamada!", button);
   event.preventDefault();
@@ -3804,7 +3811,7 @@ function onHomeMasterClick(event, button) {
   });
 }
 
-// FunÃƒÂ§ÃƒÂ£o chamada pelo onclick dos botÃƒÂµes master de cortinas na home
+// Função chamada pelo onclick dos botÃƒÂµes master de cortinas na home
 function onHomeCurtainMasterClick(event, button) {
   console.log("Ã°Å¸â€“Â±Ã¯Â¸Â onHomeCurtainMasterClick chamada!", button);
   event.preventDefault();
@@ -3870,7 +3877,7 @@ function onHomeCurtainMasterClick(event, button) {
   });
 }
 
-// FunÃƒÂ§ÃƒÂ£o especial para atualizar estados apÃƒÂ³s comandos master
+// Função especial para atualizar estados apÃƒÂ³s comandos master
 function updateStatesAfterMasterCommand(deviceIds, command) {
   console.log(
     `Ã°Å¸Å½Â¯ Atualizando estados apÃƒÂ³s master ${command} para:`,
@@ -4075,7 +4082,7 @@ async function loadAllDeviceStatesGlobally() {
 
     updateProgress(30, "Enviando solicitaÃƒÂ§ÃƒÂ£o...");
 
-    // FunÃƒÂ§ÃƒÂ£o de retry com backoff exponencial
+    // Função de retry com backoff exponencial
     const fetchWithRetry = async (
       url,
       options,
@@ -4879,7 +4886,7 @@ window.debugEletrize = {
 
 /* --- Music player metadata update functions --- */
 
-// FunÃƒÂ§ÃƒÂ£o para atualizar metadados do Denon
+// Função para atualizar metadados do Denon
 function updateDenonMetadata() {
   console.log("Ã°Å¸Å½Âµ Buscando metadados do Denon AVR via Hubitat Cloud...");
 
@@ -5103,7 +5110,7 @@ function updateDenonMetadata() {
     });
 }
 
-// FunÃƒÂ§ÃƒÂ£o para atualizar a UI do player com os metadados
+// Função para atualizar a UI do player com os metadados
 function updateMusicPlayerUI(artist, track, album, albumArt) {
   artist = normalizePortugueseText(artist);
   track = normalizePortugueseText(track);
@@ -5152,7 +5159,7 @@ function updateMusicPlayerUI(artist, track, album, albumArt) {
 // VariÃƒÂ¡vel global para o intervalo de polling de metadados
 let musicMetadataInterval = null;
 
-// FunÃƒÂ§ÃƒÂ£o para iniciar polling especÃƒÂ­fico de metadados do player
+// Função para iniciar polling especÃƒÂ­fico de metadados do player
 function startMusicMetadataPolling() {
   // Parar polling anterior se existir
   stopMusicMetadataPolling();
@@ -5170,7 +5177,7 @@ function startMusicMetadataPolling() {
   }, 3000);
 }
 
-// FunÃƒÂ§ÃƒÂ£o para parar o polling de metadados
+// Função para parar o polling de metadados
 function stopMusicMetadataPolling() {
   if (musicMetadataInterval) {
     clearInterval(musicMetadataInterval);
@@ -5454,7 +5461,7 @@ function initMusicPlayerUI() {
         );
     });
 
-    // FunÃƒÂ§ÃƒÂ£o para atualizar a barra de volume
+    // Função para atualizar a barra de volume
     function updateVolumeBar() {
       const value = parseInt(volumeSlider.value);
       const percent = (value / 100) * 100;
@@ -5677,7 +5684,7 @@ function initUltraBasicMode() {
   }
 }
 
-// FunÃƒÂ§ÃƒÂ£o de inicializaÃƒÂ§ÃƒÂ£o simplificada para mobile COM POLLING ATIVO
+// Função de inicialização simplificada para mobile COM POLLING ATIVO
 function initSimpleMode() {
   console.log("Ã°Å¸â€œÂ± Inicializando modo simples com polling...");
 
@@ -5805,13 +5812,13 @@ window.addEventListener("unhandledrejection", function (event) {
 
 console.log("Script carregado, configurando DOMContentLoaded...");
 
-// FunÃƒÂ§ÃƒÂ£o de inicializaÃƒÂ§ÃƒÂ£o unificada (mobile e desktop idÃƒÂªnticos)
-// FunÃƒÂ§ÃƒÂ£o de inicializaÃƒÂ§ÃƒÂ£o unificada (mobile e desktop idÃƒÂªnticos)
+// Função de inicialização unificada (mobile e desktop idÃƒÂªnticos)
+// Função de inicialização unificada (mobile e desktop idÃƒÂªnticos)
 function initializeApp() {
   console.log("DASHBOARD ELETRIZE INICIALIZANDO");
   console.log("Mobile detectado:", isMobile);
 
-  // Marcar que a inicializaÃƒÂ§ÃƒÂ£o foi iniciada
+  // Marcar que a inicialização foi iniciada
   window.initializationStarted = true;
 
   // Debug visual para mobile
@@ -5825,7 +5832,7 @@ function initializeApp() {
     // Timeout padrÃƒÂ£o para desktop e mobile (comportamento idÃƒÂªntico)
     var initDelay = 500;
     console.log(
-      "Delay de inicializaÃƒÂ§ÃƒÂ£o: " + initDelay + "ms (universal)"
+      "Delay de inicialização: " + initDelay + "ms (universal)"
     );
 
     // Aguardar um pouco para UI carregar e entÃƒÂ£o iniciar carregamento
@@ -5851,7 +5858,7 @@ function initializeApp() {
               var syncDelay = 100;
               setTimeout(() => {
                 console.log(
-                  "Ã°Å¸ÂÂ  Inicializando controles de cÃƒÂ´modos na inicializaÃƒÂ§ÃƒÂ£o..."
+                  "Ã°Å¸ÂÂ  Inicializando controles de cÃƒÂ´modos na inicialização..."
                 );
                 initRoomPage(); // Inicializar pagina de comodo
                 scheduleControlSync(true); // Sincronizar todos os controles
@@ -5885,7 +5892,7 @@ function initializeApp() {
               console.log("AplicaÃƒÂ§ÃƒÂ£o totalmente inicializada!");
               showMobileDebug("App totalmente inicializada!", "success");
 
-              // Marcar que a inicializaÃƒÂ§ÃƒÂ£o foi concluÃƒÂ­da
+              // Marcar que a inicialização foi concluÃƒÂ­da
               window.appFullyInitialized = true;
             }, finalDelay);
           })
@@ -5908,7 +5915,7 @@ function initializeApp() {
             }, 1000);
           });
       } catch (loadError) {
-        console.error("Erro crÃƒÂ­tico na inicializaÃƒÂ§ÃƒÂ£o:", loadError);
+        console.error("Erro crÃƒÂ­tico na inicialização:", loadError);
         showMobileDebug("ERRO CRÃƒÂTICO: " + loadError.message, "error");
 
         // Modo de emergÃƒÂªncia
@@ -5935,7 +5942,7 @@ function initializeApp() {
   }
 }
 
-// InicializaÃƒÂ§ÃƒÂ£o global da aplicaÃƒÂ§ÃƒÂ£o
+// inicialização global da aplicaÃƒÂ§ÃƒÂ£o
 window.addEventListener("DOMContentLoaded", function () {
   console.log("DOMContentLoaded executado, chamando initializeApp...");
   initializeApp();
@@ -5945,7 +5952,7 @@ window.addEventListener("DOMContentLoaded", function () {
 setTimeout(function () {
   if (!window.initializationStarted) {
     console.log(
-      "Fallback: DOMContentLoaded nÃƒÂ£o executou, forÃƒÂ§ando inicializaÃƒÂ§ÃƒÂ£o..."
+      "Fallback: DOMContentLoaded nÃƒÂ£o executou, forÃƒÂ§ando inicialização..."
     );
     initializeApp();
   }

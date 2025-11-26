@@ -128,7 +128,7 @@ function detectDevice() {
 
 }
 
-// FunÃƒÂ§ÃƒÂ£o para detectar se estÃƒÂ¡ na pÃƒÂ¡gina de controle remoto da TV
+// Função para detectar se estÃƒÂ¡ na pÃƒÂ¡gina de controle remoto da TV
 function isOnTVControlPage() {
   return (
     window.location.pathname.includes("ambiente1-tv") ||
@@ -136,7 +136,7 @@ function isOnTVControlPage() {
   );
 }
 
-// FunÃƒÂ§ÃƒÂ£o para criar/mostrar overlay de orientaÃƒÂ§ÃƒÂ£o
+// Função para criar/mostrar overlay de orientação
 function showOrientationOverlay() {
   let overlay = document.getElementById("orientation-overlay");
 
