@@ -1,13 +1,19 @@
 // ALL_LIGHT_IDS agora está definido em script.js (carregado primeiro)
-const ALL_CURTAIN_IDS = [
-  "38", // Cortina Ambiente 5
-  "39", // Cortina Ambiente 3 (exemplo)
-  "40", // Cortina Ambiente 3 (exemplo adicional)
-  "41", // Cortina adicional (exemplo)
-  "42", // Cortina Ambiente 2 (exemplo)
-  "43", // Cortina adicional (exemplo)
-  // ID 44: Todas-Cortinas (Virtual Button - master)
-];
+
+// === CONFIGURAÇÃO DO CENÁRIO DORMIR ===
+// Dispositivos da Varanda (Ambiente 1)
+const VARANDA_LUZES = ["44", "95", "96", "41", "45", "40", "31"];
+const VARANDA_CORTINAS = ["109", "115", "116"];
+const VARANDA_AC = "110";
+
+// Dispositivos do Living (Ambiente 2)
+const LIVING_LUZES = ["57", "61", "75", "76", "49", "58", "20"];
+const LIVING_CORTINAS = ["119"];
+const LIVING_AC = "167";
+
+// Receiver/Música
+const RECEIVER = "15";
+
 let masterConfirmCallback = null;
 
 function showPopup(message, onConfirm) {
@@ -196,129 +202,67 @@ function executeMasterCurtainsAction(action) {
     });
 }
 
-// === CENÁRIOS GENÉRICOS ===
+// === CENÁRIO DORMIR ===
+// Desliga tudo da Varanda e Living (luzes, AC, receiver) e fecha cortinas
 
-function handleCenario1() {
+function handleCenarioDormir() {
   showPopup(
-    "Executar Cenário 1? Esta ação será configurada de acordo com as necessidades do cliente.",
-    executeCenario1
+    "Executar cenário Dormir? Isso irá desligar luzes, ar condicionado, receiver e fechar cortinas da Varanda e Living.",
+    executeCenarioDormir
   );
 }
 
-function executeCenario1() {
-  console.log("🌅 Iniciando cenário: Cenário 1");
-
-  // Exemplo: Definir IDs dos dispositivos por ambiente
-  const ambiente2Lights = ["7", "8", "9"]; // Ambiente 2: exemplo de IDs
-  const ambiente3Lights = ["11", "12", "13"]; // Ambiente 3: exemplo de IDs
-  const ambiente4Barra = ["36"]; // Ambiente 4: exemplo de ID
-  const ambiente3Curtains = ["39", "40"]; // Cortinas do Ambiente 3 (exemplo)
+function executeCenarioDormir() {
+  console.log("🌙 Iniciando cenário: Dormir (Desligamento Geral Varanda + Living)");
 
   // Adicionar feedback visual
-  const btn = document.getElementById("cenario-1-btn");
+  const btn = document.getElementById("cenario-dormir-btn");
   if (btn) btn.classList.add("loading");
 
   const promises = [];
 
-  // Acender luzes do Ambiente 2
-  ambiente2Lights.forEach((deviceId) => {
-    console.log(`💡 Ligando Ambiente 2 device ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "on"));
-    setStoredState(deviceId, "on");
-  });
-
-  // Acender luzes do Ambiente 3
-  ambiente3Lights.forEach((deviceId) => {
-    console.log(`💡 Ligando Ambiente 3 device ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "on"));
-    setStoredState(deviceId, "on");
-  });
-
-  // Acender Barra LED do Ambiente 4
-  ambiente4Barra.forEach((deviceId) => {
-    console.log(`💡 Ligando Ambiente 4 Barra LED ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "on"));
-    setStoredState(deviceId, "on");
-  });
-
-  // Abrir cortinas do Ambiente 3
-  ambiente3Curtains.forEach((deviceId) => {
-    console.log(`🪟 Abrindo cortina Ambiente 3 ${deviceId}`);
-    promises.push(sendCurtainCommand(deviceId, "open"));
-  });
-
-  Promise.all(promises)
-    .then(() => {
-      console.log("✅ Cenário 1 executado com sucesso");
-      setTimeout(() => {
-        if (typeof syncAllVisibleControls === "function") {
-          syncAllVisibleControls(true);
-        }
-      }, 500);
-      hidePopup();
-    })
-    .catch((error) => {
-      console.error("❌ Erro ao executar Cenário 1:", error);
-      if (typeof showErrorMessage === "function") {
-        showErrorMessage(`Erro ao executar cenário 1: ${error.message}`);
-      }
-    })
-    .finally(() => {
-      if (btn) btn.classList.remove("loading");
-    });
-}
-
-function handleCenario2() {
-  showPopup(
-    "Executar Cenário 2? Esta ação será configurada de acordo com as necessidades do cliente.",
-    executeCenario2
-  );
-}
-
-function executeCenario2() {
-  console.log("🌙 Iniciando cenário: Cenário 2");
-
-  // Exemplo: Definir IDs dos dispositivos
-  const lightsToKeepOn = [
-    "35", // Ambiente 4: exemplo
-    "37", // Ambiente 4: exemplo
-    "49", // Ambiente 6: exemplo
-  ];
-
-  // Todos os outros dispositivos devem ser apagados
-  const devicesToTurnOff = ALL_LIGHT_IDS.filter(
-    (id) => !lightsToKeepOn.includes(id)
-  );
-
-  // Adicionar feedback visual
-  const btn = document.getElementById("cenario-2-btn");
-  if (btn) btn.classList.add("loading");
-
-  const promises = [];
-
-  // Ligar luzes especificadas
-  lightsToKeepOn.forEach((deviceId) => {
-    console.log(`💡 Ligando luz ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "on"));
-    setStoredState(deviceId, "on");
-  });
-
-  // Apagar todas as demais luzes
-  devicesToTurnOff.forEach((deviceId) => {
-    console.log(`🔌 Desligando device ${deviceId}`);
+  // === DESLIGAR LUZES ===
+  // Varanda
+  VARANDA_LUZES.forEach((deviceId) => {
+    console.log(`💡 Desligando luz Varanda ${deviceId}`);
     promises.push(sendHubitatCommand(deviceId, "off"));
     setStoredState(deviceId, "off");
   });
 
-  // Fechar todas as cortinas
-  ALL_CURTAIN_IDS.forEach((deviceId) => {
-    console.log(`🪟 Fechando cortina ${deviceId}`);
-    promises.push(sendCurtainCommand(deviceId, "close"));
+  // Living
+  LIVING_LUZES.forEach((deviceId) => {
+    console.log(`💡 Desligando luz Living ${deviceId}`);
+    promises.push(sendHubitatCommand(deviceId, "off"));
+    setStoredState(deviceId, "off");
   });
+
+  // === FECHAR CORTINAS ===
+  // Varanda
+  VARANDA_CORTINAS.forEach((deviceId) => {
+    console.log(`🪟 Fechando cortina Varanda ${deviceId}`);
+    promises.push(sendHubitatCommand(deviceId, "close"));
+  });
+
+  // Living
+  LIVING_CORTINAS.forEach((deviceId) => {
+    console.log(`🪟 Fechando cortina Living ${deviceId}`);
+    promises.push(sendHubitatCommand(deviceId, "close"));
+  });
+
+  // === DESLIGAR AR CONDICIONADO ===
+  console.log(`❄️ Desligando AC Varanda ${VARANDA_AC}`);
+  promises.push(sendHubitatCommand(VARANDA_AC, "off"));
+
+  console.log(`❄️ Desligando AC Living ${LIVING_AC}`);
+  promises.push(sendHubitatCommand(LIVING_AC, "off"));
+
+  // === DESLIGAR RECEIVER ===
+  console.log(`🎵 Desligando Receiver ${RECEIVER}`);
+  promises.push(sendHubitatCommand(RECEIVER, "off"));
 
   Promise.all(promises)
     .then(() => {
-      console.log("✅ Cenário 2 executado com sucesso");
+      console.log("✅ Cenário Dormir executado com sucesso");
       setTimeout(() => {
         if (typeof syncAllVisibleControls === "function") {
           syncAllVisibleControls(true);
@@ -327,9 +271,9 @@ function executeCenario2() {
       hidePopup();
     })
     .catch((error) => {
-      console.error("❌ Erro ao executar Cenário 2:", error);
+      console.error("❌ Erro ao executar Cenário Dormir:", error);
       if (typeof showErrorMessage === "function") {
-        showErrorMessage(`Erro ao executar cenário 2: ${error.message}`);
+        showErrorMessage(`Erro ao executar cenário Dormir: ${error.message}`);
       }
     })
     .finally(() => {
