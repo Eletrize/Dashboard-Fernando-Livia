@@ -2671,12 +2671,11 @@ function initAirConditionerControl() {
         return;
       }
       
-      // Define os IDs baseados na seleção
-      // TODO: Substituir pelos IDs reais dos dispositivos
+      // IDs dos ACs do Living
       const acIds = {
-        living1: state.deviceId, // AC I
-        living2: state.deviceId, // AC II (substituir pelo ID real)
-        livingBoth: [state.deviceId] // Ambos (substituir pelos IDs reais)
+        living1: "167", // AC I
+        living2: "166", // AC II
+        livingBoth: ["167", "166"] // Ambos
       };
       
       const selectedIds = acIds[livingSelectedAC];
