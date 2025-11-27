@@ -2396,6 +2396,104 @@ function initAirConditionerControl() {
     });
   });
 
+  // === Lógica específica para AC Living (2 ACs: I, II, Ambos) ===
+  const isLivingAC = root.hasAttribute('data-ac-living');
+  let livingSelectedAC = null; // null, 'living1', 'living2', 'livingBoth'
+
+  if (isLivingAC) {
+    // Estado inicial: nenhum AC selecionado, power desabilitado
+    if (powerButton) {
+      powerButton.classList.add('ac-command-btn--disabled');
+      powerButton.disabled = true;
+    }
+
+    // Handler para botões de seleção do Living
+    modeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.mode;
+        
+        // Verifica se é um modo do Living (living1, living2, livingBoth)
+        if (mode === 'living1' || mode === 'living2' || mode === 'livingBoth') {
+          // Se clicar no mesmo botão já ativo, desativa
+          if (livingSelectedAC === mode) {
+            livingSelectedAC = null;
+            button.setAttribute('aria-pressed', 'false');
+            
+            // Desabilita power novamente
+            if (powerButton) {
+              powerButton.classList.add('ac-command-btn--disabled');
+              powerButton.disabled = true;
+            }
+          } else {
+            // Desativa todos os outros e ativa o clicado
+            modeButtons.forEach(btn => {
+              btn.setAttribute('aria-pressed', 'false');
+            });
+            
+            livingSelectedAC = mode;
+            button.setAttribute('aria-pressed', 'true');
+            
+            // Habilita o botão power
+            if (powerButton) {
+              powerButton.classList.remove('ac-command-btn--disabled');
+              powerButton.disabled = false;
+            }
+          }
+        }
+      });
+    });
+
+    // Sobrescreve o togglePower para usar o AC selecionado
+    const originalTogglePower = togglePower;
+    const livingTogglePower = () => {
+      if (!livingSelectedAC) {
+        console.log("AC Living: Nenhum AC selecionado");
+        return;
+      }
+      
+      // Define os IDs baseados na seleção
+      // TODO: Substituir pelos IDs reais dos dispositivos
+      const acIds = {
+        living1: state.deviceId, // AC I
+        living2: state.deviceId, // AC II (substituir pelo ID real)
+        livingBoth: [state.deviceId] // Ambos (substituir pelos IDs reais)
+      };
+      
+      const selectedIds = acIds[livingSelectedAC];
+      const command = !state.powerOn ? "on" : "off";
+      
+      if (Array.isArray(selectedIds)) {
+        // Enviar para múltiplos ACs
+        selectedIds.forEach(id => {
+          sendHubitatCommand(id, command);
+        });
+      } else {
+        sendHubitatCommand(selectedIds, command);
+      }
+      
+      // Atualiza estado visual
+      state.powerOn = !state.powerOn;
+      if (powerButton) {
+        powerButton.setAttribute("aria-pressed", state.powerOn.toString());
+      }
+      
+      if (temperatureSection) {
+        if (state.powerOn) {
+          temperatureSection.classList.add("power-on");
+        } else {
+          temperatureSection.classList.remove("power-on");
+        }
+      }
+    };
+    
+    // Remove listener antigo e adiciona novo
+    if (powerButton) {
+      powerButton.removeEventListener("click", togglePower);
+      powerButton.addEventListener("click", livingTogglePower);
+    }
+  }
+  // === Fim da lógica específica do AC Living ===
+
   window.addEventListener("resize", () => {
     geometry = calculateGeometry();
     const angle = angleFromTemperature(state.temperature);

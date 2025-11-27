@@ -96,3 +96,31 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         letter-spacing: 0.08em;
     }
 }
+
+/* AC Living - Grid com 3 botões de seleção */
+.ac-modes-grid--triple {
+    grid-template-columns: repeat(3, 1fr) !important;
+}
+
+/* AC Living - Grid de aletas com 2 botões (sem WindFree) */
+.ac-aleta-grid--dual {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+
+/* AC Living - Botão power desabilitado */
+.ac-command-btn--disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+.ac-command-btn--disabled img {
+    opacity: 0.5 !important;
+}
+
+/* AC Living - Botão de seleção ativo */
+[data-ac-living] .ac-mode-btn[aria-pressed="true"] {
+    background: linear-gradient(135deg, #b4b4b440, #87878726) !important;
+    border-color: #b4b4b480 !important;
+    box-shadow: 0 8px 24px #b4b4b440, inset 0 1px #ffffff1a !important;
+}

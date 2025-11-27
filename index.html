@@ -1812,11 +1812,10 @@
     </div>
 
     <div class="ac-page-wrapper">
-        <main class="ac-container" data-component="ac-control">
+        <main class="ac-container" data-component="ac-control" data-ac-living="true">
             
             <!-- Display de Temperatura -->
             <section class="ac-temperature-section">
-        <h2 class="ac-section-title">Temperatura</h2>
         <div class="ac-temperature-fade-content">
           <div class="ac-temperature-display">
             <div class="ac-temp-wrapper">
@@ -1846,17 +1845,20 @@
         </div>
             </section>
 
-            <!-- Wrapper para os controles (Modo, Aletas, Comandos) -->
+            <!-- Wrapper para os controles (Seleção, Aletas, Comandos) -->
             <div class="ac-controls-wrapper">
-                <!-- Controles de Modo -->
-                <section class="ac-modes" role="group" aria-label="Modos de operação">
-                    <h2 class="ac-section-title">Modo</h2>
-                    <div class="ac-modes-grid">
-                        <button type="button" class="ac-mode-btn" data-mode-button data-mode="cool" aria-pressed="true" aria-label="Modo resfriar">
-                            <img src="images/icons/icon-ac-cool.svg" alt="">
+                <!-- Controles de Seleção -->
+                <section class="ac-modes" role="group" aria-label="Seleção de ar-condicionado">
+                    <h2 class="ac-section-title">Seleção</h2>
+                    <div class="ac-modes-grid ac-modes-grid--triple">
+                        <button type="button" class="ac-mode-btn ac-mode-btn--selection" data-mode-button data-mode="living1" aria-pressed="false" aria-label="AC I">
+                            <span class="ac-mode-btn__label">I</span>
                         </button>
-                        <button type="button" class="ac-mode-btn" data-mode-button data-mode="heat" aria-pressed="false" aria-label="Modo aquecer">
-                            <img src="images/icons/icon-ac-heat.svg" alt="">
+                        <button type="button" class="ac-mode-btn ac-mode-btn--selection" data-mode-button data-mode="living2" aria-pressed="false" aria-label="AC II">
+                            <span class="ac-mode-btn__label">II</span>
+                        </button>
+                        <button type="button" class="ac-mode-btn ac-mode-btn--selection" data-mode-button data-mode="livingBoth" aria-pressed="false" aria-label="Ambos ACs">
+                            <span class="ac-mode-btn__label">Ambos</span>
                         </button>
                     </div>
                 </section>
@@ -1864,12 +1866,9 @@
                 <!-- Controles de Aletas -->
                 <section class="ac-aleta-section" role="group" aria-label="Controle das aletas">
                     <h2 class="ac-section-title">Aletas</h2>
-                    <div class="ac-aleta-grid">
+                    <div class="ac-aleta-grid ac-aleta-grid--dual">
               <button type="button" class="ac-aleta-btn" data-aleta-button data-aleta="moving" aria-pressed="true" aria-label="Aletas em movimento">
                 <img src="images/icons/icon-ac-aleta-moving.svg" alt="">
-              </button>
-              <button type="button" class="ac-aleta-btn" data-aleta-button data-aleta="windfree" aria-pressed="false" aria-label="WindFree">
-                <img src="images/icons/icon-windfree.svg" alt="">
               </button>
               <button type="button" class="ac-aleta-btn" data-aleta-button data-aleta="parada" aria-pressed="false" aria-label="Aletas paradas">
                 <img src="images/icons/icon-ac-aleta-parada.svg" alt="">
@@ -1881,7 +1880,7 @@
                 <section class="ac-commands-section">
                     <h3 class="ac-section-title">Comandos</h3>
                     <div class="ac-commands-grid">
-                        <button type="button" class="ac-command-btn ac-command-btn-large" data-role="power" aria-pressed="true" aria-label="Ligar/Desligar ar-condicionado">
+                        <button type="button" class="ac-command-btn ac-command-btn-large ac-command-btn--disabled" data-role="power" aria-pressed="false" aria-label="Ligar/Desligar ar-condicionado" disabled>
                             <img src="images/icons/icon-ac-power.svg" alt="">
                         </button>
                     </div>
