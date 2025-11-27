@@ -2351,10 +2351,46 @@ function initAirConditionerControl() {
     });
   });
 
+  // Verifica se é AC Living antes de adicionar handlers de modo
+  const isLivingAC = root.hasAttribute('data-ac-living');
+  let livingSelectedAC = null; // null, 'living1', 'living2', 'livingBoth'
+
   modeButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      if (!state.powerOn) return;
       const mode = button.dataset.mode;
+      
+      // Para AC Living, os botões de seleção funcionam mesmo com power off
+      if (isLivingAC && (mode === 'living1' || mode === 'living2' || mode === 'livingBoth')) {
+        // Se clicar no mesmo botão já ativo, desativa
+        if (livingSelectedAC === mode) {
+          livingSelectedAC = null;
+          button.setAttribute('aria-pressed', 'false');
+          
+          // Desabilita power novamente
+          if (powerButton) {
+            powerButton.classList.add('ac-command-btn--disabled');
+            powerButton.disabled = true;
+          }
+        } else {
+          // Desativa todos os outros e ativa o clicado
+          modeButtons.forEach(btn => {
+            btn.setAttribute('aria-pressed', 'false');
+          });
+          
+          livingSelectedAC = mode;
+          button.setAttribute('aria-pressed', 'true');
+          
+          // Habilita o botão power
+          if (powerButton) {
+            powerButton.classList.remove('ac-command-btn--disabled');
+            powerButton.disabled = false;
+          }
+        }
+        return; // Não executa a lógica padrão de modo
+      }
+      
+      // Lógica padrão para outros ACs
+      if (!state.powerOn) return;
       if (mode) {
         setMode(mode);
       }
@@ -2397,9 +2433,6 @@ function initAirConditionerControl() {
   });
 
   // === Lógica específica para AC Living (2 ACs: I, II, Ambos) ===
-  const isLivingAC = root.hasAttribute('data-ac-living');
-  let livingSelectedAC = null; // null, 'living1', 'living2', 'livingBoth'
-
   if (isLivingAC) {
     // Estado inicial: nenhum AC selecionado, power desabilitado
     if (powerButton) {
@@ -2407,44 +2440,7 @@ function initAirConditionerControl() {
       powerButton.disabled = true;
     }
 
-    // Handler para botões de seleção do Living
-    modeButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const mode = button.dataset.mode;
-        
-        // Verifica se é um modo do Living (living1, living2, livingBoth)
-        if (mode === 'living1' || mode === 'living2' || mode === 'livingBoth') {
-          // Se clicar no mesmo botão já ativo, desativa
-          if (livingSelectedAC === mode) {
-            livingSelectedAC = null;
-            button.setAttribute('aria-pressed', 'false');
-            
-            // Desabilita power novamente
-            if (powerButton) {
-              powerButton.classList.add('ac-command-btn--disabled');
-              powerButton.disabled = true;
-            }
-          } else {
-            // Desativa todos os outros e ativa o clicado
-            modeButtons.forEach(btn => {
-              btn.setAttribute('aria-pressed', 'false');
-            });
-            
-            livingSelectedAC = mode;
-            button.setAttribute('aria-pressed', 'true');
-            
-            // Habilita o botão power
-            if (powerButton) {
-              powerButton.classList.remove('ac-command-btn--disabled');
-              powerButton.disabled = false;
-            }
-          }
-        }
-      });
-    });
-
     // Sobrescreve o togglePower para usar o AC selecionado
-    const originalTogglePower = togglePower;
     const livingTogglePower = () => {
       if (!livingSelectedAC) {
         console.log("AC Living: Nenhum AC selecionado");
