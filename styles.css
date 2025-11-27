@@ -149,8 +149,16 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
         gap: 10px !important;
     }
     
+    .ac-modes,
+    .ac-aleta-section,
     .ac-commands-section {
-        margin-top: 10px !important;
-        margin-bottom: 0 !important;
+        margin: 0 !important;
+        gap: 10px !important;
+    }
+    
+    .ac-modes-grid,
+    .ac-aleta-grid,
+    .ac-commands-grid {
+        gap: 10px !important;
     }
 }
