@@ -2476,6 +2476,14 @@ function initAirConditionerControl() {
         powerButton.setAttribute("aria-pressed", state.powerOn.toString());
       }
       
+      // Habilita/desabilita botões de aleta
+      aletaButtons.forEach((button) => {
+        button.toggleAttribute("disabled", !state.powerOn);
+      });
+      
+      // Atualiza atributo data-power-off no root
+      root.toggleAttribute("data-power-off", !state.powerOn);
+      
       if (temperatureSection) {
         if (state.powerOn) {
           temperatureSection.classList.add("power-on");
