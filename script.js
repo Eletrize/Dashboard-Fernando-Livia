@@ -1060,6 +1060,152 @@ function suiteMasterTvOff() {
 }
 
 // ============================================
+// MACROS SUÍTE I (sem Receiver) - TV: 184
+// ============================================
+
+// Macro para ligar HTV Suíte I: Liga TV, aguarda 3s, seleciona HDMI2
+function suite1HtvOn() {
+  const TV_ID = "184"; // TV Samsung Suíte I
+
+  console.log("🎬 Macro Suíte I HTV: Ligando TV e selecionando HDMI2...");
+
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV Suíte I ligada");
+      console.log("⏳ Aguardando 3 segundos antes de selecionar HDMI2...");
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(sendHubitatCommand(TV_ID, "hdmi2"));
+        }, 3000);
+      });
+    })
+    .then(() => {
+      console.log("✅ HDMI2 selecionado na TV Suíte I");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro Suíte I HTV:", error);
+    });
+}
+
+// Macro para desligar HTV Suíte I: Apenas desliga TV
+function suite1HtvOff() {
+  const TV_ID = "184"; // TV Samsung Suíte I
+
+  console.log("🎬 Macro Suíte I HTV: Desligando TV...");
+
+  sendHubitatCommand(TV_ID, "off")
+    .then(() => {
+      console.log("✅ TV Suíte I desligada");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV Suíte I:", error);
+    });
+}
+
+// Macro para ligar TV Suíte I: Apenas liga TV (apps internos)
+function suite1TvOn() {
+  const TV_ID = "184"; // TV Samsung Suíte I
+
+  console.log("🎬 Macro Suíte I TV: Ligando TV...");
+
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV Suíte I ligada");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao ligar TV Suíte I:", error);
+    });
+}
+
+// Macro para desligar TV Suíte I: Apenas desliga TV
+function suite1TvOff() {
+  const TV_ID = "184"; // TV Samsung Suíte I
+
+  console.log("🎬 Macro Suíte I TV: Desligando TV...");
+
+  sendHubitatCommand(TV_ID, "off")
+    .then(() => {
+      console.log("✅ TV Suíte I desligada");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV Suíte I:", error);
+    });
+}
+
+// ============================================
+// MACROS SUÍTE II (sem Receiver) - TV: 185
+// ============================================
+
+// Macro para ligar HTV Suíte II: Liga TV, aguarda 3s, seleciona HDMI2
+function suite2HtvOn() {
+  const TV_ID = "185"; // TV Samsung Suíte II
+
+  console.log("🎬 Macro Suíte II HTV: Ligando TV e selecionando HDMI2...");
+
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV Suíte II ligada");
+      console.log("⏳ Aguardando 3 segundos antes de selecionar HDMI2...");
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(sendHubitatCommand(TV_ID, "hdmi2"));
+        }, 3000);
+      });
+    })
+    .then(() => {
+      console.log("✅ HDMI2 selecionado na TV Suíte II");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro Suíte II HTV:", error);
+    });
+}
+
+// Macro para desligar HTV Suíte II: Apenas desliga TV
+function suite2HtvOff() {
+  const TV_ID = "185"; // TV Samsung Suíte II
+
+  console.log("🎬 Macro Suíte II HTV: Desligando TV...");
+
+  sendHubitatCommand(TV_ID, "off")
+    .then(() => {
+      console.log("✅ TV Suíte II desligada");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV Suíte II:", error);
+    });
+}
+
+// Macro para ligar TV Suíte II: Apenas liga TV (apps internos)
+function suite2TvOn() {
+  const TV_ID = "185"; // TV Samsung Suíte II
+
+  console.log("🎬 Macro Suíte II TV: Ligando TV...");
+
+  sendHubitatCommand(TV_ID, "on")
+    .then(() => {
+      console.log("✅ TV Suíte II ligada");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao ligar TV Suíte II:", error);
+    });
+}
+
+// Macro para desligar TV Suíte II: Apenas desliga TV
+function suite2TvOff() {
+  const TV_ID = "185"; // TV Samsung Suíte II
+
+  console.log("🎬 Macro Suíte II TV: Desligando TV...");
+
+  sendHubitatCommand(TV_ID, "off")
+    .then(() => {
+      console.log("✅ TV Suíte II desligada");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar TV Suíte II:", error);
+    });
+}
+
+// ============================================
 
 // Macro para ligar TV + Receiver de uma vez
 
@@ -6408,6 +6554,14 @@ window.suiteMasterHtvOn = suiteMasterHtvOn;
 window.suiteMasterHtvOff = suiteMasterHtvOff;
 window.suiteMasterTvOn = suiteMasterTvOn;
 window.suiteMasterTvOff = suiteMasterTvOff;
+window.suite1HtvOn = suite1HtvOn;
+window.suite1HtvOff = suite1HtvOff;
+window.suite1TvOn = suite1TvOn;
+window.suite1TvOff = suite1TvOff;
+window.suite2HtvOn = suite2HtvOn;
+window.suite2HtvOff = suite2HtvOff;
+window.suite2TvOn = suite2TvOn;
+window.suite2TvOff = suite2TvOff;
 window.tvCommand = tvCommand;
 window.curtainAction = curtainAction;
 window.spaNavigate = spaNavigate;
