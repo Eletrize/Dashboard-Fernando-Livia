@@ -1838,7 +1838,7 @@ function initRoomPage() {
 // Função para inicializar o controle de AR quando a página de conforto for carregada
 function initAirConditionerControl() {
   const fanLevels = ["low", "medium", "high"];
-  const temperatures = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+  const temperatures = [18, 19, 20, 21, 22, 23, 24, 25];
 
   // Detectar a página atual para aplicar configuração correta
   const currentRoute = (window.location.hash || "").replace("#", "");
@@ -1848,10 +1848,8 @@ function initAirConditionerControl() {
   AC_DEVICE_ID = getACDeviceIdForCurrentRoute();
   console.log(`🌡️ AC inicializado para ambiente: ${currentRoute}, Device ID: ${AC_DEVICE_ID}`);
 
-  // Configurações específicas por ambiente
-  const tempConfig = isAmbiente1
-    ? { minTemp: 18, maxTemp: 25, defaultTemp: 22 } // Ambiente 1 - Varanda
-    : { minTemp: 17, maxTemp: 30, defaultTemp: 22 }; // Outros ambientes
+  // Configurações específicas por ambiente - todos usam 18-25
+  const tempConfig = { minTemp: 18, maxTemp: 25, defaultTemp: 22 };
 
   const state = {
     minTemp: tempConfig.minTemp,
