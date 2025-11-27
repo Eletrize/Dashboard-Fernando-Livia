@@ -124,3 +124,12 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     border-color: #b4b4b480 !important;
     box-shadow: 0 8px 24px #b4b4b440, inset 0 1px #ffffff1a !important;
 }
+
+/* AC Living - Manter botões de seleção clicáveis mesmo com power off */
+[data-component="ac-control"][data-power-off] [data-ac-living] .ac-mode-btn--selection,
+[data-ac-living][data-power-off] .ac-mode-btn--selection,
+[data-ac-living] .ac-mode-btn--selection {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+}
