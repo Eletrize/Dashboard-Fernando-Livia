@@ -133,3 +133,24 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     opacity: 1 !important;
     cursor: pointer !important;
 }
+
+/* AC Mobile - Alinhar todos os botões com borda inferior do container */
+@media (width <= 999px) {
+    .ac-container {
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 100% !important;
+    }
+    
+    .ac-controls-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        margin-top: auto !important;
+        gap: 10px !important;
+    }
+    
+    .ac-commands-section {
+        margin-top: 10px !important;
+        margin-bottom: 0 !important;
+    }
+}
