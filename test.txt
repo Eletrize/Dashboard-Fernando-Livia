@@ -94,7 +94,7 @@ function detectIPadMini6() {
   return false;
 }
 
-// Detectar se ÃƒÂ© um celular (não tablet)
+// Detectar se é um celular (não tablet)
 function isMobilePhone() {
   const userAgent = navigator.userAgent.toLowerCase();
 

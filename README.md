@@ -69,7 +69,7 @@ const ROOM_PHOTOS = {
 };
 ```
 
-### 2. ConfiguraÃ§Ã£o dos Ambientes
+### 2. Configuração dos Ambientes
 
 #### 2.1 Nomes dos Ambientes
 
@@ -138,7 +138,7 @@ const CURTAIN_SECTIONS = [
 ];
 ```
 
-### 3. ConfiguraÃ§Ã£o dos CenÃ¡rios
+### 3. Configuração dos CenÃ¡rios
 
 Edite `scenes.js` para personalizar os dois cenÃ¡rios:
 
@@ -195,7 +195,7 @@ const ALL_LIGHT_IDS = [
 ];
 ```
 
-### 5. ConfiguraÃ§Ã£o do Hubitat
+### 5. Configuração do Hubitat
 
 #### 5.1 Obter Credenciais
 

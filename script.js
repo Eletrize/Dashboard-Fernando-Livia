@@ -368,7 +368,7 @@ function detectIPadMini6() {
   return false;
 }
 
-// Detectar se ÃƒÂ© um celular (não tablet)
+// Detectar se é um celular (não tablet)
 function isMobilePhone() {
   const userAgent = navigator.userAgent.toLowerCase();
 
@@ -573,6 +573,67 @@ function getACDeviceIdForCurrentRoute() {
   return "110"; // Fallback para ambiente1
 }
 
+// ========================================
+// INICIALIZAÇÃO DE DISPOSITIVOS VARANDA (ambiente1)
+// ========================================
+
+// IDs dos dispositivos da Varanda que possuem o comando "initialize"
+const VARANDA_INITIALIZE_DEVICE_IDS = [
+  "15",   // Varanda Denon (Denon AVR)
+  "29",   // Varanda Denon (Denon HEOS Speaker)
+  "109",  // Varanda Cortinas Gourmet
+  "110",  // Varanda AC
+  "111",  // Varanda TV
+  "114",  // Varanda HTV
+  "115",  // Varanda Cortina Esquerda
+  "116",  // Varanda Cortina Direita
+];
+
+// Flag para evitar inicialização duplicada
+let varandaInitialized = false;
+let lastVarandaInitTime = 0;
+const VARANDA_INIT_COOLDOWN = 30000; // 30 segundos entre inicializações
+
+// Função para enviar comando initialize para todos os dispositivos da Varanda
+async function initializeVarandaDevices() {
+  const now = Date.now();
+  
+  // Verificar cooldown para evitar spam de comandos
+  if (now - lastVarandaInitTime < VARANDA_INIT_COOLDOWN) {
+    console.log("⏳ [initializeVarandaDevices] Cooldown ativo, ignorando inicialização");
+    return;
+  }
+  
+  console.log("🚀 [initializeVarandaDevices] Iniciando dispositivos da Varanda...");
+  lastVarandaInitTime = now;
+  
+  const results = await Promise.allSettled(
+    VARANDA_INITIALIZE_DEVICE_IDS.map(async (deviceId) => {
+      try {
+        console.log(`🔧 [initializeVarandaDevices] Enviando initialize para dispositivo ${deviceId}`);
+        await sendHubitatCommand(deviceId, "initialize");
+        console.log(`✅ [initializeVarandaDevices] Dispositivo ${deviceId} inicializado com sucesso`);
+        return { deviceId, success: true };
+      } catch (error) {
+        console.error(`❌ [initializeVarandaDevices] Erro ao inicializar dispositivo ${deviceId}:`, error);
+        return { deviceId, success: false, error };
+      }
+    })
+  );
+  
+  const successful = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+  const failed = results.length - successful;
+  
+  console.log(`🏁 [initializeVarandaDevices] Inicialização concluída: ${successful} sucesso, ${failed} falhas`);
+}
+
+// Função para verificar se estamos entrando no ambiente1 (Varanda)
+function isEnteringVaranda(hash) {
+  const route = (hash || "").replace("#", "");
+  // Verifica se é a página principal do ambiente1 (não subpáginas)
+  return route === "ambiente1";
+}
+
 // Configurações de timeout e retry
 const NETWORK_CONFIG = {
   HEALTH_CHECK_TIMEOUT: 5000, // 5s para health check
@@ -676,7 +737,7 @@ function toggleRoomControl(el) {
     })
     .catch((error) => {
       console.error(
-        `Ã¢ÂÅ’ Erro ao enviar comando para dispositivo ${deviceId}:`,
+        `⚠️Erro ao enviar comando para dispositivo ${deviceId}:`,
         error
       );
       // Em caso de erro, reverter o estado visual
@@ -1051,7 +1112,7 @@ function initVolumeSlider() {
         console.log(`Ã¢Å“â€¦ Volume do Denon definido para ${value}`);
       })
       .catch((error) => {
-        console.error(`Ã¢ÂÅ’ Erro ao definir volume do Denon:`, error);
+        console.error(`⚠️Erro ao definir volume do Denon:`, error);
       });
   });
 
@@ -1075,7 +1136,7 @@ async function updateDenonVolumeFromServer() {
 
     if (!pollingUrl) {
       console.log(
-        "Ã¢ÂÅ’ não ÃƒÂ© possÃƒÂ­vel buscar volume em desenvolvimento"
+        "⚠️não é possível buscar volume em desenvolvimento"
       );
       return;
     }
@@ -1150,7 +1211,7 @@ async function updateDenonVolumeFromServer() {
       applyDenonPowerState(powerState);
     }
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro ao buscar volume do Denon:", error);
+    console.error("⚠️Erro ao buscar volume do Denon:", error);
   }
 }
 
@@ -1317,6 +1378,20 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       initVolumeSlider();
     }, 100);
+  });
+
+  // Listener para inicialização de dispositivos da Varanda (ambiente1)
+  window.addEventListener("hashchange", () => {
+    const newHash = window.location.hash;
+    console.log("🏠 [hashchange] Verificando se é ambiente1:", newHash);
+    
+    if (isEnteringVaranda(newHash)) {
+      console.log("🏠 [hashchange] Entrando na Varanda - iniciando dispositivos...");
+      // Pequeno delay para garantir que a página carregou
+      setTimeout(() => {
+        initializeVarandaDevices();
+      }, 500);
+    }
   });
 
   // Listener específico para página de música
@@ -1788,7 +1863,7 @@ function initAirConditionerControl() {
     deviceId: AC_DEVICE_ID, // ID do dispositivo ar-condicionado (dinâmico)
   };
 
-  // ConfiguraÃƒÂ§ÃƒÂµes de modo - apenas Cool
+  // Configurações de modo - apenas Cool
   const modeConfig = {
     cool: {
       minTemp: tempConfig.minTemp,
@@ -1853,10 +1928,10 @@ function initAirConditionerControl() {
     const vbWidth = viewBox ? viewBox.width : 200;
     const vbHeight = viewBox ? viewBox.height : 120;
 
-    // O viewBox ÃƒÂ© 0 0 200 120
-    // O arco path ÃƒÂ©: M 20,100 A 80,80 0 0,1 180,100
+    // O viewBox é 0 0 200 120
+    // O arco path é: M 20,100 A 80,80 0 0,1 180,100
     // Isso significa que o centro do arco está em (100, 100) no viewBox
-    // O raio ÃƒÂ© 80
+    // O raio é 80
 
     // Calcular a escala do SVG
     const scaleX = svgRect.width / vbWidth;
@@ -2017,7 +2092,7 @@ function initAirConditionerControl() {
         tempPrev.style.opacity = "1";
         tempPrev.style.visibility = "visible";
       } else {
-        // Se ÃƒÂ© a temperatura mÃƒÂ­nima, esconde o anterior
+        // Se é a temperatura mÃƒÂ­nima, esconde o anterior
         tempPrev.style.opacity = "0";
         tempPrev.style.visibility = "hidden";
       }
@@ -2030,7 +2105,7 @@ function initAirConditionerControl() {
         tempNext.style.opacity = "1";
         tempNext.style.visibility = "visible";
       } else {
-        // Se ÃƒÂ© a temperatura mÃƒÂ¡xima, esconde o seguinte
+        // Se é a temperatura mÃƒÂ¡xima, esconde o seguinte
         tempNext.style.opacity = "0";
         tempNext.style.visibility = "hidden";
       }
@@ -2081,7 +2156,7 @@ function initAirConditionerControl() {
 
     // Calcula a posiÃƒÂ§ÃƒÂ£o relativa ao centro do arco
     const deltaX = pointerX - geometry.centerX;
-    const deltaY = geometry.centerY - pointerY; // INVERTIDO: centerY - pointerY (para cima ÃƒÂ© positivo)
+    const deltaY = geometry.centerY - pointerY; // INVERTIDO: centerY - pointerY (para cima é positivo)
 
     // Calcula o ÃƒÂ¢ngulo em radianos, depois converte para graus
     let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
@@ -2135,7 +2210,7 @@ function initAirConditionerControl() {
       knob.classList.remove("is-active");
     }
 
-    // Comando de temperatura agora ÃƒÂ© enviado via debounce em updateTemperature()
+    // Comando de temperatura agora é enviado via debounce em updateTemperature()
     // não precisa mais enviar aqui
 
     document.removeEventListener("pointermove", handlePointerMove);
@@ -2305,6 +2380,9 @@ function initAirConditionerControl() {
     if (aleta === "moving") {
       console.log("ALETA MOVIMENTO: Executando comando swingOn (mover aletas)");
       sendHubitatCommand(state.deviceId, "swingOn");
+    } else if (aleta === "windfree") {
+      console.log("WINDFREE: Executando comando windfree");
+      sendHubitatCommand(state.deviceId, "windfree");
     } else if (aleta === "parada") {
       console.log("ALETA PARADA: Executando comando swingOff (parar aletas)");
       sendHubitatCommand(state.deviceId, "swingOff");
@@ -2559,7 +2637,7 @@ function initAirConditionerControl() {
     }
   })();
 
-  // Garantir sincronizaÃƒÂ§ÃƒÂ£o: tenta tambÃƒÂ©m via polling apÃƒÂ³s um pequeno atraso
+  // Garantir sincronizaÃƒÂ§ÃƒÂ£o: tenta também via polling apÃƒÂ³s um pequeno atraso
   setTimeout(() => {
     try {
       applyACFromPolling({ needPower: true, needTemp: true, needFan: true });
@@ -2580,7 +2658,7 @@ window.normalizeAccents = function normalizeAccents(root) {
       ["FuncionÃ‡Â­rios", "FuncionÃƒÂ¡rios"],
       ["IluminaÃ¯Â¿Â½Ã¯Â¿Â½o", "IluminaÃƒÂ§ÃƒÂ£o"],
       ["IluminaÃ¯Â¿Â½Ã¯Â¿Â½Ã‡Å“o", "IluminaÃƒÂ§ÃƒÂ£o"],
-      ["PainÃ‡Â¸is", "PainÃƒÂ©is"],
+      ["PainÃ‡Â¸is", "Painéis"],
       ["ArmÃ‡Â­rio", "ArmÃƒÂ¡rio"],
       ["AmbientÃ‡Å“o", "Ambiente"],
     ]);
@@ -3026,7 +3104,7 @@ function showErrorMessage(message) {
     `;
 
   errorModal.innerHTML = `
-        <h3 style="margin-bottom: 12px; font-size: 1.4rem;">Ã¢ÂÅ’ Erro de ConexÃƒÂ£o</h3>
+        <h3 style="margin-bottom: 12px; font-size: 1.4rem;">⚠️Erro de Conexão</h3>
         <p style="margin-bottom: 20px; line-height: 1.5;">${message}</p>
         <button onclick="this.parentElement.remove()" style="
             background: linear-gradient(135deg, #e74c3c, #c0392b);
@@ -3076,9 +3154,9 @@ async function loadAllDeviceStatesDirect(deviceIds) {
   };
 }
 
-// Função para testar configuraÃƒÂ§ÃƒÂµes do Hubitat
+// Função para testar Configurações do Hubitat
 async function testHubitatConnection() {
-  console.log("Ã°Å¸â€Â§ Testando conexÃƒÂ£o com Hubitat...");
+  console.log("Ã°Å¸â€Â§ Testando Conexão com Hubitat...");
 
   try {
     // Testar com um dispositivo conhecido (231)
@@ -3098,18 +3176,18 @@ async function testHubitatConnection() {
     if (response.ok) {
       try {
         const data = JSON.parse(responseText);
-        console.log("Ã¢Å“â€¦ ConexÃƒÂ£o OK - Dados:", data);
+        console.log("Ã¢Å“â€¦ Conexão OK - Dados:", data);
         return true;
       } catch (e) {
-        console.error("Ã¢ÂÅ’ Resposta não ÃƒÂ© JSON vÃƒÂ¡lido:", e);
+        console.error("⚠️Resposta não é JSON vÃƒÂ¡lido:", e);
         return false;
       }
     } else {
-      console.error("Ã¢ÂÅ’ Erro HTTP:", response.status, response.statusText);
+      console.error("⚠️Erro HTTP:", response.status, response.statusText);
       return false;
     }
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro na conexÃƒÂ£o:", error);
+    console.error("⚠️Erro na Conexão:", error);
     return false;
   }
 }
@@ -3345,7 +3423,7 @@ function setMasterButtonLoading(button, isLoading) {
   } else {
     button.classList.remove("loading");
     button.dataset.loading = "false";
-    console.log("Ã¢ÂÅ’ Loading desativado - classes:", button.className);
+    console.log("⚠️Loading desativado - classes:", button.className);
   }
 }
 
@@ -3616,7 +3694,7 @@ function updateDeviceUI(deviceId, state, forceUpdate = false) {
       }
     } else {
       console.log(
-        `Ã¢Å¡Â Ã¯Â¸Â Elemento encontrado mas não ÃƒÂ© room-control nem control-card: ${el.className}`
+        `Ã¢Å¡Â Ã¯Â¸Â Elemento encontrado mas não é room-control nem control-card: ${el.className}`
       );
     }
   });
@@ -3730,7 +3808,7 @@ function getCurtainState(curtainId) {
   try {
     return localStorage.getItem(`curtain_${curtainId}_state`) || "closed";
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro ao obter estado da cortina:", error);
+    console.error("⚠️Erro ao obter estado da cortina:", error);
     return "closed";
   }
 }
@@ -3824,7 +3902,7 @@ function onHomeMasterClick(event, button) {
   console.log("Ã°Å¸â€Â Device IDs encontrados:", deviceIds);
 
   if (deviceIds.length === 0) {
-    console.log("Ã¢ÂÅ’ Nenhum device ID encontrado");
+    console.log("⚠️Nenhum device ID encontrado");
     return;
   }
 
@@ -3845,7 +3923,7 @@ function onHomeMasterClick(event, button) {
   // Atualizar UI imediatamente
   setMasterIcon(button, newCommand);
 
-  // Enviar comandos para todos os dispositivos (master dos ambientes mantÃƒÂ©m comportamento original)
+  // Enviar comandos para todos os dispositivos (master dos ambientes mantém comportamento original)
   const promises = deviceIds.map((deviceId) => {
     // Marcar comando recente
     recentCommands.set(deviceId, Date.now());
@@ -3882,7 +3960,7 @@ function onHomeCurtainMasterClick(event, button) {
   console.log("Ã°Å¸â€Â Curtain IDs encontrados:", curtainIds);
 
   if (curtainIds.length === 0) {
-    console.log("Ã¢ÂÅ’ Nenhum curtain ID encontrado");
+    console.log("⚠️Nenhum curtain ID encontrado");
     return;
   }
 
@@ -3968,7 +4046,7 @@ function showLoader() {
       console.warn("Ã¢Å¡Â Ã¯Â¸Â Elemento loader não encontrado");
     }
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro ao mostrar loader:", error);
+    console.error("⚠️Erro ao mostrar loader:", error);
   }
 }
 
@@ -4076,7 +4154,7 @@ async function loadAllDeviceStatesGlobally() {
         updateDeviceUI(deviceId, storedState, true); // forceUpdate = true
         loadedCount++;
       } catch (e) {
-        console.warn(`Ã¢ÂÅ’ Erro ao processar ${deviceId}:`, e);
+        console.warn(`⚠️Erro ao processar ${deviceId}:`, e);
       }
 
       const progress = 20 + ((index + 1) / ALL_LIGHT_IDS.length) * 80;
@@ -4179,7 +4257,7 @@ async function loadAllDeviceStatesGlobally() {
 
           return response;
         } catch (error) {
-          console.warn(`Ã¢ÂÅ’ Tentativa ${attempt} falhou:`, error.message);
+          console.warn(`⚠️Tentativa ${attempt} falhou:`, error.message);
 
           if (attempt === maxRetries) {
             throw new Error(
@@ -4204,7 +4282,7 @@ async function loadAllDeviceStatesGlobally() {
       }
     };
 
-    // ConfiguraÃƒÂ§ÃƒÂµes otimizadas para mobile
+    // Configurações otimizadas para mobile
     const fetchOptions = {
       method: "GET",
       cache: "no-cache", // ForÃƒÂ§ar busca fresca
@@ -4239,19 +4317,19 @@ async function loadAllDeviceStatesGlobally() {
         throw new Error("Resposta vazia do servidor");
       }
 
-      // Verificar se ÃƒÂ© HTML (Functions não estÃƒÂ£o funcionando)
+      // Verificar se é HTML (Functions não estÃƒÂ£o funcionando)
       if (
         responseText.trim().startsWith("<!DOCTYPE html") ||
         responseText.trim().startsWith("<html")
       ) {
         console.error(
-          "Ã¢ÂÅ’ CRÃƒÂTICO: Cloudflare Functions não estÃƒÂ£o funcionando!"
+          "⚠️CRÃƒÂTICO: Cloudflare Functions não estÃƒÂ£o funcionando!"
         );
         console.error(
-          "Ã¢ÂÅ’ O servidor está retornando HTML em vez de executar as Functions."
+          "⚠️O servidor está retornando HTML em vez de executar as Functions."
         );
         console.error(
-          "Ã¢ÂÅ’ Implementando fallback automÃƒÂ¡tico para API direta do Hubitat..."
+          "⚠️Implementando fallback automÃƒÂ¡tico para API direta do Hubitat..."
         );
 
         // FALLBACK AUTOMÃƒÂTICO: Usar API direta do Hubitat
@@ -4306,7 +4384,7 @@ async function loadAllDeviceStatesGlobally() {
           );
           return true;
         } catch (fallbackError) {
-          console.error("Ã¢ÂÅ’ Fallback tambÃƒÂ©m falhou:", fallbackError);
+          console.error("⚠️Fallback também falhou:", fallbackError);
 
           // ÃƒÅ¡ltimo recurso: usar estados salvos
           console.log(
@@ -4318,7 +4396,7 @@ async function loadAllDeviceStatesGlobally() {
           });
 
           throw new Error(
-            "Functions não funcionam e API direta tambÃƒÂ©m falhou - usando estados salvos"
+            "Functions não funcionam e API direta também falhou - usando estados salvos"
           );
         }
       }
@@ -4327,9 +4405,9 @@ async function loadAllDeviceStatesGlobally() {
       data = JSON.parse(responseText);
       console.log("Ã°Å¸â€œÂ¡ JSON parseado com sucesso");
     } catch (jsonError) {
-      console.error("Ã¢ÂÅ’ Erro ao parsear JSON:", jsonError);
+      console.error("⚠️Erro ao parsear JSON:", jsonError);
       console.error(
-        "Ã¢ÂÅ’ ConteÃƒÂºdo da resposta que falhou:",
+        "⚠️ConteÃƒÂºdo da resposta que falhou:",
         responseText?.substring(0, 200)
       );
       throw new Error(`Resposta invÃƒÂ¡lida do servidor: ${jsonError.message}`);
@@ -4357,19 +4435,19 @@ async function loadAllDeviceStatesGlobally() {
             let state = "off";
 
             if (Array.isArray(d.attributes)) {
-              // Formato antigo: attributes ÃƒÂ© array de objetos
+              // Formato antigo: attributes é array de objetos
               const sw = d.attributes.find((a) => a.name === "switch");
               if (sw) {
                 state = sw?.currentValue || sw?.value || "off";
               }
             } else if (d.attributes && typeof d.attributes === "object") {
-              // Formato atual: attributes ÃƒÂ© objeto direto com propriedades
+              // Formato atual: attributes é objeto direto com propriedades
               if (d.attributes.switch !== undefined) {
                 state = d.attributes.switch;
                 console.log(`Ã°Å¸â€œâ€¹ Device ${d.id}: switch=${state}`);
               } else {
                 console.log(
-                  `Ã°Å¸â€Ëœ Device ${d.id}: não ÃƒÂ© lÃƒÂ¢mpada (sem atributo 'switch'), pulando...`
+                  `Ã°Å¸â€Ëœ Device ${d.id}: não é lÃƒÂ¢mpada (sem atributo 'switch'), pulando...`
                 );
                 return; // Pular dispositivos sem switch (botÃƒÂµes, sensores, etc.)
               }
@@ -4395,7 +4473,7 @@ async function loadAllDeviceStatesGlobally() {
           );
         }
       } catch (normError) {
-        console.error("Ã¢ÂÅ’ Falha ao normalizar resposta:", normError);
+        console.error("⚠️Falha ao normalizar resposta:", normError);
         throw normError;
       }
     }
@@ -4487,15 +4565,15 @@ async function loadAllDeviceStatesGlobally() {
     console.log("Ã¢Å“â€¦ Carregamento global concluÃƒÂ­do com sucesso");
     return true;
   } catch (error) {
-    console.error("Ã¢ÂÅ’ Erro no carregamento global:", error);
+    console.error("⚠️Erro no carregamento global:", error);
 
-    // Tentar diagnÃƒÂ³stico automÃƒÂ¡tico da conexÃƒÂ£o
+    // Tentar diagnÃƒÂ³stico automÃƒÂ¡tico da Conexão
     try {
-      console.log("Ã°Å¸â€Â§ Executando diagnÃƒÂ³stico da conexÃƒÂ£o...");
+      console.log("Ã°Å¸â€Â§ Executando diagnÃƒÂ³stico da Conexão...");
       const connectionTest = await testHubitatConnection();
       if (!connectionTest) {
         showErrorMessage(
-          "Falha na conexÃƒÂ£o com Hubitat. Verifique se as configuraÃƒÂ§ÃƒÂµes foram alteradas no painel do Cloudflare."
+          "Falha na Conexão com Hubitat. Verifique se as Configurações foram alteradas no painel do Cloudflare."
         );
       }
     } catch (diagError) {
@@ -4507,7 +4585,7 @@ async function loadAllDeviceStatesGlobally() {
       console.warn("Ã¢ÂÂ±Ã¯Â¸Â Timeout apÃƒÂ³s mÃƒÂºltiplas tentativas");
       updateProgress(60, "Timeout - usando backup...");
       showErrorMessage(
-        "Timeout na conexÃƒÂ£o. Verifique sua internet e tente novamente."
+        "Timeout na Conexão. Verifique sua internet e tente novamente."
       );
     } else if (error.message.includes("Falha apÃƒÂ³s")) {
       console.warn("Ã°Å¸â€â€ž MÃƒÂºltiplas tentativas falharam");
@@ -4518,7 +4596,7 @@ async function loadAllDeviceStatesGlobally() {
     } else if (error.name === "TypeError" && error.message.includes("fetch")) {
       console.warn("Ã°Å¸Å’Â Problema de conectividade de rede");
       updateProgress(60, "Sem rede - modo offline...");
-      showErrorMessage("Sem conexÃƒÂ£o com a internet. Modo offline ativado.");
+      showErrorMessage("Sem Conexão com a internet. Modo offline ativado.");
     } else if (error.message.includes("HTTP 5")) {
       console.warn("Ã°Å¸â€Â¥ Erro no servidor (5xx)");
       updateProgress(60, "Erro servidor - backup...");
@@ -4526,7 +4604,7 @@ async function loadAllDeviceStatesGlobally() {
         "Problema no servidor. Usando ÃƒÂºltimos dados conhecidos."
       );
     } else {
-      console.warn("Ã¢ÂÅ’ Erro desconhecido no carregamento:", error.message);
+      console.warn("⚠️Erro desconhecido no carregamento:", error.message);
       updateProgress(60, "Erro geral - usando backup...");
       showErrorMessage("Erro no carregamento. Usando dados salvos localmente.");
     }
@@ -4590,7 +4668,7 @@ function checkMobileCompatibility() {
   }
 
   if (issues.length > 0) {
-    console.error("Ã¢ÂÅ’ Problemas crÃƒÂ­ticos detectados:", issues);
+    console.error("⚠️Problemas crÃƒÂ­ticos detectados:", issues);
     return false;
   }
 
@@ -4803,7 +4881,7 @@ window.debugEletrize = {
       }, index * 200);
     });
 
-    // Testar botÃƒÂ£o de cenÃƒÂ¡rios tambÃƒÂ©m
+    // Testar botÃƒÂ£o de cenÃƒÂ¡rios também
     scenes.forEach((btn, index) => {
       setTimeout(() => {
         setMasterButtonLoading(btn, true);
@@ -4866,7 +4944,7 @@ window.debugEletrize = {
       sessionStorage.clear();
       console.log("Ã¢Å“â€¦ Cache mobile limpo! Recarregue a página.");
     } catch (e) {
-      console.error("Ã¢ÂÅ’ Erro ao limpar cache:", e);
+      console.error("⚠️Erro ao limpar cache:", e);
     }
   },
   forceMobileReload: () => {
@@ -4930,7 +5008,7 @@ window.debugEletrize = {
       const response = await fetch(testUrl, fetchConfig);
       console.log("Ã¢Å“â€¦ Fetch test:", response.status, response.statusText);
     } catch (error) {
-      console.error("Ã¢ÂÅ’ Fetch test failed:", error);
+      console.error("⚠️Fetch test failed:", error);
     }
   },
 };
@@ -4965,7 +5043,7 @@ function updateDenonMetadata() {
       // Procurar o Denon AVR pelos metadados (ID 29) nos dados
       // O formato pode ser um array direto ou um objeto com propriedade devices
       const devices = Array.isArray(data) ? data : data.devices || [];
-      // O ID do dispositivo que fornece metadados do Denon ÃƒÂ© 29
+      // O ID do dispositivo que fornece metadados do Denon é 29
       const DENON_METADATA_DEVICE_ID = "29";
       let denonDevice = devices.find(
         (device) =>
@@ -5212,14 +5290,14 @@ function updateDenonMetadata() {
       }
     })
     .catch((error) => {
-      console.error("Ã¢ÂÅ’ Erro ao buscar metadados do Denon:", error);
+      console.error("⚠️Erro ao buscar metadados do Denon:", error);
       // Tentar logar a resposta bruta para debug adicional via endpoint de polling
       fetch(`${POLLING_URL}?full=1`)
         .then((res) => res.text())
         .then((t) => console.log("Raw polling response (debug):", t))
         .catch((e) =>
           console.warn(
-            "não foi possÃƒÂ­vel obter resposta bruta de /polling:",
+            "não foi possível obter resposta bruta de /polling:",
             e
           )
         );
@@ -5505,7 +5583,7 @@ function initMusicPlayerUI() {
     }
   } catch (e) {
     console.warn(
-      "não foi possÃƒÂ­vel ler overrides de IDs de Denon via data-*:",
+      "não foi possível ler overrides de IDs de Denon via data-*:",
       e
     );
   }
@@ -5525,7 +5603,7 @@ function initMusicPlayerUI() {
         setPlaying(!isPlaying);
       })
       .catch((err) =>
-        console.error("Ã¢ÂÅ’ Erro ao enviar comando " + action + ":", err)
+        console.error("⚠️Erro ao enviar comando " + action + ":", err)
       );
   });
 
@@ -5537,7 +5615,7 @@ function initMusicPlayerUI() {
     sendHubitatCommand(DENON_MUSIC_DEVICE_ID, "nextTrack")
       .then(() => console.log("Ã¢Å“â€¦ Comando nextTrack enviado com sucesso"))
       .catch((err) =>
-        console.error("Ã¢ÂÅ’ Erro ao enviar comando nextTrack:", err)
+        console.error("⚠️Erro ao enviar comando nextTrack:", err)
       );
   });
 
@@ -5551,7 +5629,7 @@ function initMusicPlayerUI() {
         console.log("Ã¢Å“â€¦ Comando previousTrack enviado com sucesso")
       )
       .catch((err) =>
-        console.error("Ã¢ÂÅ’ Erro ao enviar comando previousTrack:", err)
+        console.error("⚠️Erro ao enviar comando previousTrack:", err)
       );
   });
 
@@ -5573,7 +5651,7 @@ function initMusicPlayerUI() {
           setMuted(newMutedState);
         })
         .catch((err) =>
-          console.error(`Ã¢ÂÅ’ Erro ao enviar comando ${command}:`, err)
+          console.error(`⚠️Erro ao enviar comando ${command}:`, err)
         );
     });
 
@@ -5628,7 +5706,7 @@ function initMusicPlayerUI() {
           )
           .catch((err) =>
             console.error(
-              "Ã¢ÂÅ’ Error sending setVolume from music slider:",
+              "⚠️Error sending setVolume from music slider:",
               err
             )
           );
@@ -5686,7 +5764,7 @@ function initMusicPlayerUI() {
             setMasterPower(true);
           })
           .catch((err) =>
-            console.error("Ã¢ÂÅ’ Erro ao enviar comando on:", err)
+            console.error("⚠️Erro ao enviar comando on:", err)
           );
       }
     });
@@ -5703,7 +5781,7 @@ function initMusicPlayerUI() {
             setMasterPower(false);
           })
           .catch((err) =>
-            console.error("Ã¢ÂÅ’ Erro ao enviar comando off:", err)
+            console.error("⚠️Erro ao enviar comando off:", err)
           );
       }
     });
@@ -5793,7 +5871,7 @@ function initUltraBasicMode() {
     return true; // Sucesso
   } catch (error) {
     showMobileDebug(
-      "Ã¢ÂÅ’ ERRO CRÃƒÂTICO no modo ultra-bÃƒÂ¡sico: " + error.message,
+      "⚠️ERRO CRÃƒÂTICO no modo ultra-bÃƒÂ¡sico: " + error.message,
       "error"
     );
     return false; // Falha
@@ -5836,7 +5914,7 @@ function initSimpleMode() {
       try {
         updateDeviceUI(deviceId, "off", true);
       } catch (e) {
-        console.error("Ã¢ÂÅ’ Erro no device", deviceId + ":", e);
+        console.error("⚠️Erro no device", deviceId + ":", e);
       }
     }
 
@@ -5871,7 +5949,7 @@ function initSimpleMode() {
           startPolling(); // Ativar polling completo mesmo no modo simples
           console.log("Ã¢Å“â€¦ Polling ativo no modo simples");
         } catch (e) {
-          console.error("Ã¢ÂÅ’ Erro ao iniciar polling no modo simples:", e);
+          console.error("⚠️Erro ao iniciar polling no modo simples:", e);
         }
       } else {
         console.log(
@@ -5888,9 +5966,9 @@ function initSimpleMode() {
       }, 1000);
     }, 2000); // Aguardar 2s para estabilizar antes do polling
   } catch (error) {
-    console.error("Ã¢ÂÅ’ ERRO CRÃƒÂTICO no modo simples:", error);
-    console.error("Ã¢ÂÅ’ Erro stack:", error.stack);
-    console.error("Ã¢ÂÅ’ Erro linha:", error.lineNumber || "desconhecida");
+    console.error("⚠️ERRO CRÃƒÂTICO no modo simples:", error);
+    console.error("⚠️Erro stack:", error.stack);
+    console.error("⚠️Erro linha:", error.lineNumber || "desconhecida");
 
     // Ativar modo ultra-bÃƒÂ¡sico como fallback
     console.log("Ã°Å¸Å¡Â¨ Ativando modo ultra-bÃƒÂ¡sico...");
@@ -5996,7 +6074,7 @@ function initializeApp() {
                 setTimeout(startPolling, pollingDelay);
               } else {
                 console.log(
-                  "Ã¢ÂÅ’ POLLING NÃƒÆ’O INICIADO - não está em produÃƒÂ§ÃƒÂ£o:",
+                  "⚠️POLLING NÃƒÆ’O INICIADO - não está em produÃƒÂ§ÃƒÂ£o:",
                   {
                     isProduction: isProduction,
                     hostname: location.hostname,
@@ -6074,7 +6152,7 @@ setTimeout(function () {
   }
 }, 2000);
 
-// Parar polling quando a página ÃƒÂ© fechada
+// Parar polling quando a página é fechada
 window.addEventListener("beforeunload", stopPolling);
 
 // FunÃƒÂ§ÃƒÂµes de debug disponÃƒÂ­veis globalmente
