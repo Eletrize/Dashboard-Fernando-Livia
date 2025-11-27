@@ -2306,6 +2306,11 @@ function initAirConditionerControl() {
     }
 
     modeButtons.forEach((button) => {
+      // Para AC Living, não desabilita os botões de seleção (I, II, Ambos)
+      const mode = button.dataset.mode;
+      if (mode === 'living1' || mode === 'living2' || mode === 'livingBoth') {
+        return; // Não desabilita esses botões
+      }
       button.toggleAttribute("disabled", !isOn);
     });
 
