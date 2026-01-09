@@ -218,10 +218,15 @@ function executeCenarioDormir() {
   const btn = document.getElementById("cenario-dormir-btn");
   if (btn) btn.classList.add("loading");
 
-  // Enviar comando scene1 para o dispositivo 197
-  console.log("🌙 Enviando comando scene1 para dispositivo 197");
+  // Enviar comando initialize primeiro, depois scene1 para o dispositivo 197
+  console.log("🌙 Enviando comando initialize para dispositivo 197");
   
-  sendHubitatCommand("197", "scene1")
+  sendHubitatCommand("197", "initialize")
+    .then(() => {
+      console.log("✅ Comando initialize enviado com sucesso");
+      console.log("🌙 Enviando comando scene1 para dispositivo 197");
+      return sendHubitatCommand("197", "scene1");
+    })
     .then(() => {
       console.log("✅ Cenário Dormir executado com sucesso");
       hidePopup();
