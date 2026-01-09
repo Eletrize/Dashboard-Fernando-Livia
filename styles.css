@@ -188,7 +188,7 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 8px 0;
+    padding: 12px 12px;
     order: 1;
 }
 
