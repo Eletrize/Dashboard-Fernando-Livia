@@ -892,11 +892,11 @@ function tvCommand(el, command) {
   console.log(`📺 Enviando comando ${command} para dispositivo ${deviceId}`);
 
   // Atalho: GloboNews (canal 261) no HTV da varanda (deviceId=114)
-  // Envia 2 → 6 → 1 com 0,5s entre cada dígito.
+  // Envia 2 → 6 → 1 com 0,05s entre cada dígito.
   if (command === "globonews") {
     console.log(`📺 GloboNews: sintonizando canal 261 (device ${deviceId})`);
     // Cancelar qualquer sequência anterior para evitar comandos duplicados
-    sendCommandSequence(deviceId, ["num2", "num6", "num1"], 500).catch(
+    sendCommandSequence(deviceId, ["num2", "num6", "num1"], 50).catch(
       (error) => {
         console.error("❌ Erro ao sintonizar GloboNews (261):", error);
       }
