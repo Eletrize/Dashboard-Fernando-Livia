@@ -1353,7 +1353,7 @@ function fireTVMacro() {
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
-  const DENON_DEVICE_ID = "15"; // ID do Denon AVR no Hubitat
+  const DEVICE_ID = slider.dataset.deviceId || "15"; // ID do atributo HTML
 
   if (!slider || !display) {
     console.log("Ã¢Å¡Â Ã¯Â¸Â Slider ou display não encontrado");
@@ -1363,7 +1363,7 @@ function initVolumeSlider() {
   console.log("Ã°Å¸Å½Å¡Ã¯Â¸Â Inicializando slider de volume do Denon AVR");
 
   // Definir o device ID no slider
-  slider.dataset.deviceId = DENON_DEVICE_ID;
+  // Usar o device ID do HTML ao inves de sobrescrever
 
   // Remover event listeners antigos para evitar duplicaÃƒÂ§ÃƒÂ£o
   const newSlider = slider.cloneNode(true);
@@ -1400,7 +1400,7 @@ function initVolumeSlider() {
     );
 
     // Enviar comando setVolume para o Denon AVR
-    sendHubitatCommand(DENON_DEVICE_ID, "setVolume", value)
+    sendHubitatCommand(e.target.dataset.deviceId || "15", "setVolume", value)
       .then(() => {
         console.log(`Ã¢Å“â€¦ Volume do Denon definido para ${value}`);
       })
