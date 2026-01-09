@@ -1695,7 +1695,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         console.log("🎵 [hashchange] Executando initMusicPlayerUI...");
         initMusicPlayerUI();
-        // Living (ambiente2-musica) não tem metadata - device 195 não suporta HEOS
+        // Living (ambiente2-musica) não tem metadata - device 198 não suporta HEOS
         const hash = window.location.hash;
         if (!hash.includes('ambiente2-musica')) {
           updateDenonMetadata();
@@ -3501,7 +3501,7 @@ const DEVICES_WITH_INITIALIZE = [
   // 🎵 ÁUDIO (Denon AVR + HEOS)
   "15",   // Varanda Denon (Denon AVR)
   "29",   // Varanda Denon (HEOS Speaker)
-  "195",  // Denon Living
+  "198",  // Denon Living
   
   // ⌨️ KEYPADS (Controlart - Xport - IVOLV)
   "19",   // KP 14 4X3 - 60-19-B0
@@ -5646,7 +5646,7 @@ window.debugEletrize = {
 
 // Função para atualizar metadados do Denon
 function updateDenonMetadata() {
-  // Living (ambiente2-musica) usa device 195 que não tem metadata HEOS
+  // Living (ambiente2-musica) usa device 198 que não tem metadata HEOS
   if (window.location.hash.includes('ambiente2-musica')) {
     console.log("🎵 [updateDenonMetadata] Living detectado - pulando (sem metadata)");
     return;
@@ -6103,7 +6103,7 @@ function initMusicPlayerUI() {
   }
 
   // Se for a página do Living (ambiente2-musica), inicializar apenas o slider de volume
-  // pois o Living usa controles diferentes (device 195 sem metadata)
+  // pois o Living usa controles diferentes (device 198 sem metadata)
   const hash = window.location.hash;
   if (hash.includes('ambiente2-musica')) {
     console.log("🎵 Página de música do Living detectada - inicializando controles específicos");
@@ -6894,12 +6894,12 @@ function handleMasterCurtainsClose() {
 }
 
 // ============================================
-// CONTROLES DE MÚSICA DO LIVING (Device 195)
+// CONTROLES DE MÚSICA DO LIVING (Device 198)
 // ============================================
 
-// Função para controle de música do Living (Denon 195)
+// Função para controle de música do Living (Denon 198)
 function livingMusicCommand(button, command) {
-  const DEVICE_ID = "195";
+  const DEVICE_ID = "198";
   
   // Feedback visual
   if (button) {
@@ -7005,7 +7005,7 @@ function initLivingMusicVolumeSlider() {
   const slider = document.getElementById('music-volume-slider-living');
   if (!slider) return;
   
-  const DEVICE_ID = "195";
+  const DEVICE_ID = "198";
   
   // Remover event listeners antigos
   const newSlider = slider.cloneNode(true);
@@ -7013,10 +7013,27 @@ function initLivingMusicVolumeSlider() {
   
   const updatedSlider = document.getElementById('music-volume-slider-living');
   if (!updatedSlider) return;
+
+  // Garantir que o slider esteja interativo mesmo se algum estilo global bloquear
+  updatedSlider.style.pointerEvents = 'auto';
+  const sliderContainer = updatedSlider.closest('.music-volume-slider-container');
+  if (sliderContainer) {
+    sliderContainer.style.pointerEvents = 'auto';
+  }
+  // Atualizar a barra visual durante o arrasto
+  const updateVisualBar = (value) => {
+    const percent = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
+    updatedSlider.style.setProperty('--volume-percent', `${percent}%`);
+  };
+  updateVisualBar(updatedSlider.value);
   
   // Enviar comando ao soltar o slider
+  updatedSlider.addEventListener('input', (e) => {
+    updateVisualBar(e.target.value);
+  });
   updatedSlider.addEventListener('change', (e) => {
     const value = e.target.value;
+    updateVisualBar(value);
     console.log("🔊 Living Music Volume: " + value);
     
     sendHubitatCommand(DEVICE_ID, "setVolume", value)
