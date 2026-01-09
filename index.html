@@ -100,6 +100,31 @@
         border: none;
         cursor: pointer;
       }
+
+      /* Botão retangular para o slot de logo (HTV Varanda) */
+      .tv-logo-button {
+        width: 100%;
+        min-height: 60px;
+        padding: 12px;
+        margin: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .tv-logo-button:active {
+        transform: scale(0.98);
+      }
+
+      .tv-globonews-logo {
+        width: 100%;
+        max-width: 160px;
+        height: auto;
+        max-height: 50px;
+        opacity: 1;
+        filter: brightness(0) invert();
+      }
     </style>
   </head>
   <body>
@@ -1621,9 +1646,21 @@
             </div>
           </div>
 
-          <!-- BLOCO 7: LOGO ELETRIZE -->
+          <!-- BLOCO 7: GLOBONEWS -->
           <div class="tv-control-section tv-logo-section">
-            <img src="images/icons/Eletrize.svg" alt="Eletrize" class="tv-eletrize-logo">
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'globonews')"
+              data-device-id="114"
+              aria-label="GloboNews"
+              type="button"
+            >
+              <img
+                src="images/icons/GloboNews.svg"
+                alt="GloboNews"
+                class="tv-globonews-logo"
+              />
+            </button>
           </div>
         </div>
 
