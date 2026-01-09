@@ -1076,21 +1076,21 @@
 
             <div class="music-controls">
               <div class="tv-playback-controls">
-                <button class="tv-btn-icon-small" aria-label="Previous" data-device-id="195" onclick="sendHubitatCommand('195', 'previousTrack')">
+                <button class="tv-btn-icon-small" aria-label="Previous" data-device-id="195" onclick="livingMusicCommand(this, 'previousTrack')">
                   <img src="images/icons/icon-previous-track.svg" alt="Faixa anterior">
                 </button>
-                <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" aria-pressed="false" data-device-id="195" onclick="sendHubitatCommand('195', 'play')">
+                <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" aria-pressed="false" data-device-id="195" onclick="livingMusicPlayPause(this)">
                   <img src="images/icons/icon-play.svg" alt="Tocar" class="music-play-toggle__icon music-play-toggle__icon--play">
-                  <img src="images/icons/icon-pause.svg" alt="Pausar" class="music-play-toggle__icon music-play-toggle__icon--pause">
+                  <img src="images/icons/icon-pause.svg" alt="Pausar" class="music-play-toggle__icon music-play-toggle__icon--pause" style="display:none;">
                 </button>
-                <button class="tv-btn-icon-small" aria-label="Next" data-device-id="195" onclick="sendHubitatCommand('195', 'nextTrack')">
+                <button class="tv-btn-icon-small" aria-label="Next" data-device-id="195" onclick="livingMusicCommand(this, 'nextTrack')">
                   <img src="images/icons/icon-next-track.svg" alt="Próxima faixa">
                 </button>
               </div>
             </div>
 
             <div class="music-volume-section">
-              <button class="music-volume-mute-btn" aria-label="Mute" aria-pressed="false" data-device-id="195" onclick="sendHubitatCommand('195', 'mute')">
+              <button class="music-volume-mute-btn" aria-label="Mute" aria-pressed="false" data-device-id="195" onclick="livingMusicMute(this)">
                 <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
                 <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
               </button>
@@ -1100,8 +1100,8 @@
             </div>
 
             <div class="music-master-controls">
-              <button class="music-master-btn music-master-btn--on music-master-btn--active" aria-label="Ligar" aria-pressed="true" data-device-id="195" onclick="sendHubitatCommand('195', 'on')">Ligar</button>
-              <button class="music-master-btn music-master-btn--off" aria-label="Desligar" aria-pressed="false" data-device-id="195" onclick="sendHubitatCommand('195', 'off')">Desligar</button>
+              <button class="music-master-btn music-master-btn--on music-master-btn--active" aria-label="Ligar" aria-pressed="true" data-device-id="195" onclick="livingMusicOn(this)">Ligar</button>
+              <button class="music-master-btn music-master-btn--off" aria-label="Desligar" aria-pressed="false" data-device-id="195" onclick="livingMusicOff(this)">Desligar</button>
             </div>
           </div>
         </div>

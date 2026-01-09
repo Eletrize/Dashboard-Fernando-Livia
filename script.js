@@ -6085,6 +6085,15 @@ function initMusicPlayerUI() {
     return;
   }
 
+  // Se for a página do Living (ambiente2-musica), inicializar apenas o slider de volume
+  // pois o Living usa controles diferentes (device 195 sem metadata)
+  const hash = window.location.hash;
+  if (hash.includes('ambiente2-musica')) {
+    console.log("🎵 Página de música do Living detectada - inicializando controles específicos");
+    initLivingMusicVolumeSlider();
+    return;
+  }
+
   const playToggleBtn = queryActiveMusic("#music-play-toggle");
   const playTogglePlayIcon = playToggleBtn
     ? playToggleBtn.querySelector(".music-play-toggle__icon--play")
@@ -6867,6 +6876,144 @@ function handleMasterCurtainsClose() {
   console.log(`✅ Comando de fechamento enviado para ${curtainIds.size} cortinas`);
 }
 
+// ============================================
+// CONTROLES DE MÚSICA DO LIVING (Device 195)
+// ============================================
+
+// Função para controle de música do Living (Denon 195)
+function livingMusicCommand(button, command) {
+  const DEVICE_ID = "195";
+  
+  // Feedback visual
+  if (button) {
+    button.style.transform = "scale(0.92)";
+    button.style.opacity = "0.7";
+    setTimeout(() => {
+      button.style.transform = "";
+      button.style.opacity = "";
+    }, 200);
+  }
+  
+  console.log("🎵 Living Music: enviando comando " + command + " para device " + DEVICE_ID);
+  
+  sendHubitatCommand(DEVICE_ID, command)
+    .then(() => {
+      console.log("✅ Comando " + command + " enviado com sucesso");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao enviar comando " + command + ":", error);
+    });
+}
+
+// Ligar música Living
+function livingMusicOn(button) {
+  livingMusicCommand(button, "on");
+  
+  // Atualizar estado visual dos botões
+  const onBtn = button;
+  const offBtn = button?.parentElement?.querySelector('.music-master-btn--off');
+  
+  if (onBtn) {
+    onBtn.classList.add('music-master-btn--active');
+    onBtn.setAttribute('aria-pressed', 'true');
+  }
+  if (offBtn) {
+    offBtn.classList.remove('music-master-btn--active');
+    offBtn.setAttribute('aria-pressed', 'false');
+  }
+}
+
+// Desligar música Living
+function livingMusicOff(button) {
+  livingMusicCommand(button, "off");
+  
+  // Atualizar estado visual dos botões
+  const offBtn = button;
+  const onBtn = button?.parentElement?.querySelector('.music-master-btn--on');
+  
+  if (offBtn) {
+    offBtn.classList.add('music-master-btn--active');
+    offBtn.setAttribute('aria-pressed', 'true');
+  }
+  if (onBtn) {
+    onBtn.classList.remove('music-master-btn--active');
+    onBtn.setAttribute('aria-pressed', 'false');
+  }
+}
+
+// Mute toggle música Living
+function livingMusicMute(button) {
+  const isMuted = button?.getAttribute('aria-pressed') === 'true';
+  const command = isMuted ? "unmute" : "mute";
+  
+  livingMusicCommand(button, command);
+  
+  // Toggle estado visual
+  if (button) {
+    button.setAttribute('aria-pressed', isMuted ? 'false' : 'true');
+    const unmutedIcon = button.querySelector('.volume-icon-unmuted');
+    const mutedIcon = button.querySelector('.volume-icon-muted');
+    
+    if (unmutedIcon && mutedIcon) {
+      unmutedIcon.style.display = isMuted ? 'block' : 'none';
+      mutedIcon.style.display = isMuted ? 'none' : 'block';
+    }
+  }
+}
+
+// Play/Pause toggle música Living
+function livingMusicPlayPause(button) {
+  const isPlaying = button?.getAttribute('aria-pressed') === 'true';
+  const command = isPlaying ? "pause" : "play";
+  
+  livingMusicCommand(button, command);
+  
+  // Toggle estado visual
+  if (button) {
+    button.setAttribute('aria-pressed', isPlaying ? 'false' : 'true');
+    button.classList.toggle('is-playing', !isPlaying);
+    
+    const playIcon = button.querySelector('.music-play-toggle__icon--play');
+    const pauseIcon = button.querySelector('.music-play-toggle__icon--pause');
+    
+    if (playIcon && pauseIcon) {
+      playIcon.style.display = isPlaying ? 'block' : 'none';
+      pauseIcon.style.display = isPlaying ? 'none' : 'block';
+    }
+  }
+}
+
+// Inicializar slider de volume do Living (chamado quando a página é navegada)
+function initLivingMusicVolumeSlider() {
+  const slider = document.getElementById('music-volume-slider-living');
+  if (!slider) return;
+  
+  const DEVICE_ID = "195";
+  
+  // Remover event listeners antigos
+  const newSlider = slider.cloneNode(true);
+  slider.parentNode.replaceChild(newSlider, slider);
+  
+  const updatedSlider = document.getElementById('music-volume-slider-living');
+  if (!updatedSlider) return;
+  
+  // Enviar comando ao soltar o slider
+  updatedSlider.addEventListener('change', (e) => {
+    const value = e.target.value;
+    console.log("🔊 Living Music Volume: " + value);
+    
+    sendHubitatCommand(DEVICE_ID, "setVolume", value)
+      .then(() => {
+        console.log("✅ Volume do Living definido para " + value);
+      })
+      .catch((error) => {
+        console.error("❌ Erro ao definir volume:", error);
+      });
+  });
+  
+  console.log("✅ Slider de volume do Living inicializado");
+}
+
 // Exportar funções usadas em onclick="" no HTML (necessário para IIFE)
 window.toggleRoomControl = toggleRoomControl;
 window.togglePoolControl = togglePoolControl;
@@ -6894,3 +7041,10 @@ window.curtainAction = curtainAction;
 window.spaNavigate = spaNavigate;
 window.handleMasterCurtainsOpen = handleMasterCurtainsOpen;
 window.handleMasterCurtainsClose = handleMasterCurtainsClose;
+window.livingMusicCommand = livingMusicCommand;
+window.livingMusicOn = livingMusicOn;
+window.livingMusicOff = livingMusicOff;
+window.livingMusicMute = livingMusicMute;
+window.livingMusicPlayPause = livingMusicPlayPause;
+window.initLivingMusicVolumeSlider = initLivingMusicVolumeSlider;
+
