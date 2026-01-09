@@ -3295,6 +3295,113 @@ function useHubitatCloud(deviceId) {
   );
 }
 
+// ========================================
+// DISPOSITIVOS COM COMANDO INITIALIZE
+// ========================================
+// IDs dos dispositivos que possuem o comando "initialize"
+// Devem ser inicializados durante o loading para garantir funcionamento
+const DEVICES_WITH_INITIALIZE = [
+  // 🎵 ÁUDIO (Denon AVR + HEOS)
+  "15",   // Varanda Denon (Denon AVR)
+  "29",   // Varanda Denon (HEOS Speaker)
+  "195",  // Denon Living
+  
+  // ⌨️ KEYPADS (Controlart - Xport - IVOLV)
+  "19",   // KP 14 4X3 - 60-19-B0
+  "30",   // KP 01 3X3 - 3D-23-84
+  "34",   // KP 02 4X3 - 64-31-A7
+  "39",   // KP 03 3X3 - 46-F4-32
+  "43",   // KP 04 4X3 - 45-6D-3A
+  "48",   // KP 05 3X3 - 08-E9-EE
+  "56",   // KP 07 3X3 - 72-08-E3
+  "60",   // KP 08 3X3 - 0A-06-B0
+  "64",   // KP 09 3X3 - 77-F9-77
+  "69",   // KP 10 3x3 - 33-17-50
+  "74",   // KP 11 3X3 - 24-45-31
+  "79",   // KP 12 3X3 - 10-FD-01
+  
+  // 🪟 CORTINAS (Controlart - Xport - Curtain Controller)
+  "109",  // Varanda Cortinas Gourmet
+  "115",  // Varanda Cortina Esquerda
+  "116",  // Varanda Cortina Direita
+  "119",  // Living Cortina
+  "161",  // Piscina Deck
+  "162",  // Piscina Toldo
+  
+  // ❄️ AR CONDICIONADO (ControlArt - Xport - IR para AC)
+  "110",  // Varanda AC
+  "166",  // Jantar AC
+  "167",  // Living AC
+  
+  // 📺 CONTROLES DE TV/HTV (IR)
+  "111",  // Varanda TV
+  "114",  // Varanda HTV
+  
+  // ⚡ SHELLY ENERGY MONITOR
+  "94",   // Varanda Shelly Pia
+];
+
+// Função para inicializar todos os dispositivos que suportam initialize
+async function initializeAllDevices(progressCallback) {
+  if (!isProduction) {
+    console.log("🔧 [initializeAllDevices] Modo DEV - inicialização de dispositivos ignorada");
+    return { success: true, initialized: 0, failed: 0, skipped: DEVICES_WITH_INITIALIZE.length };
+  }
+  
+  console.log(`🔧 [initializeAllDevices] Iniciando ${DEVICES_WITH_INITIALIZE.length} dispositivos...`);
+  
+  let initialized = 0;
+  let failed = 0;
+  const total = DEVICES_WITH_INITIALIZE.length;
+  const batchSize = 5; // Enviar em lotes de 5 para não sobrecarregar
+  const delayBetweenBatches = 300; // ms entre lotes
+  
+  // Processar em lotes
+  for (let i = 0; i < total; i += batchSize) {
+    const batch = DEVICES_WITH_INITIALIZE.slice(i, Math.min(i + batchSize, total));
+    
+    // Enviar comandos do lote em paralelo
+    const promises = batch.map(async (deviceId) => {
+      try {
+        await sendHubitatCommand(deviceId, "initialize");
+        console.log(`✅ [initializeAllDevices] Dispositivo ${deviceId} inicializado`);
+        return { deviceId, success: true };
+      } catch (error) {
+        console.warn(`⚠️ [initializeAllDevices] Falha ao inicializar ${deviceId}:`, error.message);
+        return { deviceId, success: false, error: error.message };
+      }
+    });
+    
+    const results = await Promise.allSettled(promises);
+    
+    results.forEach((result) => {
+      if (result.status === "fulfilled" && result.value.success) {
+        initialized++;
+      } else {
+        failed++;
+      }
+    });
+    
+    // Atualizar progresso
+    const progress = Math.round(((i + batch.length) / total) * 100);
+    if (progressCallback) {
+      progressCallback(progress, `Inicializando dispositivos ${Math.min(i + batchSize, total)}/${total}...`);
+    }
+    
+    // Aguardar entre lotes (exceto no último)
+    if (i + batchSize < total) {
+      await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+    }
+  }
+  
+  console.log(`🔧 [initializeAllDevices] Concluído: ${initialized} inicializados, ${failed} falhas`);
+  
+  return { success: failed === 0, initialized, failed, total };
+}
+
+// Flag para evitar múltiplas inicializações
+let devicesInitialized = false;
+
 const TEXT_MOJIBAKE_REGEX = /[\u00C3\u00C2\u00E2\uFFFD]/;
 const TEXT_MOJIBAKE_REPLACEMENTS = [
   ["\u00e2\u0080\u0099", "Ã¢â‚¬â„¢"],
@@ -6362,9 +6469,36 @@ function initializeApp() {
         // Carregamento global de todos os estados (usando Promise)
         loadAllDeviceStatesGlobally()
           .then(function (success) {
-            console.log("Carregamento global concluÃƒÂ­do, success:", success);
+            console.log("Carregamento global concluído, success:", success);
 
-            // Delay final padrÃƒÂ£o para desktop e mobile
+            // ========================================
+            // INICIALIZAÇÃO DE DISPOSITIVOS
+            // ========================================
+            // Enviar comando initialize para todos os dispositivos que suportam
+            if (!devicesInitialized && isProduction) {
+              console.log("🔧 Iniciando inicialização de dispositivos...");
+              updateProgress(85, "Inicializando dispositivos...");
+              
+              initializeAllDevices(function(progress, message) {
+                // Mapear progresso de 85% a 95%
+                var mappedProgress = 85 + Math.round(progress * 0.10);
+                updateProgress(mappedProgress, message);
+              }).then(function(result) {
+                devicesInitialized = true;
+                console.log("🔧 Inicialização de dispositivos concluída:", result);
+                updateProgress(95, "Dispositivos prontos!");
+                finishLoading();
+              }).catch(function(error) {
+                console.error("⚠️ Erro na inicialização de dispositivos:", error);
+                devicesInitialized = true; // Marcar como feito para não travar
+                finishLoading();
+              });
+            } else {
+              finishLoading();
+            }
+            
+            function finishLoading() {
+            // Delay final padrão para desktop e mobile
             var finalDelay = 800;
             setTimeout(function () {
               // Esconder loader
@@ -6408,12 +6542,13 @@ function initializeApp() {
                 );
               }
 
-              console.log("AplicaÃƒÂ§ÃƒÂ£o totalmente inicializada!");
+              console.log("Aplicação totalmente inicializada!");
               showMobileDebug("App totalmente inicializada!", "success");
 
-              // Marcar que a inicialização foi concluÃƒÂ­da
+              // Marcar que a inicialização foi concluída
               window.appFullyInitialized = true;
             }, finalDelay);
+            } // Fim da função finishLoading
           })
           .catch(function (error) {
             console.error("Erro no carregamento global:", error);
@@ -6480,9 +6615,10 @@ setTimeout(function () {
 // Parar polling quando a página é fechada
 window.addEventListener("beforeunload", stopPolling);
 
-// FunÃƒÂ§ÃƒÂµes de debug disponÃƒÂ­veis globalmente
+// Funções de debug disponíveis globalmente
 window.testHubitatConnection = testHubitatConnection;
 window.showErrorMessage = showErrorMessage;
+window.initializeAllDevices = initializeAllDevices; // Para debug manual
 
 // Funções master de cortinas (abrir/fechar todas)
 function handleMasterCurtainsOpen() {
