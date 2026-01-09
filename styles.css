@@ -175,8 +175,9 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
+    height: 100%;
     padding: 0;
     background: transparent;
     border: none;
@@ -187,7 +188,7 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 12px 8px;
+    padding: 8px 0;
     order: 1;
 }
 
@@ -201,28 +202,32 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
     flex-direction: row;
     gap: 12px;
     width: 100%;
+    flex: 1;
     order: 2;
 }
 
 .tv-volume-with-buttons .tv-volume-buttons .tv-btn-square {
     flex: 1;
-    height: 70px;
+    height: auto;
+    min-height: 60px;
 }
 
 /* Responsivo para desktop */
 @media (width >= 900px) {
     .tv-volume-with-buttons {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
     }
     
     .tv-volume-with-buttons .tv-volume-buttons {
         flex-direction: row;
         gap: 16px;
+        flex: 1;
     }
     
     .tv-volume-with-buttons .tv-volume-buttons .tv-btn-square {
         flex: 1;
-        height: 80px;
+        height: auto;
+        min-height: 70px;
     }
 }

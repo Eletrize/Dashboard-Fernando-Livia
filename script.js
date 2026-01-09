@@ -7065,3 +7065,87 @@ window.livingMusicMute = livingMusicMute;
 window.livingMusicPlayPause = livingMusicPlayPause;
 window.initLivingMusicVolumeSlider = initLivingMusicVolumeSlider;
 
+// ============================================
+// CONTROLE DE VOLUME VIA BOTÕES (incrementa/decrementa slider)
+// ============================================
+
+// Variáveis para controle de repetição ao segurar o botão
+let volumeRepeatInterval = null;
+let volumeRepeatTimeout = null;
+
+// Função para ajustar volume do slider
+function adjustVolumeSlider(button, direction) {
+  // Encontrar o slider mais próximo (mesmo módulo de volume)
+  const volumeSection = button.closest('.tv-volume-with-buttons');
+  if (!volumeSection) return;
+  
+  const slider = volumeSection.querySelector('.tv-volume-slider');
+  if (!slider) return;
+  
+  // Obter valor atual e calcular novo valor
+  let currentValue = parseInt(slider.value) || 0;
+  let newValue = direction === 'up' ? currentValue + 1 : currentValue - 1;
+  
+  // Limitar ao range do slider
+  newValue = Math.max(parseInt(slider.min) || 0, Math.min(parseInt(slider.max) || 100, newValue));
+  
+  // Atualizar valor do slider
+  slider.value = newValue;
+  
+  // Atualizar barra visual
+  const percent = (newValue / 100) * 100;
+  slider.style.setProperty('--volume-progress', percent + '%');
+  
+  // Atualizar display de valor se existir
+  const volumeDisplay = slider.closest('.tv-control-section')?.querySelector('.tv-volume-value');
+  if (volumeDisplay) {
+    volumeDisplay.textContent = newValue;
+  }
+  
+  // Disparar evento change para enviar comando ao Hubitat
+  slider.dispatchEvent(new Event('change', { bubbles: true }));
+  
+  // Feedback visual no botão
+  button.style.transform = 'scale(0.92)';
+  button.style.opacity = '0.8';
+  setTimeout(() => {
+    button.style.transform = '';
+    button.style.opacity = '';
+  }, 100);
+  
+  console.log('🔊 Volume ajustado via botão:', direction, '-> Novo valor:', newValue);
+}
+
+// Iniciar repetição ao segurar o botão
+function startVolumeRepeat(button, direction) {
+  // Limpar qualquer repetição anterior
+  stopVolumeRepeat();
+  
+  // Primeiro ajuste imediato
+  adjustVolumeSlider(button, direction);
+  
+  // Após 400ms de segurar, iniciar repetição rápida
+  volumeRepeatTimeout = setTimeout(() => {
+    volumeRepeatInterval = setInterval(() => {
+      adjustVolumeSlider(button, direction);
+    }, 80); // Repetir a cada 80ms enquanto segura
+  }, 400);
+}
+
+// Parar repetição
+function stopVolumeRepeat() {
+  if (volumeRepeatTimeout) {
+    clearTimeout(volumeRepeatTimeout);
+    volumeRepeatTimeout = null;
+  }
+  if (volumeRepeatInterval) {
+    clearInterval(volumeRepeatInterval);
+    volumeRepeatInterval = null;
+  }
+}
+
+// Exportar funções
+window.adjustVolumeSlider = adjustVolumeSlider;
+window.startVolumeRepeat = startVolumeRepeat;
+window.stopVolumeRepeat = stopVolumeRepeat;
+
