@@ -1020,6 +1020,25 @@ function telaoMacroOn() {
     });
 }
 
+// Macro para desligar Telão da Piscina (Receiver Zona 2 + Telão)
+function telaoMacroOff() {
+  const TELAO_ID = "157";
+  const RECEIVER_ID = "16"; // Zona 2 do receiver (Piscina)
+
+  console.log("🎬 Macro Telão: Desligando Receiver Zona 2 e Telão...");
+
+  Promise.all([
+    sendHubitatCommand(RECEIVER_ID, "off"),
+    sendHubitatCommand(TELAO_ID, "off")
+  ])
+    .then(() => {
+      console.log("✅ Receiver Zona 2 e Telão desligados");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao desligar Telão:", error);
+    });
+}
+
 // Macro para desligar TV e Receiver
 function htvMacroOff() {
   const TV_ID = "111";
@@ -6857,6 +6876,8 @@ window.togglePoolControl = togglePoolControl;
 window.fireTVMacro = fireTVMacro;
 window.htvMacroOn = htvMacroOn;
 window.htvMacroOff = htvMacroOff;
+window.telaoMacroOn = telaoMacroOn;
+window.telaoMacroOff = telaoMacroOff;
 window.tvMacroOn = tvMacroOn;
 window.tvMacroOff = tvMacroOff;
 window.suiteMasterHtvOn = suiteMasterHtvOn;
