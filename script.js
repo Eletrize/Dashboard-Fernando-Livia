@@ -1695,8 +1695,15 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         console.log("🎵 [hashchange] Executando initMusicPlayerUI...");
         initMusicPlayerUI();
-        updateDenonMetadata();
-        startMusicMetadataPolling();
+        // Living (ambiente2-musica) não tem metadata - device 195 não suporta HEOS
+        const hash = window.location.hash;
+        if (!hash.includes('ambiente2-musica')) {
+          updateDenonMetadata();
+          startMusicMetadataPolling();
+        } else {
+          console.log("🎵 [hashchange] Living detectado - sem polling de metadata");
+          stopMusicMetadataPolling();
+        }
       }, 300);
     } else {
       stopMusicMetadataPolling();
@@ -5639,6 +5646,11 @@ window.debugEletrize = {
 
 // Função para atualizar metadados do Denon
 function updateDenonMetadata() {
+  // Living (ambiente2-musica) usa device 195 que não tem metadata HEOS
+  if (window.location.hash.includes('ambiente2-musica')) {
+    console.log("🎵 [updateDenonMetadata] Living detectado - pulando (sem metadata)");
+    return;
+  }
   console.log("🎵 [updateDenonMetadata] INICIANDO - Hash atual:", window.location.hash);
 
   // Pedir ao Cloudflare function para retornar o JSON completo do Hubitat
@@ -5977,10 +5989,15 @@ let musicMetadataInterval = null;
 
 // Função para iniciar polling especÃƒÂ­fico de metadados do player
 function startMusicMetadataPolling() {
+  // Living (ambiente2-musica) não tem metadata - pular
+  if (window.location.hash.includes('ambiente2-musica')) {
+    console.log("🎵 Living detectado - sem polling de metadata");
+    return;
+  }
   // Parar polling anterior se existir
   stopMusicMetadataPolling();
 
-  console.log("Ã°Å¸Å½Âµ Iniciando polling de metadados a cada 3 segundos");
+  console.log("🎵 Iniciando polling de metadados a cada 3 segundos");
 
   // Iniciar novo polling a cada 3 segundos
   musicMetadataInterval = setInterval(() => {
