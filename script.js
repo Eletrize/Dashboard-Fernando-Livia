@@ -772,6 +772,46 @@ function togglePoolControl(el, action) {
 
 let tvPowerState = "off"; // Estado inicial: desligado
 
+// ========================================
+// TUNING DE CANAL (SEQUÊNCIA DE NÚMEROS)
+// ========================================
+
+const pendingChannelSequences = new Map(); // deviceId -> { cancelled: boolean }
+
+function cancelPendingChannelSequence(deviceId) {
+  const existing = pendingChannelSequences.get(String(deviceId));
+  if (existing) {
+    existing.cancelled = true;
+    pendingChannelSequences.delete(String(deviceId));
+  }
+}
+
+function delayMs(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function sendCommandSequence(deviceId, commands, intervalMs) {
+  const id = String(deviceId);
+  cancelPendingChannelSequence(id);
+
+  const token = { cancelled: false };
+  pendingChannelSequences.set(id, token);
+
+  try {
+    for (let i = 0; i < commands.length; i += 1) {
+      if (token.cancelled) return;
+      await sendHubitatCommand(id, commands[i]);
+      if (i < commands.length - 1) {
+        await delayMs(intervalMs);
+      }
+    }
+  } finally {
+    if (pendingChannelSequences.get(id) === token) {
+      pendingChannelSequences.delete(id);
+    }
+  }
+}
+
 function updateTVPowerState(newState) {
   tvPowerState = newState;
 
@@ -850,6 +890,19 @@ function tvCommand(el, command) {
   recentCommands.set(deviceId, Date.now());
 
   console.log(`📺 Enviando comando ${command} para dispositivo ${deviceId}`);
+
+  // Atalho: GloboNews (canal 261) no HTV da varanda (deviceId=114)
+  // Envia 2 → 6 → 1 com 0,5s entre cada dígito.
+  if (command === "globonews") {
+    console.log(`📺 GloboNews: sintonizando canal 261 (device ${deviceId})`);
+    // Cancelar qualquer sequência anterior para evitar comandos duplicados
+    sendCommandSequence(deviceId, ["num2", "num6", "num1"], 500).catch(
+      (error) => {
+        console.error("❌ Erro ao sintonizar GloboNews (261):", error);
+      }
+    );
+    return;
+  }
 
   // Enviar para Hubitat
   sendHubitatCommand(deviceId, command)
@@ -2355,9 +2408,38 @@ function initAirConditionerControl() {
       temperatureDebounceTimer = setTimeout(() => {
         const tempCommand = `temp${state.temperature}`;
         console.log(
-          `Enviando comando de temperatura apÃƒÂ³s 1.5s: ${tempCommand}`
+          `Enviando comando de temperatura após 1.5s: ${tempCommand}`
         );
-        sendHubitatCommand(state.deviceId, tempCommand);
+        
+        // Para AC Living, enviar para o AC correto e salvar estado
+        if (isLivingAC && livingSelectedAC) {
+          const acIds = {
+            living1: "167",
+            living2: "166",
+            livingBoth: ["167", "166"]
+          };
+          const selectedIds = acIds[livingSelectedAC];
+          
+          if (Array.isArray(selectedIds)) {
+            // Enviar para múltiplos ACs (Ambos)
+            selectedIds.forEach(id => {
+              sendHubitatCommand(id, tempCommand);
+            });
+            // Salvar temperatura em ambos
+            livingACStates.living1.temperature = state.temperature;
+            livingACStates.living2.temperature = state.temperature;
+            console.log(`🌡️ AC Living: Temperatura ${state.temperature}°C enviada para AMBOS`);
+          } else {
+            sendHubitatCommand(selectedIds, tempCommand);
+            // Salvar temperatura do AC individual
+            livingACStates[livingSelectedAC].temperature = state.temperature;
+            console.log(`🌡️ AC Living: Temperatura ${state.temperature}°C enviada para ${livingSelectedAC}`);
+          }
+        } else {
+          // AC normal (não Living)
+          sendHubitatCommand(state.deviceId, tempCommand);
+        }
+        
         temperatureDebounceTimer = null;
       }, 1500);
     }
@@ -2373,11 +2455,11 @@ function initAirConditionerControl() {
       return null;
     }
 
-    // Calcula a posiÃƒÂ§ÃƒÂ£o relativa ao centro do arco
+    // Calcula a posição relativa ao centro do arco
     const deltaX = pointerX - geometry.centerX;
     const deltaY = geometry.centerY - pointerY; // INVERTIDO: centerY - pointerY (para cima é positivo)
 
-    // Calcula o ÃƒÂ¢ngulo em radianos, depois converte para graus
+    // Calcula o ângulo em radianos, depois converte para graus
     let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
     // Normaliza para 0-360
@@ -2578,6 +2660,75 @@ function initAirConditionerControl() {
   // Verifica se é AC Living antes de adicionar handlers de modo
   const isLivingAC = root.hasAttribute('data-ac-living');
   let livingSelectedAC = null; // null, 'living1', 'living2', 'livingBoth'
+  
+  // ========================================
+  // ESTADOS INDIVIDUAIS DOS ACs DO LIVING
+  // ========================================
+  // Cada AC tem seu próprio estado (power e temperatura)
+  const livingACStates = {
+    living1: { powerOn: false, temperature: 22 },  // AC I (ID 167)
+    living2: { powerOn: false, temperature: 22 }   // AC II (ID 166)
+  };
+  
+  // Função para atualizar o UI com o estado do AC selecionado
+  function updateUIForSelectedAC(selectedMode) {
+    if (selectedMode === 'livingBoth') {
+      // Para "Ambos", mostrar estado combinado
+      const ac1On = livingACStates.living1.powerOn;
+      const ac2On = livingACStates.living2.powerOn;
+      const bothOn = ac1On && ac2On;
+      
+      // Se ambos estão ligados, mostrar média das temperaturas
+      // Se não, mostrar OFF
+      state.powerOn = bothOn;
+      if (bothOn) {
+        state.temperature = Math.round((livingACStates.living1.temperature + livingACStates.living2.temperature) / 2);
+      } else {
+        state.temperature = 22; // Padrão
+      }
+    } else {
+      // Para AC individual, mostrar seu estado salvo
+      const acState = livingACStates[selectedMode];
+      state.powerOn = acState.powerOn;
+      state.temperature = acState.temperature;
+    }
+    
+    // Atualizar UI visual
+    if (powerButton) {
+      powerButton.setAttribute("aria-pressed", state.powerOn.toString());
+    }
+    
+    const angle = angleFromTemperature(state.temperature);
+    updateKnobPosition(angle);
+    updateProgress(angle);
+    updateTemperatureDisplay();
+    
+    if (temperatureSection) {
+      if (state.powerOn) {
+        temperatureSection.classList.add("power-on");
+      } else {
+        temperatureSection.classList.remove("power-on");
+      }
+    }
+    root.toggleAttribute("data-power-off", !state.powerOn);
+    
+    // Habilitar/desabilitar botões de aleta
+    aletaButtons.forEach((btn) => {
+      btn.toggleAttribute("disabled", !state.powerOn);
+    });
+    
+    console.log(`🔄 AC Living: UI atualizada para ${selectedMode}`, { power: state.powerOn, temp: state.temperature });
+  }
+  
+  // Função para salvar estado do AC atual
+  function saveLivingACState() {
+    if (!livingSelectedAC || livingSelectedAC === 'livingBoth') return;
+    
+    livingACStates[livingSelectedAC].powerOn = state.powerOn;
+    livingACStates[livingSelectedAC].temperature = state.temperature;
+    console.log(`💾 AC Living: Estado salvo para ${livingSelectedAC}`, livingACStates[livingSelectedAC]);
+  }
+  // ========================================
 
   modeButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -2587,6 +2738,9 @@ function initAirConditionerControl() {
       if (isLivingAC && (mode === 'living1' || mode === 'living2' || mode === 'livingBoth')) {
         // Se clicar no mesmo botão já ativo, desativa
         if (livingSelectedAC === mode) {
+          // Salvar estado antes de desativar
+          saveLivingACState();
+          
           livingSelectedAC = null;
           button.setAttribute('aria-pressed', 'false');
           
@@ -2596,6 +2750,12 @@ function initAirConditionerControl() {
             powerButton.disabled = true;
           }
         } else {
+          // ========================================
+          // SALVAR ESTADO DO AC ATUAL E CARREGAR O NOVO
+          // ========================================
+          // Salvar estado do AC anterior (se houver)
+          saveLivingACState();
+          
           // Desativa todos os outros e ativa o clicado
           modeButtons.forEach(btn => {
             btn.setAttribute('aria-pressed', 'false');
@@ -2603,6 +2763,12 @@ function initAirConditionerControl() {
           
           livingSelectedAC = mode;
           button.setAttribute('aria-pressed', 'true');
+          
+          // Carregar e mostrar estado do AC selecionado
+          updateUIForSelectedAC(mode);
+          
+          console.log(`🔄 AC Living: Trocando para ${mode}`);
+          // ========================================
           
           // Habilita o botão power
           if (powerButton) {
@@ -2679,19 +2845,27 @@ function initAirConditionerControl() {
       };
       
       const selectedIds = acIds[livingSelectedAC];
-      const command = !state.powerOn ? "on" : "off";
+      const newPowerState = !state.powerOn;
+      const command = newPowerState ? "on" : "off";
       
       if (Array.isArray(selectedIds)) {
-        // Enviar para múltiplos ACs
+        // Enviar para múltiplos ACs (Ambos)
         selectedIds.forEach(id => {
           sendHubitatCommand(id, command);
         });
+        // Atualizar estados de ambos os ACs
+        livingACStates.living1.powerOn = newPowerState;
+        livingACStates.living2.powerOn = newPowerState;
+        console.log(`⚡ AC Living: Comando ${command} enviado para AMBOS os ACs`);
       } else {
         sendHubitatCommand(selectedIds, command);
+        // Salvar estado do AC individual
+        livingACStates[livingSelectedAC].powerOn = newPowerState;
+        console.log(`⚡ AC Living: Comando ${command} enviado para ${livingSelectedAC}`);
       }
       
       // Atualiza estado visual
-      state.powerOn = !state.powerOn;
+      state.powerOn = newPowerState;
       if (powerButton) {
         powerButton.setAttribute("aria-pressed", state.powerOn.toString());
       }
