@@ -204,75 +204,28 @@ function executeMasterCurtainsAction(action) {
 }
 
 // === CENÁRIO DORMIR ===
-// Desliga tudo da Varanda e Living (luzes, AC, receiver) e fecha cortinas
+// Envia comando scene1 para o dispositivo 197
 
 function handleCenarioDormir() {
   showPopup(
-    "Executar cenário Dormir? Isso irá desligar luzes, TV, ar condicionado, receiver e fechar cortinas da Varanda e Living.",
+    "Executar cenário Dormir?",
     executeCenarioDormir
   );
 }
 
 function executeCenarioDormir() {
-  console.log("🌙 Iniciando cenário: Dormir (Desligamento Geral Varanda + Living)");
+  console.log("🌙 Iniciando cenário: Dormir");
 
   // Adicionar feedback visual
   const btn = document.getElementById("cenario-dormir-btn");
   if (btn) btn.classList.add("loading");
 
-  const promises = [];
-
-  // === DESLIGAR LUZES ===
-  // Varanda
-  VARANDA_LUZES.forEach((deviceId) => {
-    console.log(`💡 Desligando luz Varanda ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "off"));
-    setStoredState(deviceId, "off");
-  });
-
-  // Living
-  LIVING_LUZES.forEach((deviceId) => {
-    console.log(`💡 Desligando luz Living ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "off"));
-    setStoredState(deviceId, "off");
-  });
-
-  // === FECHAR CORTINAS ===
-  // Varanda
-  VARANDA_CORTINAS.forEach((deviceId) => {
-    console.log(`🪟 Fechando cortina Varanda ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "close"));
-  });
-
-  // Living
-  LIVING_CORTINAS.forEach((deviceId) => {
-    console.log(`🪟 Fechando cortina Living ${deviceId}`);
-    promises.push(sendHubitatCommand(deviceId, "close"));
-  });
-
-  // === DESLIGAR AR CONDICIONADO ===
-  console.log(`❄️ Desligando AC Varanda ${VARANDA_AC}`);
-  promises.push(sendHubitatCommand(VARANDA_AC, "off"));
-
-  console.log(`❄️ Desligando AC Living ${LIVING_AC}`);
-  promises.push(sendHubitatCommand(LIVING_AC, "off"));
-
-  // === DESLIGAR TV ===
-  console.log(`📺 Desligando TV Varanda ${VARANDA_TV}`);
-  promises.push(sendHubitatCommand(VARANDA_TV, "off"));
-
-  // === DESLIGAR RECEIVER ===
-  console.log(`🎵 Desligando Receiver ${RECEIVER}`);
-  promises.push(sendHubitatCommand(RECEIVER, "off"));
-
-  Promise.all(promises)
+  // Enviar comando scene1 para o dispositivo 197
+  console.log("🌙 Enviando comando scene1 para dispositivo 197");
+  
+  sendHubitatCommand("197", "scene1")
     .then(() => {
       console.log("✅ Cenário Dormir executado com sucesso");
-      setTimeout(() => {
-        if (typeof syncAllVisibleControls === "function") {
-          syncAllVisibleControls(true);
-        }
-      }, 500);
       hidePopup();
     })
     .catch((error) => {
