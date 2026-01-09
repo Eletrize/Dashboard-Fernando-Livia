@@ -50,12 +50,10 @@ function hidePopup() {
   masterConfirmCallback = null;
 }
 
-// DEPRECATED: função removida com novos cenários de expediente
-// function updateMasterLightToggleState() {
-//     const btn = document.getElementById('master-light-toggle-btn');
-//     if (!btn) return;
-//     // ... código comentado
-// }
+// Função placeholder para manter compatibilidade (funcionalidade removida)
+function updateMasterLightToggleState() {
+  // Função vazia - funcionalidade original removida com novos cenários
+}
 
 function handleMasterLightToggle() {
   const btn = document.getElementById("master-light-toggle-btn");
