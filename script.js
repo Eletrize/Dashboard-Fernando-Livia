@@ -26,6 +26,9 @@ function debugLog(messageOrFactory, ...args) {
     return;
   }
 
+  // Pegar o device ID do atributo HTML (15 para Varanda, 16 para Piscina)
+  const DEVICE_ID = slider.dataset.deviceId || "15";
+
   console.log(messageOrFactory, ...args);
 }
 
@@ -1353,23 +1356,22 @@ function fireTVMacro() {
 function initVolumeSlider() {
   const slider = document.getElementById("tv-volume-slider");
   const display = document.getElementById("tv-volume-display");
-  const DEVICE_ID = slider.dataset.deviceId || "15"; // ID do atributo HTML
 
   if (!slider || !display) {
-    console.log("Ã¢Å¡Â Ã¯Â¸Â Slider ou display não encontrado");
+    console.log("Slider ou display nao encontrado");
     return;
   }
 
-  console.log("Ã°Å¸Å½Å¡Ã¯Â¸Â Inicializando slider de volume do Denon AVR");
+  // Pegar o device ID do atributo HTML (15 para Varanda, 16 para Piscina)
+  const DEVICE_ID = slider.dataset.deviceId || "15";
 
-  // Definir o device ID no slider
-  // Usar o device ID do HTML ao inves de sobrescrever
+  console.log("Inicializando slider de volume (Device ID: " + DEVICE_ID + ")");
 
-  // Remover event listeners antigos para evitar duplicaÃƒÂ§ÃƒÂ£o
+  // Remover event listeners antigos para evitar duplicacao
   const newSlider = slider.cloneNode(true);
   slider.parentNode.replaceChild(newSlider, slider);
 
-  // Pegar referÃƒÂªncia ao novo slider
+  // Pegar referencia ao novo slider
   const updatedSlider = document.getElementById("tv-volume-slider");
 
   // Buscar volume atual do Denon e atualizar o slider
@@ -1384,38 +1386,33 @@ function initVolumeSlider() {
     display.textContent = value;
     updatedSlider.style.setProperty("--volume-progress", percentage + "%");
 
-    console.log(
-      `Ã°Å¸Å½Å¡Ã¯Â¸Â Volume display atualizado: ${value} (${percentage.toFixed(
-        1
-      )}%)`
-    );
+    console.log("Volume display atualizado: " + value + " (" + percentage.toFixed(1) + "%)");
   });
 
   // Enviar comando ao soltar o slider
   updatedSlider.addEventListener("change", (e) => {
     const value = e.target.value;
+    const deviceId = e.target.dataset.deviceId || "15";
 
-    console.log(
-      `Ã°Å¸â€Å  Volume alterado para: ${value} - enviando para Denon AVR`
-    );
+    console.log("Volume alterado para: " + value + " - enviando para Device " + deviceId);
 
     // Enviar comando setVolume para o Denon AVR
-    sendHubitatCommand(e.target.dataset.deviceId || "15", "setVolume", value)
+    sendHubitatCommand(deviceId, "setVolume", value)
       .then(() => {
-        console.log(`Ã¢Å“â€¦ Volume do Denon definido para ${value}`);
+        console.log("Volume do Device " + deviceId + " definido para " + value);
       })
       .catch((error) => {
-        console.error(`⚠️Erro ao definir volume do Denon:`, error);
+        console.error("Erro ao definir volume do Device " + deviceId + ":", error);
       });
   });
 
-  console.log("Ã¢Å“â€¦ Slider de volume do Denon AVR inicializado com sucesso");
+  console.log("Slider de volume inicializado com sucesso (Device ID: " + DEVICE_ID + ")");
 }
 
 // Função para atualizar o volume do Denon a partir do servidor
 async function updateDenonVolumeFromServer() {
-  const DENON_DEVICE_ID = "15";
   const tvSlider = document.getElementById("tv-volume-slider");
+  const DENON_DEVICE_ID = tvSlider?.dataset?.deviceId || "15";
   const tvDisplay = document.getElementById("tv-volume-display");
   const musicSlider =
     typeof queryActiveMusic === "function"
