@@ -1043,71 +1043,44 @@
     <h1 class="page-title">Living, Música</h1>
   </div>
 
-  <div class="ambiente2-musica-wrapper ambiente-grid">
-    <div class="control-card control-card--full-width music-player-card" data-metadata-device-id="29">
+  <div class="ambiente2-musica-wrapper ambiente-grid" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh;">
+    <div class="control-card control-card--full-width music-player-card" data-metadata-device-id="195" style="max-width: 400px; width: 100%;">
       <div class="music-player-inner">
-        <div class="music-player-content">
-          <div class="music-primary">
-            <div class="music-album">
-              <img class="music-album-img" src="images/Images/photo-living.jpg" alt="Capa do álbum" loading="lazy" decoding="async" width="720" height="540">
-            </div>
+        <div class="music-player-content" style="display: flex; flex-direction: column; align-items: center; gap: 2rem; padding: 2rem;">
 
-            <div class="music-info">
-              <div class="music-track">
-                <div class="music-track-marquee">
-                  <div class="music-track-marquee__inner">
-                    <span class="music-track-marquee__text" id="music-track">Nome da Música</span>
-                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="music-artist" id="music-artist">Nome do Artista</div>
-            </div>
-          </div>
-
-          <div class="music-secondary">
-            <div class="music-info music-info--desktop">
-              <div class="music-track">
-                <div class="music-track-marquee">
-                  <div class="music-track-marquee__inner">
-                    <span class="music-track-marquee__text music-track-sync">Nome da Música</span>
-                    <span class="music-track-marquee__text music-track-marquee__text--clone" aria-hidden="true"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="music-artist music-artist-sync">Nome do Artista</div>
-            </div>
-
-            <div class="music-controls">
-              <div class="tv-playback-controls">
-                <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev" data-device-id="29">
-                  <img src="images/icons/icon-previous-track.svg" alt="Faixa anterior">
-                </button>
-                <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" id="music-play-toggle" aria-pressed="false" data-device-id="29">
-                  <img src="images/icons/icon-play.svg" alt="Tocar" class="music-play-toggle__icon music-play-toggle__icon--play">
-                  <img src="images/icons/icon-pause.svg" alt="Pausar" class="music-play-toggle__icon music-play-toggle__icon--pause">
-                </button>
-                <button class="tv-btn-icon-small" aria-label="Next" id="music-next" data-device-id="29">
-                  <img src="images/icons/icon-next-track.svg" alt="Próxima faixa">
-                </button>
-              </div>
-            </div>
-
-            <div class="music-volume-section">
-              <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false" data-device-id="195">
-                <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
-                <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
+          <!-- Controles de Playback -->
+          <div class="music-controls">
+            <div class="tv-playback-controls" style="display: flex; gap: 1.5rem; justify-content: center;">
+              <button class="tv-btn-icon-small" aria-label="Previous" id="music-prev" data-device-id="195">
+                <img src="images/icons/icon-previous-track.svg" alt="Faixa anterior">
               </button>
-              <div class="music-volume-slider-container">
-                <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume" data-device-id="195">
-              </div>
-            </div>
-
-            <div class="music-master-controls">
-              <button class="music-master-btn music-master-btn--on music-master-btn--active" id="music-master-on" aria-label="Ligar" aria-pressed="true" data-device-id="195">Ligar</button>
-              <button class="music-master-btn music-master-btn--off" id="music-master-off" aria-label="Desligar" aria-pressed="false" data-device-id="195">Desligar</button>
+              <button class="tv-btn-icon-small music-play-toggle" aria-label="Tocar/Pausar" id="music-play-toggle" aria-pressed="false" data-device-id="195">
+                <img src="images/icons/icon-play.svg" alt="Tocar" class="music-play-toggle__icon music-play-toggle__icon--play">
+                <img src="images/icons/icon-pause.svg" alt="Pausar" class="music-play-toggle__icon music-play-toggle__icon--pause">
+              </button>
+              <button class="tv-btn-icon-small" aria-label="Next" id="music-next" data-device-id="195">
+                <img src="images/icons/icon-next-track.svg" alt="Próxima faixa">
+              </button>
             </div>
           </div>
+
+          <!-- Controle de Volume -->
+          <div class="music-volume-section" style="width: 100%;">
+            <button class="music-volume-mute-btn" id="music-mute" aria-label="Mute" aria-pressed="false" data-device-id="195">
+              <img src="images/icons/icon-volume.svg" alt="Volume" class="volume-icon-unmuted">
+              <img src="images/icons/icon-mute.svg" alt="Mute" class="volume-icon-muted" style="display:none;">
+            </button>
+            <div class="music-volume-slider-container">
+              <input type="range" min="0" max="100" value="50" class="music-volume-slider" id="music-volume-slider" aria-label="Volume" data-device-id="195">
+            </div>
+          </div>
+
+          <!-- Botões Ligar/Desligar -->
+          <div class="music-master-controls" style="display: flex; gap: 1rem; justify-content: center;">
+            <button class="music-master-btn music-master-btn--on music-master-btn--active" id="music-master-on" aria-label="Ligar" aria-pressed="true" data-device-id="195">Ligar</button>
+            <button class="music-master-btn music-master-btn--off" id="music-master-off" aria-label="Desligar" aria-pressed="false" data-device-id="195">Desligar</button>
+          </div>
+
         </div>
       </div>
     </div>
