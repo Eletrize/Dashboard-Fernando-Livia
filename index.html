@@ -407,47 +407,23 @@
         ambiente9: "photo-suitemaster",
       };
 
-      const RESPONSIVE_WIDTHS = [480, 720, 960, 1440, 1920, 2560];
-      const CARD_DISPLAY_WIDTH = 720;
-      const CARD_IMAGE_SIZES =
-        "(max-width: 600px) 100vw, (max-width: 1200px) 60vw, 720px";
-
+      // Usando apenas imagens webp da pasta images/Images
       const ROOM_IMAGE_DATA = Object.entries(ROOM_IMAGE_BASE).reduce(
         (acc, [key, base]) => {
-          const sortedWidths = [...RESPONSIVE_WIDTHS].sort((a, b) => a - b);
-          const backgroundWidth = sortedWidths[sortedWidths.length - 1];
-          const cardWidth =
-            sortedWidths.find((width) => width >= CARD_DISPLAY_WIDTH) ||
-            backgroundWidth;
+          const webpUrl = `images/Images/${base}.webp`;
           acc[key] = {
             base,
-            fallback: `images/Images/${base}.jpg`,
-            webpSrcset: RESPONSIVE_WIDTHS.map(
-              (width) => `images/optimized/${base}-${width}.webp ${width}w`
-            ).join(", "),
-            defaultWebp: `images/optimized/${base}-${cardWidth}.webp`,
-            backgroundWebp: `images/optimized/${base}-${backgroundWidth}.webp`,
+            webp: webpUrl,
           };
           return acc;
         },
         {}
       );
 
-      const WEBP_SUPPORTED = (() => {
-        try {
-          const canvas = document.createElement("canvas");
-          return canvas
-            .toDataURL("image/webp", 0.5)
-            .startsWith("data:image/webp");
-        } catch (error) {
-          return false;
-        }
-      })();
-
       function getRoomBackgroundUrl(route) {
         const data = ROOM_IMAGE_DATA[route];
         if (!data) return null;
-        return WEBP_SUPPORTED ? data.backgroundWebp : data.fallback;
+        return data.webp;
       }
 
       const ROOM_BACKGROUND_CACHE = new Map();
@@ -504,12 +480,10 @@
           container.classList.remove("bg-loading");
         } else {
           const data = ROOM_IMAGE_DATA[route];
-          const fallbackUrl =
-            (WEBP_SUPPORTED ? data?.defaultWebp : data?.fallback) ||
-            data?.fallback;
-          if (fallbackUrl) {
-            cacheRoomBackground(route, fallbackUrl);
-            container.style.backgroundImage = `url('${fallbackUrl}')`;
+          const webpUrl = data?.webp;
+          if (webpUrl) {
+            cacheRoomBackground(route, webpUrl);
+            container.style.backgroundImage = `url('${webpUrl}')`;
           } else {
             container.style.backgroundImage = "";
           }
@@ -532,8 +506,7 @@
       function renderRoomResponsivePhoto(route, alt, options = {}) {
         const data = ROOM_IMAGE_DATA[route];
         if (!data) return "";
-        const preferredCardUrl = WEBP_SUPPORTED ? data.defaultWebp : data.fallback;
-        cacheRoomBackground(route, preferredCardUrl);
+        cacheRoomBackground(route, data.webp);
         const {
           eager = false,
           className = "room-card-photo",
@@ -547,20 +520,10 @@
           : "";
 
         return `
-          <picture class="${className}" data-route="${route}">
-            <source
-              type="image/webp"
-              srcset="${data.webpSrcset}"
-              sizes="${CARD_IMAGE_SIZES}"
-            />
-            <source
-              type="image/jpeg"
-              srcset="${data.fallback}"
-              sizes="${CARD_IMAGE_SIZES}"
-            />
+          <div class="${className}" data-route="${route}">
             <img
               ${imgClassAttribute}
-              src="${data.fallback}"
+              src="${data.webp}"
               alt="${alt}"
               loading="${loading}"
               decoding="${decoding}"
@@ -568,7 +531,7 @@
               width="720"
               height="540"
             />
-          </picture>
+          </div>
         `;
       }
 
@@ -3362,7 +3325,7 @@
 
         <button class="back-btn" onclick="spaNavigate('home')"><img src="images/icons/back-button.svg" alt="Voltar"></button>
 
-        <h1 class="page-title">Circulação</h1>
+        <h1 class="page-title">Área Íntima</h1>
 
     </div>
 
@@ -5361,7 +5324,7 @@
               { name: "Piscina", route: "ambiente3" },
               { name: "Externa", route: "ambiente4" },
               { name: "Serviço", route: "ambiente5" },
-              { name: "Circulação", route: "ambiente6" },
+              { name: "Área Íntima", route: "ambiente6" },
               { name: "Suíte I", route: "ambiente7" },
               { name: "Suíte II", route: "ambiente8" },
               { name: "Suíte Master", route: "ambiente9" },

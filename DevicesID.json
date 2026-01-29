@@ -2372,7 +2372,7 @@
         "date":  "2025-11-24T21:00:55+0000",
         "model":  null,
         "manufacturer":  null,
-        "room":  "Circulação",
+        "room":  "Área Íntima",
         "capabilities":  [
                              "Actuator",
                              "Switch",
@@ -2406,7 +2406,7 @@
         "date":  "2025-11-24T21:00:55+0000",
         "model":  null,
         "manufacturer":  null,
-        "room":  "Circulação",
+        "room":  "Área Íntima",
         "capabilities":  [
                              "Actuator",
                              "Switch",
