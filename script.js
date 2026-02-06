@@ -2842,8 +2842,10 @@ function initAirConditionerControl() {
       console.log("ALETA MOVIMENTO: Executando comando swingOn (mover aletas)");
       sendHubitatCommand(state.deviceId, "swingOn");
     } else if (aleta === "windfree") {
-      console.log("WINDFREE: Executando comando windfree");
-      sendHubitatCommand(state.deviceId, "windfree");
+      const isSuiteMasterAC = String(state.deviceId) === String(AC_DEVICE_IDS.ambiente9);
+      const windFreeCommand = isSuiteMasterAC ? "windFree" : "windfree";
+      console.log(`WINDFREE: Executando comando ${windFreeCommand}`);
+      sendHubitatCommand(state.deviceId, windFreeCommand);
     } else if (aleta === "parada") {
       console.log("ALETA PARADA: Executando comando swingOff (parar aletas)");
       sendHubitatCommand(state.deviceId, "swingOff");
