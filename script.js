@@ -3374,7 +3374,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
 // Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
-const APP_VERSION = "1.0.6"; // cache/version marker
+const APP_VERSION = "1.0.7"; // cache/version marker
 (function () {
   if (false && isMobile) {
     // DESABILITADO para debug

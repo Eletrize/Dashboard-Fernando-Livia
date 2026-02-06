@@ -314,9 +314,21 @@ html,html{height:100dvh;overflow:hidden}body{touch-action:manipulation;-webkit-u
 }
 
 .music-control-panel .tv-playback-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     padding: 0;
     gap: 12px;
+}
+
+.music-control-panel .tv-playback-controls .tv-btn-icon-small {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
 }
 
 .music-control-panel .tv-btn-icon-small {
