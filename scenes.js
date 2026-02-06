@@ -15,6 +15,9 @@ const LIVING_AC = "167";
 // Receiver/Música
 const RECEIVER = "15";
 
+// Área Íntima
+const AREA_INTIMA_BALIZADORES = "82";
+
 let masterConfirmCallback = null;
 
 function showPopup(message, onConfirm) {
@@ -225,10 +228,40 @@ function executeCenarioDormir() {
     .then(() => {
       console.log("✅ Comando initialize enviado com sucesso");
       console.log("🌙 Enviando comando scene1 para dispositivo 197");
-      return sendHubitatCommand("197", "scene1");
+
+      const curtainCommands = VARANDA_CORTINAS.map((id) =>
+        sendCurtainCommand(id, "close")
+      );
+
+      return Promise.all([
+        sendHubitatCommand("197", "scene1"),
+        sendHubitatCommand(AREA_INTIMA_BALIZADORES, "on"),
+        ...curtainCommands,
+      ]);
     })
     .then(() => {
       console.log("✅ Cenário Dormir executado com sucesso");
+
+      if (typeof setStoredState === "function") {
+        setStoredState(AREA_INTIMA_BALIZADORES, "on");
+      }
+
+      if (typeof updateDeviceUI === "function") {
+        updateDeviceUI(AREA_INTIMA_BALIZADORES, "on", true);
+      }
+
+      if (typeof setCurtainState === "function") {
+        VARANDA_CORTINAS.forEach((id) => setCurtainState(id, "closed"));
+      }
+
+      if (typeof updateIndividualCurtainButtons === "function") {
+        updateIndividualCurtainButtons(VARANDA_CORTINAS, "close");
+      }
+
+      if (typeof updateDeviceStatesFromServer === "function") {
+        updateDeviceStatesFromServer();
+      }
+
       hidePopup();
     })
     .catch((error) => {
