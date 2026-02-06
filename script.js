@@ -894,16 +894,26 @@ function tvCommand(el, command) {
 
   console.log(`📺 Enviando comando ${command} para dispositivo ${deviceId}`);
 
-  // Atalho: GloboNews (canal 261) no HTV da varanda (deviceId=114)
-  // Envia 2 → 6 → 1 com 0,05s entre cada dígito.
+  // Atalho: GloboNews (canal 267) no HTV da varanda (deviceId=114)
+  // Envia 2 → 6 → 7 com 0,05s entre cada dígito.
   if (command === "globonews") {
-    console.log(`📺 GloboNews: sintonizando canal 261 (device ${deviceId})`);
+    console.log(`📺 GloboNews: sintonizando canal 267 (device ${deviceId})`);
     // Cancelar qualquer sequência anterior para evitar comandos duplicados
-    sendCommandSequence(deviceId, ["num2", "num6", "num1"], 50).catch(
+    sendCommandSequence(deviceId, ["num2", "num6", "num7"], 50).catch(
       (error) => {
-        console.error("❌ Erro ao sintonizar GloboNews (261):", error);
+        console.error("❌ Erro ao sintonizar GloboNews (267):", error);
       }
     );
+    return;
+  }
+
+  // Atalho: BBB (canal 1) no HTV
+  // Envia num1 direto.
+  if (command === "bbb") {
+    console.log(`📺 BBB: sintonizando canal 1 (device ${deviceId})`);
+    sendHubitatCommand(deviceId, "num1")
+      .then(() => console.log(`✅ BBB canal 1 sintonizado (device ${deviceId})`))
+      .catch((error) => console.error("❌ Erro ao sintonizar BBB (1):", error));
     return;
   }
 
