@@ -1,13 +1,13 @@
 // ALL_LIGHT_IDS agora está definido em script.js (carregado primeiro)
 
-// === CONFIGURAÇÃO DO CENÁRIO DORMIR ===
-// Dispositivos da Varanda (Ambiente 1)
+// === MAPEAMENTO DE DISPOSITIVOS ===
+// Varanda (Ambiente 1)
 const VARANDA_LUZES = ["44", "95", "96", "41", "45", "40", "31"];
 const VARANDA_CORTINAS = ["109", "115", "116"];
 const VARANDA_AC = "110";
 const VARANDA_TV = "111";
 
-// Dispositivos do Living (Ambiente 2)
+// Living (Ambiente 2)
 const LIVING_LUZES = ["57", "61", "75", "76", "49", "58", "20"];
 const LIVING_CORTINAS = ["119"];
 const LIVING_AC = "167";
@@ -15,8 +15,17 @@ const LIVING_AC = "167";
 // Receiver/Música
 const RECEIVER = "15";
 
-// Área Íntima
+// Área íntima
 const AREA_INTIMA_BALIZADORES = "82";
+
+// Piscina (inclui luz da página Piscina > Iluminação)
+const PISCINA_LUZES = ["35", "36", "37", "42", "270"];
+
+// Cenário Vinho
+const VINHO_LUZES_ON = ["20", "75", "76"]; // Arandela, Spots Adega, LED Movel Adega
+
+// Cenário Jantar
+const JANTAR_VARANDA_LUZES_ON = ["31", "40", "45", "96", "95"]; // Lustre, Spots Movel, LED Movel, LED Movel Pia, LED Pia
 
 let masterConfirmCallback = null;
 
@@ -26,6 +35,10 @@ function showPopup(message, onConfirm) {
   const confirmBtn = document.getElementById("popup-confirm");
   const cancelBtn = document.getElementById("popup-cancel");
   const overlay = popup;
+
+  if (!popup || !messageEl || !confirmBtn || !cancelBtn) {
+    return;
+  }
 
   messageEl.textContent = message;
   masterConfirmCallback = onConfirm;
@@ -47,19 +60,21 @@ function showPopup(message, onConfirm) {
 
 function hidePopup() {
   const popup = document.getElementById("confirmation-popup");
+  if (!popup) return;
   popup.style.display = "none";
   const confirmBtn = document.getElementById("popup-confirm");
-  confirmBtn.onclick = null;
+  if (confirmBtn) confirmBtn.onclick = null;
   masterConfirmCallback = null;
 }
 
-// Função placeholder para manter compatibilidade (funcionalidade removida)
+// Função placeholder para manter compatibilidade
 function updateMasterLightToggleState() {
-  // Função vazia - funcionalidade original removida com novos cenários
+  // Intencionalmente vazia
 }
 
 function handleMasterLightToggle() {
   const btn = document.getElementById("master-light-toggle-btn");
+  if (!btn) return;
   const action = btn.dataset.action;
 
   const message =
@@ -71,41 +86,28 @@ function handleMasterLightToggle() {
 }
 
 function executeMasterLightToggle(action) {
-  // Usar machine rules dos relay boards para otimização:
   // Dispositivos 264 e 265: MasterONOFF-RelayBoard-01 e 02
-  // Button 1 (push 1) = Master ON para ambos os relay boards
-  // Button 2 (push 2) = Master OFF para ambos os relay boards
+  // Button 1 (push 1) = Master ON
+  // Button 2 (push 2) = Master OFF
+  const relayDevices = ["264", "265"];
+  const buttonValue = action === "on" ? "1" : "2";
 
-  const relayDevices = ["264", "265"]; // Ambos os relay boards
-  const buttonValue = action === "on" ? "1" : "2"; // Button 1 = ON, Button 2 = OFF
-
-  console.log(
-    `🎯 Executando master ${action} via relay boards otimizados (devices ${relayDevices.join(
-      ", "
-    )}, button ${buttonValue})`
+  const promises = relayDevices.map((deviceId) =>
+    sendHubitatCommand(deviceId, "push", buttonValue)
   );
-
-  // Enviar comandos para ambos os relay boards em paralelo
-  const promises = relayDevices.map((deviceId) => {
-    console.log(`📡 Enviando push ${buttonValue} para device ${deviceId}`);
-    return sendHubitatCommand(deviceId, "push", buttonValue);
-  });
 
   Promise.all(promises)
     .then(() => {
-      console.log(
-        `✅ Master light toggle ${action} enviado com sucesso para ambos os relay boards`
-      );
+      if (Array.isArray(ALL_LIGHT_IDS)) {
+        ALL_LIGHT_IDS.forEach((id) => {
+          if (typeof setStoredState === "function") {
+            setStoredState(id, action);
+          }
+        });
+      }
 
-      // Atualizar estados locais de todos os dispositivos após comando bem-sucedido
-      ALL_LIGHT_IDS.forEach((id) => {
-        setStoredState(id, action);
-      });
-
-      // Forçar atualização da UI após 1 segundo para dar tempo dos relay boards processarem
       setTimeout(() => {
         updateMasterLightToggleState();
-        // Forçar polling para sincronizar estados reais
         if (typeof updateDeviceStatesFromServer === "function") {
           updateDeviceStatesFromServer();
         }
@@ -114,10 +116,7 @@ function executeMasterLightToggle(action) {
       hidePopup();
     })
     .catch((err) => {
-      console.error(
-        `❌ Master light toggle ${action} falhou em um ou mais relay boards:`,
-        err
-      );
+      console.error(`Erro no master light toggle (${action}):`, err);
       hidePopup();
     });
 }
@@ -132,11 +131,13 @@ function handleMasterCurtainToggle(action) {
 }
 
 function executeMasterCurtainToggle(action) {
-  const promises = ALL_CURTAIN_IDS.map((id) => sendCurtainCommand(id, action));
+  const curtainIds = Array.isArray(window.ALL_CURTAIN_IDS)
+    ? window.ALL_CURTAIN_IDS
+    : [];
+  const promises = curtainIds.map((id) => sendCurtainCommand(id, action));
 
   Promise.all(promises)
     .then(() => {
-      console.log(`Master curtain toggle ${action} complete.`);
       hidePopup();
     })
     .catch((err) => {
@@ -145,7 +146,6 @@ function executeMasterCurtainToggle(action) {
     });
 }
 
-// Funções para controlar todas as cortinas via botão virtual do Hubitat (ID 44)
 function handleMasterCurtainsOpen() {
   showPopup("Você tem certeza que gostaria de abrir todas as cortinas?", () => {
     executeMasterCurtainsAction("open");
@@ -153,82 +153,104 @@ function handleMasterCurtainsOpen() {
 }
 
 function handleMasterCurtainsClose() {
-  showPopup(
-    "Você tem certeza que gostaria de fechar todas as cortinas?",
-    () => {
-      executeMasterCurtainsAction("close");
-    }
-  );
+  showPopup("Você tem certeza que gostaria de fechar todas as cortinas?", () => {
+    executeMasterCurtainsAction("close");
+  });
 }
 
 function executeMasterCurtainsAction(action) {
   const deviceId = "44"; // Virtual Button "Todas-Cortinas"
   const pushButton = action === "open" ? "1" : "3"; // 1 = abrir, 3 = fechar
 
-  console.log(
-    `🎬 Executando ação master curtinas: ${action} (ID: ${deviceId}, push: ${pushButton})`
-  );
-
-  // Adicionar feedback visual (loading)
   const btnId =
     action === "open"
       ? "master-curtains-open-btn"
       : "master-curtains-close-btn";
   const btn = document.getElementById(btnId);
-  if (btn) {
-    btn.classList.add("loading");
-  }
+  if (btn) btn.classList.add("loading");
 
-  // Enviar comando para o Virtual Button
   sendHubitatCommand(deviceId, "push", pushButton)
     .then(() => {
-      console.log(`✅ Comando master curtinas ${action} executado com sucesso`);
       hidePopup();
     })
     .catch((error) => {
-      console.error(
-        `❌ Erro ao executar comando master curtinas ${action}:`,
-        error
-      );
-      showErrorMessage(
-        `Erro ao ${action === "open" ? "abrir" : "fechar"} cortinas: ${
-          error.message
-        }`
-      );
+      console.error(`Erro ao executar comando master curtinas ${action}:`, error);
+      if (typeof showErrorMessage === "function") {
+        showErrorMessage(
+          `Erro ao ${action === "open" ? "abrir" : "fechar"} cortinas: ${
+            error.message
+          }`
+        );
+      }
     })
     .finally(() => {
-      // Remover feedback visual
-      if (btn) {
-        btn.classList.remove("loading");
-      }
+      if (btn) btn.classList.remove("loading");
     });
 }
 
-// === CENÁRIO DORMIR ===
-// Envia comando scene1 para o dispositivo 197
+function setSceneButtonLoading(buttonId, isLoading) {
+  const btn = document.getElementById(buttonId);
+  if (!btn) return;
+  btn.classList.toggle("loading", Boolean(isLoading));
+}
 
+async function sendCommandToMany(deviceIds, command, value) {
+  const ids = Array.isArray(deviceIds) ? deviceIds : [deviceIds];
+  return Promise.all(ids.map((id) => sendHubitatCommand(id, command, value)));
+}
+
+function syncLightStates(deviceIds, state) {
+  if (!Array.isArray(deviceIds)) return;
+  deviceIds.forEach((id) => {
+    if (typeof setStoredState === "function") {
+      setStoredState(id, state);
+    }
+    if (typeof updateDeviceUI === "function") {
+      updateDeviceUI(id, state, true);
+    }
+  });
+}
+
+async function turnOnAC(deviceId) {
+  if (!deviceId) return;
+  try {
+    await sendHubitatCommand(deviceId, "initialize");
+  } catch (_error) {
+    // Segue com "on" mesmo se initialize falhar.
+  }
+  await sendHubitatCommand(deviceId, "on");
+}
+
+function syncCurtainsClosed(deviceIds) {
+  if (!Array.isArray(deviceIds)) return;
+
+  if (typeof setCurtainState === "function") {
+    deviceIds.forEach((id) => setCurtainState(id, "closed"));
+  }
+
+  if (typeof updateIndividualCurtainButtons === "function") {
+    updateIndividualCurtainButtons(deviceIds, "close");
+  }
+}
+
+function refreshStatesAfterScene() {
+  if (typeof updateDeviceStatesFromServer === "function") {
+    updateDeviceStatesFromServer();
+  }
+}
+
+// === CENÁRIO DORMIR ===
+// Envia command scene1 para o dispositivo 197
 function handleCenarioDormir() {
-  showPopup(
-    "Executar cenário Dormir?",
-    executeCenarioDormir
-  );
+  showPopup("Executar cenário Dormir?", executeCenarioDormir);
 }
 
 function executeCenarioDormir() {
-  console.log("🌙 Iniciando cenário: Dormir");
+  const buttonId = "cenario-dormir-btn";
+  setSceneButtonLoading(buttonId, true);
 
-  // Adicionar feedback visual
-  const btn = document.getElementById("cenario-dormir-btn");
-  if (btn) btn.classList.add("loading");
-
-  // Enviar comando initialize primeiro, depois scene1 para o dispositivo 197
-  console.log("🌙 Enviando comando initialize para dispositivo 197");
-  
   sendHubitatCommand("197", "initialize")
     .then(() => {
-      console.log("✅ Comando initialize enviado com sucesso");
-      console.log("🌙 Enviando comando scene1 para dispositivo 197");
-
       const curtainCommands = VARANDA_CORTINAS.map((id) =>
         sendCurtainCommand(id, "close")
       );
@@ -240,8 +262,6 @@ function executeCenarioDormir() {
       ]);
     })
     .then(() => {
-      console.log("✅ Cenário Dormir executado com sucesso");
-
       if (typeof setStoredState === "function") {
         setStoredState(AREA_INTIMA_BALIZADORES, "on");
       }
@@ -250,29 +270,95 @@ function executeCenarioDormir() {
         updateDeviceUI(AREA_INTIMA_BALIZADORES, "on", true);
       }
 
-      if (typeof setCurtainState === "function") {
-        VARANDA_CORTINAS.forEach((id) => setCurtainState(id, "closed"));
-      }
-
-      if (typeof updateIndividualCurtainButtons === "function") {
-        updateIndividualCurtainButtons(VARANDA_CORTINAS, "close");
-      }
-
-      if (typeof updateDeviceStatesFromServer === "function") {
-        updateDeviceStatesFromServer();
-      }
-
+      syncCurtainsClosed(VARANDA_CORTINAS);
+      refreshStatesAfterScene();
       hidePopup();
     })
     .catch((error) => {
-      console.error("❌ Erro ao executar Cenário Dormir:", error);
+      console.error("Erro ao executar Cenário Dormir:", error);
       if (typeof showErrorMessage === "function") {
         showErrorMessage(`Erro ao executar cenário Dormir: ${error.message}`);
       }
     })
     .finally(() => {
-      if (btn) btn.classList.remove("loading");
+      setSceneButtonLoading(buttonId, false);
     });
+}
+
+// === CENÁRIO VINHO ===
+function handleCenarioVinho() {
+  showPopup("Executar cenário Vinho?", executeCenarioVinho);
+}
+
+async function executeCenarioVinho() {
+  const buttonId = "cenario-vinho-btn";
+  setSceneButtonLoading(buttonId, true);
+
+  try {
+    // 1) Desligar todas as luzes do Living
+    await sendCommandToMany(LIVING_LUZES, "off");
+    syncLightStates(LIVING_LUZES, "off");
+
+    // 2) Acender Arandela, Spots Adega e LED Movel Adega
+    await sendCommandToMany(VINHO_LUZES_ON, "on");
+    syncLightStates(VINHO_LUZES_ON, "on");
+
+    // 3) Ligar AR Living
+    await turnOnAC(LIVING_AC);
+
+    // 4) Fechar cortina Living
+    await Promise.all(
+      LIVING_CORTINAS.map((id) => sendCurtainCommand(id, "close"))
+    );
+    syncCurtainsClosed(LIVING_CORTINAS);
+
+    refreshStatesAfterScene();
+    hidePopup();
+  } catch (error) {
+    console.error("Erro ao executar Cenário Vinho:", error);
+    if (typeof showErrorMessage === "function") {
+      showErrorMessage(`Erro ao executar cenário Vinho: ${error.message}`);
+    }
+  } finally {
+    setSceneButtonLoading(buttonId, false);
+  }
+}
+
+// === CENÁRIO JANTAR ===
+function handleCenarioJantar() {
+  showPopup("Executar cenário Jantar?", executeCenarioJantar);
+}
+
+async function executeCenarioJantar() {
+  const buttonId = "cenario-jantar-btn";
+  setSceneButtonLoading(buttonId, true);
+
+  try {
+    // 1) Desligar todas as luzes da Varanda
+    await sendCommandToMany(VARANDA_LUZES, "off");
+    syncLightStates(VARANDA_LUZES, "off");
+
+    // 2) Acender luzes da cena Jantar na Varanda
+    await sendCommandToMany(JANTAR_VARANDA_LUZES_ON, "on");
+    syncLightStates(JANTAR_VARANDA_LUZES_ON, "on");
+
+    // 3) Acender todas as luzes da Piscina
+    await sendCommandToMany(PISCINA_LUZES, "on");
+    syncLightStates(PISCINA_LUZES, "on");
+
+    // 4) Ligar AR da Varanda
+    await turnOnAC(VARANDA_AC);
+
+    refreshStatesAfterScene();
+    hidePopup();
+  } catch (error) {
+    console.error("Erro ao executar Cenário Jantar:", error);
+    if (typeof showErrorMessage === "function") {
+      showErrorMessage(`Erro ao executar cenário Jantar: ${error.message}`);
+    }
+  } finally {
+    setSceneButtonLoading(buttonId, false);
+  }
 }
 
 function initScenesPage() {

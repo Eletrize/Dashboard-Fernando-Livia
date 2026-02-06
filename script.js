@@ -116,6 +116,8 @@ const ICON_ASSET_PATHS = [
   "images/icons/icon-play.svg",
   "images/icons/icon-pause.svg",
   "images/icons/icon-stop.svg",
+  "images/icons/icon-vinho.svg",
+  "images/icons/icon-jantar.svg",
   "images/icons/Encerrar-expediente.svg",
   "images/icons/iniciar-expediente.svg",
   "images/icons/icon-scenes.svg",
@@ -3374,7 +3376,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
 // Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
-const APP_VERSION = "1.0.7"; // cache/version marker
+const APP_VERSION = "1.0.8"; // cache/version marker
 (function () {
   if (false && isMobile) {
     // DESABILITADO para debug
