@@ -1,4 +1,4 @@
-﻿// ========================================
+// ========================================
 // DEBUG UTILITIES
 // ========================================
 
@@ -3374,7 +3374,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
 // Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
-const APP_VERSION = "1.0.0"; // Ã°Å¸Å½â€° MARCO v1.0 - SISTEMA TOTALMENTE FUNCIONAL
+const APP_VERSION = "1.0.5"; // cache/version marker
 (function () {
   if (false && isMobile) {
     // DESABILITADO para debug
@@ -6105,12 +6105,76 @@ function ensureMusicTrackMarqueeListeners() {
   musicTrackMarqueeListenersAttached = true;
 }
 
+// Fallback to convert legacy music markup into controls-only layout.
+// This guarantees Varanda/Living/Piscina keep the new UI even if old HTML is cached.
+function enforceMusicControlsOnlyLayout() {
+  const activePage = document.querySelector(".page.active");
+  if (!activePage) return;
+
+  const playerContent = activePage.querySelector(
+    ".music-player-card .music-player-content"
+  );
+  if (!playerContent) return;
+
+  if (playerContent.classList.contains("music-player-content--controls-only")) {
+    return;
+  }
+
+  const controlsBlock = playerContent.querySelector(".music-controls");
+  const volumeBlock = playerContent.querySelector(".music-volume-section");
+  const masterBlock = playerContent.querySelector(".music-master-controls");
+
+  if (!controlsBlock || !volumeBlock || !masterBlock) {
+    return;
+  }
+
+  playerContent
+    .querySelectorAll(".music-primary, .music-info--desktop")
+    .forEach((node) => node.remove());
+
+  const shell = document.createElement("div");
+  shell.className = "music-control-shell";
+
+  const createPanel = (title, className, bodyNode) => {
+    const panel = document.createElement("section");
+    panel.className = className;
+
+    const label = document.createElement("h2");
+    label.className = "music-section-label";
+    label.textContent = title;
+    panel.appendChild(label);
+    panel.appendChild(bodyNode);
+
+    return panel;
+  };
+
+  shell.appendChild(
+    createPanel(
+      "Reproducao",
+      "music-control-panel music-control-panel--transport",
+      controlsBlock
+    )
+  );
+  shell.appendChild(
+    createPanel("Volume", "music-control-panel", volumeBlock)
+  );
+  shell.appendChild(
+    createPanel("Energia", "music-control-panel", masterBlock)
+  );
+
+  playerContent.innerHTML = "";
+  playerContent.classList.add("music-player-content--controls-only");
+  playerContent.appendChild(shell);
+}
+
 function initMusicPlayerUI() {
   // Guard clause: verificar se estamos em uma página de música
   if (!isMusicPageActive()) {
     console.log(" Não está em página de música, ignorando initMusicPlayerUI");
     return;
   }
+
+  enforceMusicControlsOnlyLayout();
 
   // Se for a página do Living (ambiente2-musica), inicializar apenas o slider de volume
   // pois o Living usa controles diferentes (device 198 sem metadata)

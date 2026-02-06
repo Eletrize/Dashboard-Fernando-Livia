@@ -1,5 +1,6 @@
 name = "dashboard-eletrize-base"
 compatibility_date = "2023-10-01"
+pages_build_output_dir = "."
 
 # Configuração para Cloudflare Pages (recomendado)
 # As variáveis sensíveis são definidas via: wrangler secret put NOME_DA_VARIAVEL
@@ -13,15 +14,6 @@ VERSION = "1.0.0"
 # main = "functions/_worker.js"
 # route = "dashboard-eletrize.workers.dev/*"
 
-# Build settings (para Pages)
-[build]
-command = ""
-cwd = "."
-
 # Assets estáticos servidos pelo Pages
 # [site]
 # bucket = "./"
-
-# Functions do Cloudflare Pages
-[functions]
-directory = "functions"

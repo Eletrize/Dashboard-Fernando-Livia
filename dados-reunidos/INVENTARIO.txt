@@ -1,0 +1,18 @@
+﻿Arquivos reunidos em dados-reunidos:
+
+[ids]
+IDs-AMBIENTES-DISPOSITIVOS.md
+
+[fotos-ambientes]
+photo-circulacao.webp
+photo-externo.webp
+photo-living.webp
+photo-piscina.webp
+photo-servico.webp
+photo-suitei.webp
+photo-suiteii.webp
+photo-suitemaster.webp
+photo-varanda.webp
+
+[json]
+test-data.json
