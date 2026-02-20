@@ -116,8 +116,6 @@ const ICON_ASSET_PATHS = [
   "images/icons/icon-play.svg",
   "images/icons/icon-pause.svg",
   "images/icons/icon-stop.svg",
-  "images/icons/icon-vinho.svg",
-  "images/icons/icon-jantar.svg",
   "images/icons/Encerrar-expediente.svg",
   "images/icons/iniciar-expediente.svg",
   "images/icons/icon-scenes.svg",
@@ -896,26 +894,16 @@ function tvCommand(el, command) {
 
   console.log(`📺 Enviando comando ${command} para dispositivo ${deviceId}`);
 
-  // Atalho: GloboNews (canal 267) no HTV da varanda (deviceId=114)
-  // Envia 2 → 6 → 7 com 0,05s entre cada dígito.
+  // Atalho: GloboNews (canal 247) no HTV da varanda (deviceId=114)
+  // Envia 2 → 4 → 7 com 0,05s entre cada dígito.
   if (command === "globonews") {
-    console.log(`📺 GloboNews: sintonizando canal 267 (device ${deviceId})`);
+    console.log(`📺 GloboNews: sintonizando canal 247 (device ${deviceId})`);
     // Cancelar qualquer sequência anterior para evitar comandos duplicados
     sendCommandSequence(deviceId, ["num2", "num4", "num7"], 50).catch(
       (error) => {
-        console.error("❌ Erro ao sintonizar GloboNews (267):", error);
+        console.error("❌ Erro ao sintonizar GloboNews (247):", error);
       }
     );
-    return;
-  }
-
-  // Atalho: BBB (canal 1) no HTV
-  // Envia num1 direto.
-  if (command === "bbb") {
-    console.log(`📺 BBB: sintonizando canal 1 (device ${deviceId})`);
-    sendHubitatCommand(deviceId, "num1")
-      .then(() => console.log(`✅ BBB canal 1 sintonizado (device ${deviceId})`))
-      .catch((error) => console.error("❌ Erro ao sintonizar BBB (1):", error));
     return;
   }
 
@@ -2842,10 +2830,8 @@ function initAirConditionerControl() {
       console.log("ALETA MOVIMENTO: Executando comando swingOn (mover aletas)");
       sendHubitatCommand(state.deviceId, "swingOn");
     } else if (aleta === "windfree") {
-      const isSuiteMasterAC = String(state.deviceId) === String(AC_DEVICE_IDS.ambiente9);
-      const windFreeCommand = isSuiteMasterAC ? "windFree" : "windfree";
-      console.log(`WINDFREE: Executando comando ${windFreeCommand}`);
-      sendHubitatCommand(state.deviceId, windFreeCommand);
+      console.log("WINDFREE: Executando comando windfree");
+      sendHubitatCommand(state.deviceId, "windfree");
     } else if (aleta === "parada") {
       console.log("ALETA PARADA: Executando comando swingOff (parar aletas)");
       sendHubitatCommand(state.deviceId, "swingOff");
@@ -3378,7 +3364,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const ENABLE_DEBUG_LOGS = true; // Logs habilitados em desktop e mobile
 
 // Sistema de detecção de cache desatualizado para mobile (TEMPORARIAMENTE DESABILITADO)
-const APP_VERSION = "1.0.8"; // cache/version marker
+const APP_VERSION = "1.0.0"; // Ã°Å¸Å½â€° MARCO v1.0 - SISTEMA TOTALMENTE FUNCIONAL
 (function () {
   if (false && isMobile) {
     // DESABILITADO para debug
@@ -6109,76 +6095,12 @@ function ensureMusicTrackMarqueeListeners() {
   musicTrackMarqueeListenersAttached = true;
 }
 
-// Fallback to convert legacy music markup into controls-only layout.
-// This guarantees Varanda/Living/Piscina keep the new UI even if old HTML is cached.
-function enforceMusicControlsOnlyLayout() {
-  const activePage = document.querySelector(".page.active");
-  if (!activePage) return;
-
-  const playerContent = activePage.querySelector(
-    ".music-player-card .music-player-content"
-  );
-  if (!playerContent) return;
-
-  if (playerContent.classList.contains("music-player-content--controls-only")) {
-    return;
-  }
-
-  const controlsBlock = playerContent.querySelector(".music-controls");
-  const volumeBlock = playerContent.querySelector(".music-volume-section");
-  const masterBlock = playerContent.querySelector(".music-master-controls");
-
-  if (!controlsBlock || !volumeBlock || !masterBlock) {
-    return;
-  }
-
-  playerContent
-    .querySelectorAll(".music-primary, .music-info--desktop")
-    .forEach((node) => node.remove());
-
-  const shell = document.createElement("div");
-  shell.className = "music-control-shell";
-
-  const createPanel = (title, className, bodyNode) => {
-    const panel = document.createElement("section");
-    panel.className = className;
-
-    const label = document.createElement("h2");
-    label.className = "music-section-label";
-    label.textContent = title;
-    panel.appendChild(label);
-    panel.appendChild(bodyNode);
-
-    return panel;
-  };
-
-  shell.appendChild(
-    createPanel(
-      "Reproducao",
-      "music-control-panel music-control-panel--transport",
-      controlsBlock
-    )
-  );
-  shell.appendChild(
-    createPanel("Volume", "music-control-panel", volumeBlock)
-  );
-  shell.appendChild(
-    createPanel("Energia", "music-control-panel", masterBlock)
-  );
-
-  playerContent.innerHTML = "";
-  playerContent.classList.add("music-player-content--controls-only");
-  playerContent.appendChild(shell);
-}
-
 function initMusicPlayerUI() {
   // Guard clause: verificar se estamos em uma página de música
   if (!isMusicPageActive()) {
     console.log(" Não está em página de música, ignorando initMusicPlayerUI");
     return;
   }
-
-  enforceMusicControlsOnlyLayout();
 
   // Se for a página do Living (ambiente2-musica), inicializar apenas o slider de volume
   // pois o Living usa controles diferentes (device 198 sem metadata)
