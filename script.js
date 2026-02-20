@@ -901,7 +901,7 @@ function tvCommand(el, command) {
   if (command === "globonews") {
     console.log(`📺 GloboNews: sintonizando canal 267 (device ${deviceId})`);
     // Cancelar qualquer sequência anterior para evitar comandos duplicados
-    sendCommandSequence(deviceId, ["num2", "num6", "num7"], 50).catch(
+    sendCommandSequence(deviceId, ["num2", "num4", "num7"], 50).catch(
       (error) => {
         console.error("❌ Erro ao sintonizar GloboNews (267):", error);
       }
