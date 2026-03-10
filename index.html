@@ -125,6 +125,22 @@
         opacity: 1;
         filter: brightness(0) invert();
       }
+
+      .piscina-control-grid {
+        grid-template-columns: 1fr;
+      }
+
+      @media (min-width: 700px) {
+        .piscina-control-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .piscina-control-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
     </style>
   </head>
   <body>
@@ -2966,6 +2982,22 @@
                         Ligar
                     </button>
                     <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="152" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Cascata">
+                        Desligar
+                    </button>
+                </div>
+            </article>
+
+            <!-- Filtro -->
+            <article class="curtain-tile curtain-tile--transparent piscina-switch-tile" data-device-id="158" data-environment="Piscina">
+                <header class="curtain-tile__header curtain-tile__header--minimal">
+                    <h3 class="curtain-tile__title">Filtro</h3>
+                    <div class="curtain-tile__line"></div>
+                </header>
+                <div class="curtain-tile__actions curtain-tile__actions--dual">
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="158" onclick="togglePoolControl(this, 'on')" aria-label="Ligar Filtro">
+                        Ligar
+                    </button>
+                    <button class="curtain-tile__btn curtain-tile__btn--text" data-device-id="158" onclick="togglePoolControl(this, 'off')" aria-label="Desligar Filtro">
                         Desligar
                     </button>
                 </div>
