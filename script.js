@@ -76,6 +76,7 @@ const ICON_ASSET_PATHS = [
   "images/icons/icon-musica.svg",
   "images/icons/icon-curtain.svg",
   "images/icons/icon-firetv.svg",
+  "images/icons/icon-youtube.svg",
   "images/icons/icon-conforto.svg",
   "images/icons/ar-condicionado.svg",
   "images/icons/icon-piscina.svg",
@@ -917,6 +918,43 @@ function tvCommand(el, command) {
     .catch((error) => {
       console.error(
         `❌ Erro ao enviar comando TV para dispositivo ${deviceId}:`,
+        error
+      );
+    });
+}
+
+function tvOpenYoutube(el) {
+  const deviceId = "239";
+  const command = "push";
+  const value = "1";
+
+  // Feedback visual alinhado com os demais comandos da TV.
+  if (el) {
+    el.style.transform = "scale(0.92)";
+    el.style.background = "rgba(255, 255, 255, 0.15)";
+    el.style.borderColor = "rgba(255, 255, 255, 0.3)";
+    setTimeout(() => {
+      el.style.transform = "";
+      el.style.background = "";
+      el.style.borderColor = "";
+    }, 200);
+  }
+
+  recentCommands.set(deviceId, Date.now());
+
+  console.log(
+    `📺 YouTube: enviando comando ${command}(${value}) para dispositivo ${deviceId}`
+  );
+
+  sendHubitatCommand(deviceId, command, value)
+    .then(() => {
+      console.log(
+        `✅ Comando YouTube (${command}/${value}) enviado com sucesso para dispositivo ${deviceId}`
+      );
+    })
+    .catch((error) => {
+      console.error(
+        `❌ Erro ao enviar comando YouTube para dispositivo ${deviceId}:`,
         error
       );
     });
