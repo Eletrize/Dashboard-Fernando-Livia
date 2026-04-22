@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -65,7 +65,7 @@
           if (!window.__cfBeaconWarningShown) {
             window.__cfBeaconWarningShown = true;
             console.info(
-              "Cloudflare Insights não pôde ser carregado (uso offline ou script bloqueado). Nenhuma ação adicional é necessária."
+              "Cloudflare Insights não pôde ser carregado (uso offline ou script bloqueado). Nenhuma ação adicional é necessária.",
             );
           }
         }
@@ -141,6 +141,18 @@
           grid-template-columns: repeat(4, minmax(0, 1fr));
         }
       }
+
+      .ambiente1-conforto-page .ac-fan-grid--quad,
+      .ambiente9-conforto-page .ac-fan-grid--quad {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      @media (max-width: 999px) {
+        .ambiente1-conforto-page .ac-fan-grid--quad,
+        .ambiente9-conforto-page .ac-fan-grid--quad {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
     </style>
   </head>
   <body>
@@ -149,10 +161,7 @@
       <div class="loader-content">
         <div class="loader-logo">
           <picture class="loader-logo__picture">
-            <source
-              srcset="images/pwa/app-icon-420.webp"
-              type="image/webp"
-            />
+            <source srcset="images/pwa/app-icon-420.webp" type="image/webp" />
             <img
               src="images/pwa/app-icon-512-transparent.png"
               alt="Dashboard Eletrize"
@@ -356,7 +365,7 @@
             try {
               window.localStorage.setItem(
                 "dashboard_debug",
-                enabled ? "1" : "0"
+                enabled ? "1" : "0",
               );
             } catch (error) {}
           }
@@ -377,7 +386,7 @@
 
       if ("serviceWorker" in navigator) {
         const isLocalhost = ["localhost", "127.0.0.1", "::1"].includes(
-          location.hostname
+          location.hostname,
         );
 
         if (isLocalhost) {
@@ -406,7 +415,7 @@
       // --- SPA Core ---
 
       const spaRoot = document.getElementById("spa-root");
-  const pageCache = new Map();
+      const pageCache = new Map();
 
       // Fotos dos cards por rota (reaproveitadas como fundo das páginas internas)
       // Mapeamento atualizado com as fotos corretas por ambiente
@@ -433,7 +442,7 @@
           };
           return acc;
         },
-        {}
+        {},
       );
 
       function getRoomBackgroundUrl(route) {
@@ -635,7 +644,7 @@
                 <div class="curtain-section__grid">
                     ${section.curtains
                       .map((curtain) =>
-                        renderCurtainControlCard(curtain, section.name)
+                        renderCurtainControlCard(curtain, section.name),
                       )
                       .join("")}
                 </div>
@@ -652,7 +661,7 @@
       const appInfoVersionLabel = document.getElementById("app-info-version");
 
       const fullscreenToggleBtn = document.getElementById(
-        "app-fullscreen-toggle"
+        "app-fullscreen-toggle",
       );
       const cacheClearBtn = document.getElementById("app-cache-clear");
       const instagramLink = document.getElementById("app-instagram-link");
@@ -717,8 +726,8 @@
       function isFullscreenActive() {
         return Boolean(
           document.fullscreenElement ||
-            document.webkitFullscreenElement ||
-            document.msFullscreenElement
+          document.webkitFullscreenElement ||
+          document.msFullscreenElement,
         );
       }
 
@@ -726,7 +735,7 @@
         if (!fullscreenToggleBtn) return;
 
         const label = fullscreenToggleBtn.querySelector(
-          ".app-info-option__label"
+          ".app-info-option__label",
         );
 
         if (!label) return;
@@ -843,12 +852,12 @@
         if (fullscreenToggleBtn) {
           fullscreenToggleBtn.removeEventListener(
             "click",
-            onFullscreenToggleClick
+            onFullscreenToggleClick,
           );
 
           fullscreenToggleBtn.addEventListener(
             "click",
-            onFullscreenToggleClick
+            onFullscreenToggleClick,
           );
 
           updateFullscreenOptionLabel();
@@ -2083,16 +2092,29 @@
         </div>
             </section>
 
-            <!-- Wrapper para os controles (Seleção, Aletas, Comandos) -->
+            <!-- Wrapper para os controles (Ventilação, Aletas, Comandos) -->
             <div class="ac-controls-wrapper">
-                <!-- Controles de Seleção -->
-                <section class="ac-modes" role="group" aria-label="Seleção de ar-condicionado">
-                    <h2 class="ac-section-title">Seleção</h2>
-                    <div class="ac-modes-grid ac-modes-grid--single">
-                        <button type="button" class="ac-mode-btn ac-mode-btn--selection" data-mode-button data-mode="varanda" aria-pressed="true" aria-label="Varanda">
-                            <span class="ac-mode-btn__label">Varanda</span>
-                        </button>
-                    </div>
+                <!-- Controles de Ventilação -->
+                <section class="ac-fan-section" role="group" aria-label="Controle de ventilação">
+                  <h2 class="ac-section-title">Ventilação</h2>
+                  <div class="ac-fan-grid ac-fan-grid--quad">
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="auto" aria-pressed="false" aria-label="Auto">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Auto</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="low" aria-pressed="false" aria-label="Low">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Low</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="medium" aria-pressed="true" aria-label="Mid">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Mid</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="high" aria-pressed="false" aria-label="High">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">High</span>
+                    </button>
+                  </div>
                 </section>
 
                 <!-- Controles de Aletas -->
@@ -2916,16 +2938,29 @@
         </div>
             </section>
 
-            <!-- Wrapper para os controles (Seleção, Aletas, Comandos) -->
+            <!-- Wrapper para os controles (Ventilação, Aletas, Comandos) -->
             <div class="ac-controls-wrapper">
-                <!-- Controles de Seleção -->
-                <section class="ac-modes" role="group" aria-label="Seleção de ar-condicionado">
-                    <h2 class="ac-section-title">Seleção</h2>
-                    <div class="ac-modes-grid ac-modes-grid--single">
-                        <button type="button" class="ac-mode-btn ac-mode-btn--selection" data-mode-button data-mode="varanda" aria-pressed="true" aria-label="Varanda">
-                            <span class="ac-mode-btn__label">Varanda</span>
-                        </button>
-                    </div>
+                <!-- Controles de Ventilação -->
+                <section class="ac-fan-section" role="group" aria-label="Controle de ventilação">
+                  <h2 class="ac-section-title">Ventilação</h2>
+                  <div class="ac-fan-grid ac-fan-grid--quad">
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="auto" aria-pressed="false" aria-label="Auto">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Auto</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="low" aria-pressed="false" aria-label="Low">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Low</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="medium" aria-pressed="true" aria-label="Mid">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Mid</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="high" aria-pressed="false" aria-label="High">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">High</span>
+                    </button>
+                  </div>
                 </section>
 
                 <!-- Controles de Aletas -->
@@ -4770,16 +4805,29 @@
         </div>
             </section>
 
-            <!-- Wrapper para os controles (Seleção, Aletas, Comandos) -->
+            <!-- Wrapper para os controles (Ventilação, Aletas, Comandos) -->
             <div class="ac-controls-wrapper">
-                <!-- Controles de Seleção -->
-                <section class="ac-modes" role="group" aria-label="Seleção de ar-condicionado">
-                    <h2 class="ac-section-title">Seleção</h2>
-                    <div class="ac-modes-grid ac-modes-grid--single">
-                        <button type="button" class="ac-mode-btn ac-mode-btn--selection" data-mode-button data-mode="suiteMaster" aria-pressed="true" aria-label="Suíte Master">
-                            <span class="ac-mode-btn__label">Suíte Master</span>
-                        </button>
-                    </div>
+                <!-- Controles de Ventilação -->
+                <section class="ac-fan-section" role="group" aria-label="Controle de ventilação">
+                  <h2 class="ac-section-title">Ventilação</h2>
+                  <div class="ac-fan-grid ac-fan-grid--quad">
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="auto" aria-pressed="false" aria-label="Auto">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Auto</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="low" aria-pressed="false" aria-label="Low">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Low</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="medium" aria-pressed="true" aria-label="Mid">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">Mid</span>
+                    </button>
+                    <button type="button" class="ac-fan-btn" data-fan-button data-fan="high" aria-pressed="false" aria-label="High">
+                      <img src="images/icons/icon-ac-fan.svg" alt="">
+                      <span class="ac-fan-label">High</span>
+                    </button>
+                  </div>
                 </section>
 
                 <!-- Controles de Aletas -->
@@ -5263,17 +5311,19 @@
         if (!envLabel) return null;
         const pageLabel = Object.prototype.hasOwnProperty.call(
           PAGE_SUFFIX_LABELS,
-          suffix
+          suffix,
         )
           ? PAGE_SUFFIX_LABELS[suffix]
           : suffix
-          ? suffix
-              .split("-")
-              .map((segment) =>
-                segment ? segment[0].toUpperCase() + segment.slice(1) : segment
-              )
-              .join(" ")
-          : PAGE_SUFFIX_LABELS[""];
+            ? suffix
+                .split("-")
+                .map((segment) =>
+                  segment
+                    ? segment[0].toUpperCase() + segment.slice(1)
+                    : segment,
+                )
+                .join(" ")
+            : PAGE_SUFFIX_LABELS[""];
         return `${envLabel} | ${pageLabel}`;
       }
 
@@ -5415,7 +5465,7 @@
                             ? `<button class="room-master-btn" data-route="${
                                 r.route
                               }" data-device-ids="${ids.join(
-                                ","
+                                ",",
                               )}" onclick="onHomeMasterClick(event,this)" aria-label="Master"><img class="room-master-icon" src="images/icons/icon-small-light-off.svg" alt="Master"></button>`
                             : ""
                         }
@@ -5457,7 +5507,7 @@
         const items = nav.querySelectorAll(".nav-item");
 
         const navPages = Array.from(items).map((i) =>
-          i.getAttribute("data-page")
+          i.getAttribute("data-page"),
         );
 
         const navPage = navPages.includes(page) ? page : "home";
@@ -5467,7 +5517,7 @@
         if (activeIndex < 0) activeIndex = navPages.indexOf("home");
 
         items.forEach((item, idx) =>
-          item.classList.toggle("active", idx === activeIndex)
+          item.classList.toggle("active", idx === activeIndex),
         );
 
         const activeItem = items[activeIndex];
@@ -5514,7 +5564,7 @@
               }
             })
             .catch((error) =>
-              console.error("Erro ao carregar scenes.js", error)
+              console.error("Erro ao carregar scenes.js", error),
             );
         }
 
@@ -5542,7 +5592,7 @@
         // Inicializa player de música na página de música da varanda
         if (
           ["ambiente1-musica", "ambiente2-musica", "ambiente3-musica"].includes(
-            page
+            page,
           )
         ) {
           setTimeout(() => {
@@ -5621,15 +5671,15 @@
         Promise.allSettled(promises)
           .then((results) => {
             const successes = results.filter(
-              (r) => r.status === "fulfilled"
+              (r) => r.status === "fulfilled",
             ).length;
 
             const failures = results.filter(
-              (r) => r.status === "rejected"
+              (r) => r.status === "rejected",
             ).length;
 
             console.log(
-              `✅ Master ${cmd}: ${successes} sucessos, ${failures} falhas`
+              `✅ Master ${cmd}: ${successes} sucessos, ${failures} falhas`,
             );
 
             // Segunda sincronização após comandos completos
