@@ -2229,12 +2229,17 @@ function initAirConditionerControl() {
   // Detectar a página atual para aplicar configuração correta
   const currentRoute = (window.location.hash || "").replace("#", "");
   const isAmbiente9 = currentRoute.includes("ambiente9-conforto");
-  const supportsExpandedACCommands = isAmbiente9;
+  const isAmbiente1 = currentRoute.includes("ambiente1") ||
+    currentRoute.includes("ambiente1-conforto");
+  // Habilitar comandos expandidos para Suíte Master (ambiente9) e Varanda (ambiente1)
+  const supportsExpandedACCommands = isAmbiente9 || isAmbiente1;
+  // Mapear níveis de ventoinha para sufixos reais do dispositivo
+  // Dispositivo exposto usa: temp{N} (sem sufixo) e temp{N}FanFast / FanMid / FanSlow
   const fanCommandSuffixMap = {
-    auto: "Auto",
-    low: "Low",
-    medium: "Mid",
-    high: "High",
+    auto: "", // no sufixo -> envia apenas `temp{N}`
+    low: "FanSlow",
+    medium: "FanMid",
+    high: "FanFast",
   };
 
   // Atualizar o ID do AC para o ambiente atual
@@ -2382,13 +2387,17 @@ function initAirConditionerControl() {
 
   function buildTempFanCommand(temp = state.temperature, fanLevel = state.fanLevel) {
     const normalizedTemp = normalizeCommandTemperature(temp);
-    const suffix = fanCommandSuffixMap[fanLevel] || fanCommandSuffixMap.medium;
-    return `setTemp${normalizedTemp}Fan${suffix}`;
+    const suffix = fanCommandSuffixMap[fanLevel];
+
+    // Se sufixo vazio (auto), envia apenas `temp{N}`
+    if (!suffix) return `temp${normalizedTemp}`;
+
+    return `temp${normalizedTemp}${suffix}`;
   }
 
-  function buildTempSwingCommand(temp = state.temperature, swingOn = true) {
-    const normalizedTemp = normalizeCommandTemperature(temp);
-    return `setTemp${normalizedTemp}Swing${swingOn ? "On" : "Off"}`;
+  // O driver exposto usa comandos de swing independentes (sem prefixo temp): swingOn / swingOff
+  function buildTempSwingCommand(/* temp = state.temperature, */ swingOn = true) {
+    return swingOn ? "swingOn" : "swingOff";
   }
 
   function sendPowerCommand(deviceId, isOn) {
@@ -2422,17 +2431,14 @@ function initAirConditionerControl() {
   }
 
   function sendSwingCommand(deviceId, swingOn) {
-    if (supportsExpandedACCommands) {
-      const command = buildTempSwingCommand(state.temperature, swingOn);
-      return sendHubitatCommand(deviceId, command);
-    }
-
-    return sendHubitatCommand(deviceId, swingOn ? "swingOn" : "swingOff");
+    // Sempre usar swingOn / swingOff (compatível com inventário atual)
+    const command = buildTempSwingCommand(swingOn);
+    return sendHubitatCommand(deviceId, command);
   }
 
   function sendWindFreeCommand(deviceId) {
-    const command = supportsExpandedACCommands ? "windFree" : "windfree";
-    return sendHubitatCommand(deviceId, command);
+    // Inventário atual expõe `windfree` (minúsculo)
+    return sendHubitatCommand(deviceId, "windfree");
   }
 
   function angleFromTemperature(temperature) {
