@@ -74,6 +74,7 @@ const ICON_ASSET_PATHS = [
   "images/icons/icon-tv.svg",
   "images/icons/icon-htv.svg",
   "images/icons/icon-musica.svg",
+  "images/icons/icon-caixadesom.svg",
   "images/icons/icon-curtain.svg",
   "images/icons/icon-firetv.svg",
   "images/icons/icon-youtube.svg",
@@ -1395,6 +1396,39 @@ function tvMacroOff() {
     .catch((error) => {
       console.error("❌ Erro ao desligar TV/Receiver:", error);
     });
+}
+
+async function varandaReceiverAudioSource(el, inputSource) {
+  const RECEIVER_ID = "15";
+
+  if (!inputSource) {
+    console.error("varandaReceiverAudioSource: inputSource ausente");
+    return;
+  }
+
+  try {
+    if (el) {
+      el.disabled = true;
+      el.classList.add("loading");
+    }
+
+    await sendHubitatCommand(RECEIVER_ID, "on");
+    await sendHubitatCommand(RECEIVER_ID, "setInputSource", inputSource);
+
+    console.log(
+      `Receiver da Varanda ligado e input ${inputSource} selecionado`
+    );
+  } catch (error) {
+    console.error(
+      `Erro ao configurar Receiver da Varanda para ${inputSource}:`,
+      error
+    );
+  } finally {
+    if (el) {
+      el.disabled = false;
+      el.classList.remove("loading");
+    }
+  }
 }
 
 // Macro para ativar Fire TV (HDMI 2 + BD no Receiver)
@@ -7327,6 +7361,7 @@ window.telaoMacroOn = telaoMacroOn;
 window.telaoMacroOff = telaoMacroOff;
 window.tvMacroOn = tvMacroOn;
 window.tvMacroOff = tvMacroOff;
+window.varandaReceiverAudioSource = varandaReceiverAudioSource;
 window.suiteMasterHtvOn = suiteMasterHtvOn;
 window.suiteMasterHtvOff = suiteMasterHtvOff;
 window.suiteMasterTvOn = suiteMasterTvOn;
