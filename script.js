@@ -1432,12 +1432,10 @@ async function varandaReceiverAudioSource(el, inputSource) {
 }
 
 // Macro para ativar Fire TV (HDMI 2 + BD no Receiver)
-function fireTVMacro() {
-  if (TV_ID = "111") {
-    RECEIVER_ID = "15"; // VARANDA
-  } else {
-    RECEIVER_ID = "16"; // PISCINA
-  }
+function fireTVMacro() {  
+  const TV_ID = "111";
+  const RECEIVER_ID = "15"; // VARANDA
+  const RECEIVER_ID2 = "16"; // PISCINA
 
   console.log(
     "🎬 Macro Fire TV: Selecionando HDMI 2 e setando Receiver para BD...",
@@ -1452,6 +1450,7 @@ function fireTVMacro() {
     })
     .then(() => {
       console.log("✅ Input BD selecionado no Receiver");
+      return sendHubitatCommand(RECEIVER_ID2, "setInputSource", "BD");
     })
     .catch((error) => {
       console.error("❌ Erro na macro Fire TV:", error);
