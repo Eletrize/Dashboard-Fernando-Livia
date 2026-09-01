@@ -1434,8 +1434,8 @@ async function varandaReceiverAudioSource(el, inputSource) {
 // Macro para ativar Fire TV (HDMI 2 + BD no Receiver)
 function fireTVMacro() {  
   const TV_ID = "111";
-  const RECEIVER_ID = "15"; // VARANDA
-  const RECEIVER_ID2 = "16"; // PISCINA
+  const RECEIVER_ID = "16"; // VARANDA
+  const RECEIVER_ID2 = "15"; // PISCINA
 
   console.log(
     "🎬 Macro Fire TV: Selecionando HDMI 2 e setando Receiver para BD...",
