@@ -1566,7 +1566,7 @@
                   <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="varandaReceiverAudioSource(this, 'SAT/CBL')" data-device-id="15" aria-label="Som Receiver HTV">
+              <button class="tv-btn tv-btn--icon-only" onclick="varandaReceiverAudioSource(this, 'GAME')" data-device-id="15" aria-label="Som Receiver HTV">
                 <img src="images/icons/icon-caixadesom.svg" alt="Som Receiver">
               </button>
               <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'home')" data-device-id="114" aria-label="Home">
@@ -1648,6 +1648,166 @@
               class="tv-btn tv-logo-button"
               onclick="tvCommand(this, 'globonews')"
               data-device-id="114"
+              aria-label="GloboNews"
+              type="button"
+            >
+              <img
+                src="images/icons/GloboNews.svg"
+                alt="GloboNews"
+                class="tv-globonews-logo"
+              />
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+        `,
+
+        "ambiente1-roku": () => `
+
+    <div class="top-bar-custom"></div>
+
+    <div class="page active page-container ambiente1-page ambiente1-roku-page">
+
+      <div class="page-header">
+        <button class="back-btn" onclick="spaNavigate('ambiente1')">
+          <img src="images/icons/back-button.svg" alt="Voltar">
+        </button>
+        <h1 class="page-title">Controle TV</h1>
+      </div>
+
+      <div class="tv-control-wrapper">
+        
+        <!-- COLUNA 1 -->
+        <div class="tv-controls-col tv-col-1">
+          <!-- BLOCO 1: ON/OFF -->
+          <div class="tv-control-section">
+            <header class="tv-section-header">
+              <h3 class="tv-section-title">On / Off</h3>
+              <div class="tv-section-line"></div>
+            </header>
+            <div class="tv-control-group tv-power-group">
+              <button class="tv-btn tv-btn--power-on" onclick="rokuMacroOn()" aria-label="Ligar">
+                ON
+              </button>
+              <button class="tv-btn tv-btn--power-off" onclick="rokuMacroOff()" aria-label="Desligar">
+                OFF
+              </button>
+            </div>
+          </div>
+
+          <!-- BLOCO 4 E 5: VOLUME E CANAIS (lado a lado) -->
+          <div class="tv-volume-canais-wrapper">
+                
+            <!-- BLOCO 4: VOLUME -->
+            <div class="tv-control-section tv-control-section--volume-expanded">
+              <header class="tv-section-header">
+                <h3 class="tv-section-title">Volume</h3>
+                <span class="tv-volume-value" id="tv-volume-display">50</span>
+                <div class="tv-section-line"></div>
+              </header>
+              <div class="tv-control-group tv-volume-with-buttons">
+                <div class="tv-volume-buttons">
+                  <button class="tv-btn-square tv-volume-btn-up" onmousedown="startVolumeRepeat(this, 'up')" onmouseup="stopVolumeRepeat()" onmouseleave="stopVolumeRepeat()" ontouchstart="startVolumeRepeat(this, 'up')" ontouchend="stopVolumeRepeat()" aria-label="Volume +">
+                    <img src="images/icons/arrow-up.svg" alt="Volume +" class="tv-btn-icon-img">
+                  </button>
+                  <button class="tv-btn-square tv-volume-btn-down" onmousedown="startVolumeRepeat(this, 'down')" onmouseup="stopVolumeRepeat()" onmouseleave="stopVolumeRepeat()" ontouchstart="startVolumeRepeat(this, 'down')" ontouchend="stopVolumeRepeat()" aria-label="Volume -">
+                    <img src="images/icons/arrow-down.svg" alt="Volume -" class="tv-btn-icon-img">
+                  </button>
+                </div>
+                <div class="tv-volume-slider-wrapper">
+                  <input 
+                    type="range" 
+                    class="tv-volume-slider" 
+                    id="tv-volume-slider"
+                    min="0" 
+                    max="100" 
+                    value="50"
+                    data-device-id="15"
+                    aria-label="Controle de Volume"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUNA 2 -->
+        <div class="tv-controls-col tv-col-2">
+          <!-- BLOCO 3: COMANDOS (Back, Menu, Home, Mute) -->
+          <div class="tv-control-section">
+            <header class="tv-section-header">
+              <h3 class="tv-section-title">Comandos</h3>
+              <div class="tv-section-line"></div>
+            </header>
+            <div class="tv-control-group tv-commands-grid">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'returnButton')" data-device-id="280" aria-label="Voltar">
+                <img src="images/icons/back-button.svg" alt="Voltar">
+              </button>
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'menu')" data-device-id="280" aria-label="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+              </button>
+              <button class="tv-btn tv-btn--icon-only" onclick="varandaReceiverAudioSource(this, 'BD')" data-device-id="15" aria-label="Som Receiver Roku">
+                <img src="images/icons/icon-caixadesom.svg" alt="Som Receiver">
+              </button>
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'home')" data-device-id="280" aria-label="Home">
+                <img src="images/icons/icon-home.svg" alt="Home">
+              </button>
+            </div>
+          </div>
+
+          <!-- BLOCO 2: CONTROLE (D-PAD) -->
+          <div class="tv-control-section">
+            <header class="tv-section-header">
+              <h3 class="tv-section-title">Controle</h3>
+              <div class="tv-section-line"></div>
+            </header>
+            <div class="tv-control-group tv-directional-row">
+              <div class="tv-directional-section">
+                <div class="tv-directional-pad">
+                  <!-- Linha 1: UP -->
+                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'cursorUp')" data-device-id="280" aria-label="Cima">
+                    <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
+                  </button>
+                            
+                  <!-- Linha 2: LEFT, OK, RIGHT -->
+                  <div class="tv-directional-row-line">
+                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'cursorLeft')" data-device-id="280" aria-label="Esquerda">
+                      <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
+                    </button>
+                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'cursorCenter')" data-device-id="280" aria-label="OK">
+                      <div class="tv-ok-circle"></div>
+                    </button>
+                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'cursorRight')" data-device-id="280" aria-label="Direita">
+                      <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
+                    </button>
+                  </div>
+                            
+                  <!-- Linha 3: DOWN -->
+                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'cursorDown')" data-device-id="280" aria-label="Baixo">
+                    <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUNA 3 -->
+        <div class="tv-controls-col tv-col-3">
+          <!-- BLOCO 7: GLOBONEWS -->
+          <div class="tv-control-section tv-logo-section">
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'globonews')"
+              data-device-id="280"
               aria-label="GloboNews"
               type="button"
             >
@@ -2736,6 +2896,12 @@
     <div class="control-card" onclick="spaNavigate('ambiente1-htv')">
       <img class="control-icon" src="images/icons/icon-htv.svg" alt="HTV">
       <div class="control-label">HTV</div>
+    </div>
+
+    <!-- Botão Roku -->
+    <div class="control-card" onclick="spaNavigate('ambiente1-roku')">
+      <img class="control-icon" src="images/icons/icon-roku.svg" alt="Roku">
+      <div class="control-label">Roku</div>
     </div>
 
     <!-- Botão Televisão -->
