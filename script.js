@@ -1013,7 +1013,7 @@ function htvMacroOn() {
       // Aguardar 4 segundos antes de setar input GAME
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve(sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME"));
+          resolve(sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME1"));
         }, 4000);
       });
     })
@@ -1024,7 +1024,7 @@ function htvMacroOn() {
       console.error("❌ Erro na macro HTV:", error);
       // Mesmo com erro, tentar setar o input (caso TV já esteja ligada)
       console.log("🔄 Tentando setar input GAME mesmo com erro anterior...");
-      sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME")
+      sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME1")
         .then(() =>
           console.log("✅ Input GAME selecionado no Receiver (recuperação)"),
         )
@@ -1097,7 +1097,7 @@ function htvMacroOn_old() {
       // Aguardar 4 segundos antes de setar input GAME
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve(sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME"));
+          resolve(sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME1"));
         }, 4000);
       });
     })
@@ -1108,7 +1108,7 @@ function htvMacroOn_old() {
       console.error("❌ Erro na macro HTV:", error);
       // Mesmo com erro, tentar setar o input (caso TV já esteja ligada)
       console.log("🔄 Tentando setar input GAME mesmo com erro anterior...");
-      sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME")
+      sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME1")
         .then(() =>
           console.log("✅ Input GAME selecionado no Receiver (recuperação)"),
         )
@@ -1126,7 +1126,7 @@ function telaoMacroOn() {
   // Liga Telão e seta input GAME no receiver
   Promise.all([
     sendHubitatCommand(TELAO_ID, "on"),
-    sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME"),
+    sendHubitatCommand(RECEIVER_ID, "setInputSource", "GAME1"),
   ])
     .then(() => {
       console.log("✅ Telão ligado e input GAME selecionado");
