@@ -1136,6 +1136,25 @@ function telaoMacroOn() {
     });
 }
 
+function rokuPiscinaMacroOn() {
+  const TELAO_ID = "157";
+  const RECEIVER_ID = "16";
+
+  console.log("🎬 Macro Telão: Ligando Telão e setando input BLURAY...");
+
+  // Liga Telão e seta input GAME no receiver
+  Promise.all([
+    sendHubitatCommand(TELAO_ID, "on"),
+    sendHubitatCommand(RECEIVER_ID, "setInputSource", "BD"),
+  ])
+    .then(() => {
+      console.log("✅ Telão ligado e input BLURAY selecionado");
+    })
+    .catch((error) => {
+      console.error("❌ Erro na macro Telão:", error);
+    });
+}
+
 // Macro para desligar Telão da Piscina (Receiver Zona 2 + Telão)
 function telaoMacroOff() {
   const TELAO_ID = "157";
