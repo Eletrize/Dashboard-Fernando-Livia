@@ -1747,16 +1747,16 @@
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-commands-grid">
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Back')" data-device-id="280" aria-label="Voltar">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Back')" data-device-id="280" aria-label="Voltar">
                 <img src="images/icons/back-button.svg" alt="Voltar">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Info')" data-device-id="280" aria-label="Info">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Info')" data-device-id="280" aria-label="Info">
                 <img src="images/icons/icon-info.svg" alt="Info">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Refresh')" data-device-id="15" aria-label="Refresh">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Refresh')" data-device-id="15" aria-label="Refresh">
                 <img src="images/icons/icon-refresh.svg" alt="Refresh">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Home')" data-device-id="280" aria-label="Home">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Home')" data-device-id="280" aria-label="Home">
                 <img src="images/icons/icon-home.svg" alt="Home">
               </button>
             </div>
@@ -1772,25 +1772,25 @@
               <div class="tv-directional-section">
                 <div class="tv-directional-pad">
                   <!-- Linha 1: UP -->
-                  <button class="tv-directional-btn tv-directional-btn--up" onclick="sendHubitatCommand(280, 'Up')" data-device-id="280" aria-label="Cima">
+                  <button class="tv-directional-btn tv-directional-btn--up" onclick="sendHubitatCommand(280, 'keyPress', 'Up')" data-device-id="280" aria-label="Cima">
                     <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
                   </button>
                             
                   <!-- Linha 2: LEFT, OK, RIGHT -->
                   <div class="tv-directional-row-line">
-                    <button class="tv-directional-btn tv-directional-btn--left" onclick="sendHubitatCommand(280, 'Left')" data-device-id="280" aria-label="Esquerda">
+                    <button class="tv-directional-btn tv-directional-btn--left" onclick="sendHubitatCommand(280, 'keyPress', 'Left')" data-device-id="280" aria-label="Esquerda">
                       <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="sendHubitatCommand(280, 'Enter')" data-device-id="280" aria-label="OK">
+                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="sendHubitatCommand(280, 'keyPress', 'Enter')" data-device-id="280" aria-label="OK">
                       <div class="tv-ok-circle"></div>
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--right" onclick="sendHubitatCommand(280, 'Right')" data-device-id="280" aria-label="Direita">
+                    <button class="tv-directional-btn tv-directional-btn--right" onclick="sendHubitatCommand(280, 'keyPress', 'Right')" data-device-id="280" aria-label="Direita">
                       <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
                     </button>
                   </div>
                             
                   <!-- Linha 3: DOWN -->
-                  <button class="tv-directional-btn tv-directional-btn--down" onclick="sendHubitatCommand(280, 'Down')" data-device-id="280" aria-label="Baixo">
+                  <button class="tv-directional-btn tv-directional-btn--down" onclick="sendHubitatCommand(280, 'keyPress', 'Down')" data-device-id="280" aria-label="Baixo">
                     <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
                   </button>
                 </div>
@@ -1805,7 +1805,7 @@
           <div class="tv-control-section tv-logo-section">
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Youtube')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Youtube')"
               data-device-id="280"
               aria-label="Youtube"
               type="button"
@@ -1818,7 +1818,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Netflix')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Netflix')"
               data-device-id="280"
               aria-label="Netflix"
               type="button"
@@ -1831,7 +1831,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Disney Plus')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Disney Plus')"
               data-device-id="280"
               aria-label="Disney"
               type="button"
@@ -1844,7 +1844,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Prime Video')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Prime Video')"
               data-device-id="280"
               aria-label="PrimeVideo"
               type="button"
@@ -1857,7 +1857,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'HBO Max')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'HBO Max')"
               data-device-id="280"
               aria-label="HBO"
               type="button"
@@ -1870,7 +1870,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Globoplay')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Globoplay')"
               data-device-id="280"
               aria-label="Globoplay"
               type="button"
@@ -2264,16 +2264,16 @@
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-commands-grid">
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Back')" data-device-id="280" aria-label="Voltar">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Back')" data-device-id="280" aria-label="Voltar">
                 <img src="images/icons/back-button.svg" alt="Voltar">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Info')" data-device-id="280" aria-label="Info">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Info')" data-device-id="280" aria-label="Info">
                 <img src="images/icons/icon-info.svg" alt="Info">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Refresh')" data-device-id="15" aria-label="Refresh">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Refresh')" data-device-id="15" aria-label="Refresh">
                 <img src="images/icons/icon-refresh.svg" alt="Refresh">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'Home')" data-device-id="280" aria-label="Home">
+              <button class="tv-btn tv-btn--icon-only" onclick="sendHubitatCommand(280, 'keyPress', 'Home')" data-device-id="280" aria-label="Home">
                 <img src="images/icons/icon-home.svg" alt="Home">
               </button>
             </div>
@@ -2289,25 +2289,25 @@
               <div class="tv-directional-section">
                 <div class="tv-directional-pad">
                   <!-- Linha 1: UP -->
-                  <button class="tv-directional-btn tv-directional-btn--up" onclick="sendHubitatCommand(280, 'Up')" data-device-id="280" aria-label="Cima">
+                  <button class="tv-directional-btn tv-directional-btn--up" onclick="sendHubitatCommand(280, 'keyPress', 'Up')" data-device-id="280" aria-label="Cima">
                     <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
                   </button>
                             
                   <!-- Linha 2: LEFT, OK, RIGHT -->
                   <div class="tv-directional-row-line">
-                    <button class="tv-directional-btn tv-directional-btn--left" onclick="sendHubitatCommand(280, 'Left')" data-device-id="280" aria-label="Esquerda">
+                    <button class="tv-directional-btn tv-directional-btn--left" onclick="sendHubitatCommand(280, 'keyPress', 'Left')" data-device-id="280" aria-label="Esquerda">
                       <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="sendHubitatCommand(280, 'Enter')" data-device-id="280" aria-label="OK">
+                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="sendHubitatCommand(280, 'keyPress', 'Enter')" data-device-id="280" aria-label="OK">
                       <div class="tv-ok-circle"></div>
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--right" onclick="sendHubitatCommand(280, 'Right')" data-device-id="280" aria-label="Direita">
+                    <button class="tv-directional-btn tv-directional-btn--right" onclick="sendHubitatCommand(280, 'keyPress', 'Right')" data-device-id="280" aria-label="Direita">
                       <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
                     </button>
                   </div>
                             
                   <!-- Linha 3: DOWN -->
-                  <button class="tv-directional-btn tv-directional-btn--down" onclick="sendHubitatCommand(280, 'Down')" data-device-id="280" aria-label="Baixo">
+                  <button class="tv-directional-btn tv-directional-btn--down" onclick="sendHubitatCommand(280, 'keyPress', 'Down')" data-device-id="280" aria-label="Baixo">
                     <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
                   </button>
                 </div>
@@ -2322,7 +2322,7 @@
           <div class="tv-control-section tv-logo-section">
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Youtube')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Youtube')"
               data-device-id="280"
               aria-label="Youtube"
               type="button"
@@ -2335,7 +2335,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Netflix')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Netflix')"
               data-device-id="280"
               aria-label="Netflix"
               type="button"
@@ -2348,7 +2348,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Disney Plus')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Disney Plus')"
               data-device-id="280"
               aria-label="Disney"
               type="button"
@@ -2361,7 +2361,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Prime Video')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Prime Video')"
               data-device-id="280"
               aria-label="PrimeVideo"
               type="button"
@@ -2374,7 +2374,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'HBO Max')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'HBO Max')"
               data-device-id="280"
               aria-label="HBO"
               type="button"
@@ -2387,7 +2387,7 @@
             </button>
             <button
               class="tv-btn tv-logo-button"
-              onclick="sendHubitatCommand(280, 'Globoplay')"
+              onclick="sendHubitatCommand(280, 'setInputSource', 'Globoplay')"
               data-device-id="280"
               aria-label="Globoplay"
               type="button"
