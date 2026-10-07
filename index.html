@@ -88,7 +88,6 @@
 
     <style>
       /* Botão invisível no card para capturar clique na Home */
-
       .room-card-link {
         position: absolute;
         left: 0;
@@ -102,6 +101,10 @@
       }
 
       /* Botão retangular para o slot de logo (HTV Varanda) */
+      .tv-control-section.tv-logo-section {
+        gap: 12px;
+      }
+      
       .tv-logo-button {
         width: 100%;
         min-height: 60px;
@@ -1737,27 +1740,23 @@
 
         <!-- COLUNA 2 -->
         <div class="tv-controls-col tv-col-2">
-          <!-- BLOCO 3: COMANDOS (Back, Menu, Home, Mute) -->
+          <!-- BLOCO 3: COMANDOS (Back, Info, Refresh, Home) -->
           <div class="tv-control-section">
             <header class="tv-section-header">
               <h3 class="tv-section-title">Comandos</h3>
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-commands-grid">
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'returnButton')" data-device-id="280" aria-label="Voltar">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Back')" data-device-id="280" aria-label="Voltar">
                 <img src="images/icons/back-button.svg" alt="Voltar">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'menu')" data-device-id="280" aria-label="Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Info')" data-device-id="280" aria-label="Info">
+                <img src="images/icons/icon-info.svg" alt="Info">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="varandaReceiverAudioSource(this, 'BD')" data-device-id="15" aria-label="Som Receiver Roku">
-                <img src="images/icons/icon-caixadesom.svg" alt="Som Receiver">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Refresh')" data-device-id="15" aria-label="Refresh">
+                <img src="images/icons/icon-refresh.svg" alt="Refresh">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'home')" data-device-id="280" aria-label="Home">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Home')" data-device-id="280" aria-label="Home">
                 <img src="images/icons/icon-home.svg" alt="Home">
               </button>
             </div>
@@ -1773,25 +1772,25 @@
               <div class="tv-directional-section">
                 <div class="tv-directional-pad">
                   <!-- Linha 1: UP -->
-                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'cursorUp')" data-device-id="280" aria-label="Cima">
+                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'Up')" data-device-id="280" aria-label="Cima">
                     <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
                   </button>
                             
                   <!-- Linha 2: LEFT, OK, RIGHT -->
                   <div class="tv-directional-row-line">
-                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'cursorLeft')" data-device-id="280" aria-label="Esquerda">
+                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'Left')" data-device-id="280" aria-label="Esquerda">
                       <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'cursorCenter')" data-device-id="280" aria-label="OK">
+                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'Enter')" data-device-id="280" aria-label="OK">
                       <div class="tv-ok-circle"></div>
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'cursorRight')" data-device-id="280" aria-label="Direita">
+                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'Right')" data-device-id="280" aria-label="Direita">
                       <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
                     </button>
                   </div>
                             
                   <!-- Linha 3: DOWN -->
-                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'cursorDown')" data-device-id="280" aria-label="Baixo">
+                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'Down')" data-device-id="280" aria-label="Baixo">
                     <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
                   </button>
                 </div>
@@ -1802,18 +1801,83 @@
 
         <!-- COLUNA 3 -->
         <div class="tv-controls-col tv-col-3">
-          <!-- BLOCO 7: GLOBONEWS -->
+          <!-- BLOCO 7: APPS FAVORITOS -->
           <div class="tv-control-section tv-logo-section">
             <button
               class="tv-btn tv-logo-button"
-              onclick="tvCommand(this, 'globonews')"
+              onclick="tvCommand(this, 'Youtube')"
               data-device-id="280"
-              aria-label="GloboNews"
+              aria-label="Youtube"
               type="button"
             >
               <img
-                src="images/icons/GloboNews.svg"
-                alt="GloboNews"
+                src="images/icons/icon-youtube.svg"
+                alt="Youtube"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Netflix')"
+              data-device-id="280"
+              aria-label="Netflix"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-netflix.svg"
+                alt="Netflix"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Disney Plus')"
+              data-device-id="280"
+              aria-label="Disney"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-disney.svg"
+                alt="Disney"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Prime Video')"
+              data-device-id="280"
+              aria-label="PrimeVideo"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-primevideo.svg"
+                alt="PrimeVideo"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'HBO Max')"
+              data-device-id="280"
+              aria-label="HBO"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-hbo.svg"
+                alt="HBO"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Globoplay')"
+              data-device-id="280"
+              aria-label="Globoplay"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-globoplay.svg"
+                alt="Globoplay"
                 class="tv-globonews-logo"
               />
             </button>
@@ -2182,7 +2246,7 @@
                     min="0" 
                     max="100" 
                     value="50"
-                    data-device-id="15"
+                    data-device-id="16"
                     aria-label="Controle de Volume"
                   >
                 </div>
@@ -2193,27 +2257,23 @@
 
         <!-- COLUNA 2 -->
         <div class="tv-controls-col tv-col-2">
-          <!-- BLOCO 3: COMANDOS (Back, Menu, Home, Mute) -->
+          <!-- BLOCO 3: COMANDOS (Back, Info, Refresh, Home) -->
           <div class="tv-control-section">
             <header class="tv-section-header">
               <h3 class="tv-section-title">Comandos</h3>
               <div class="tv-section-line"></div>
             </header>
             <div class="tv-control-group tv-commands-grid">
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'returnButton')" data-device-id="280" aria-label="Voltar">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Back')" data-device-id="280" aria-label="Voltar">
                 <img src="images/icons/back-button.svg" alt="Voltar">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'menu')" data-device-id="280" aria-label="Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Info')" data-device-id="280" aria-label="Info">
+                <img src="images/icons/icon-info.svg" alt="Info">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="varandaReceiverAudioSource(this, 'BD')" data-device-id="15" aria-label="Som Receiver Roku">
-                <img src="images/icons/icon-caixadesom.svg" alt="Som Receiver">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Refresh')" data-device-id="15" aria-label="Refresh">
+                <img src="images/icons/icon-refresh.svg" alt="Refresh">
               </button>
-              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'home')" data-device-id="280" aria-label="Home">
+              <button class="tv-btn tv-btn--icon-only" onclick="tvCommand(this, 'Home')" data-device-id="280" aria-label="Home">
                 <img src="images/icons/icon-home.svg" alt="Home">
               </button>
             </div>
@@ -2229,25 +2289,25 @@
               <div class="tv-directional-section">
                 <div class="tv-directional-pad">
                   <!-- Linha 1: UP -->
-                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'cursorUp')" data-device-id="280" aria-label="Cima">
+                  <button class="tv-directional-btn tv-directional-btn--up" onclick="tvCommand(this, 'Up')" data-device-id="280" aria-label="Cima">
                     <img src="images/icons/arrow-up.svg" alt="Cima" class="tv-btn-icon-img">
                   </button>
                             
                   <!-- Linha 2: LEFT, OK, RIGHT -->
                   <div class="tv-directional-row-line">
-                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'cursorLeft')" data-device-id="280" aria-label="Esquerda">
+                    <button class="tv-directional-btn tv-directional-btn--left" onclick="tvCommand(this, 'Left')" data-device-id="280" aria-label="Esquerda">
                       <img src="images/icons/arrow-left.svg" alt="Esquerda" class="tv-btn-icon-img">
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'cursorCenter')" data-device-id="280" aria-label="OK">
+                    <button class="tv-directional-btn tv-directional-btn--ok" onclick="tvCommand(this, 'Enter')" data-device-id="280" aria-label="OK">
                       <div class="tv-ok-circle"></div>
                     </button>
-                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'cursorRight')" data-device-id="280" aria-label="Direita">
+                    <button class="tv-directional-btn tv-directional-btn--right" onclick="tvCommand(this, 'Right')" data-device-id="280" aria-label="Direita">
                       <img src="images/icons/arrow-right.svg" alt="Direita" class="tv-btn-icon-img">
                     </button>
                   </div>
                             
                   <!-- Linha 3: DOWN -->
-                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'cursorDown')" data-device-id="280" aria-label="Baixo">
+                  <button class="tv-directional-btn tv-directional-btn--down" onclick="tvCommand(this, 'Down')" data-device-id="280" aria-label="Baixo">
                     <img src="images/icons/arrow-down.svg" alt="Baixo" class="tv-btn-icon-img">
                   </button>
                 </div>
@@ -2258,18 +2318,83 @@
 
         <!-- COLUNA 3 -->
         <div class="tv-controls-col tv-col-3">
-          <!-- BLOCO 7: GLOBONEWS -->
+          <!-- BLOCO 7: APPS FAVORITOS -->
           <div class="tv-control-section tv-logo-section">
             <button
               class="tv-btn tv-logo-button"
-              onclick="tvCommand(this, 'globonews')"
+              onclick="tvCommand(this, 'Youtube')"
               data-device-id="280"
-              aria-label="GloboNews"
+              aria-label="Youtube"
               type="button"
             >
               <img
-                src="images/icons/GloboNews.svg"
-                alt="GloboNews"
+                src="images/icons/icon-youtube.svg"
+                alt="Youtube"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Netflix')"
+              data-device-id="280"
+              aria-label="Netflix"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-netflix.svg"
+                alt="Netflix"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Disney Plus')"
+              data-device-id="280"
+              aria-label="Disney"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-disney.svg"
+                alt="Disney"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Prime Video')"
+              data-device-id="280"
+              aria-label="PrimeVideo"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-primevideo.svg"
+                alt="PrimeVideo"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'HBO Max')"
+              data-device-id="280"
+              aria-label="HBO"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-hbo.svg"
+                alt="HBO"
+                class="tv-globonews-logo"
+              />
+            </button>
+            <button
+              class="tv-btn tv-logo-button"
+              onclick="tvCommand(this, 'Globoplay')"
+              data-device-id="280"
+              aria-label="Globoplay"
+              type="button"
+            >
+              <img
+                src="images/icons/icon-globoplay.svg"
+                alt="Globoplay"
                 class="tv-globonews-logo"
               />
             </button>
